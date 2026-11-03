@@ -1,0 +1,1 @@
+function loadSakums(){var user=JSON.parse(localStorage.getItem('currentUser')||'{}');try{fetch(WEBAPP_URL,{method:'POST',body:new URLSearchParams({data:JSON.stringify({action:'getSakums',employee_id:user.id})})}).then(function(r){return r.json();}).then(function(res){if(res.ok){}}).catch(function(){})}catch(e){}}document.addEventListener('DOMContentLoaded',loadSakums);
