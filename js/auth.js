@@ -1,11 +1,14 @@
 // AUTENTIFIKĀCIJA DEBUG ar kopējo paroli un PIN
 
 const ACCESS_PASSWORD = "VainodeSAC123*";
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby-6TL8wqZIjpkn4GY1gkUe-6l_8pXvgPmHH_1MM6olEc9ayp85c9CDaanWFX0KtHUWiw/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxNjSCOxjSGdDr7qb0TlssqqeWbiDERgCZ4kg3kYYBqQvEM5QnJE81B-ZZZ1tpwEvSTAQ/exec";
+
 
 let selectedEmployeeId = "D001";
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("%c[SRS] DOM READY", "color:#a855f7;font-weight:bold");
+    
     const accessBtn = document.getElementById('accessBtn');
     const accessPasswordInput = document.getElementById('accessPassword');
     const accessGate = document.getElementById('accessGate');
@@ -16,13 +19,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (accessBtn) {
         accessBtn.addEventListener('click', function() {
+            console.log("%c[SRS] KOPĒJĀ PAROLE", "color:#22c55e;font-weight:bold", accessPasswordInput.value);
             accessError.style.display = 'none';
             if (accessPasswordInput.value === ACCESS_PASSWORD) {
+                console.log("%c[SRS] PAROLE PAREIZA -> PIN LOGS", "color:#22c55e;font-weight:bold");
                 accessGate.style.display = 'none';
                 pinGate.style.display = 'block';
-                // Mēģinām ielādēt darbiniekus
-                loadEmployeesSimple();
+                document.getElementById('pin').focus();
             } else {
+                console.log("%c[SRS] PAROLE NEPAREIZA", "color:#ef4444;font-weight:bold");
                 accessError.style.display = 'block';
             }
         });
@@ -30,40 +35,50 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (accessPasswordInput) {
         accessPasswordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                accessBtn.click();
-            }
+            if (e.key === 'Enter') accessBtn.click();
         });
-    }
-    
-    async function loadEmployeesSimple() {
-        try {
-            const formData = new FormData();
-            formData.append('data', JSON.stringify({ action: 'getEmployees' }));
-            // Vienkāršots variants
-        } catch (e) {}
     }
     
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            console.log("%c[SRS] PIN IESNIEGTS", "color:#06b6d4;font-weight:bold");
             loginError.style.display = 'none';
             
             const pin = document.getElementById('pin').value.trim();
+            console.log("[SRS] PIN:", pin, "EMP:", selectedEmployeeId);
+            
+            if (!pin) {
+                loginError.style.display = 'block';
+                return;
+            }
             
             try {
-                const response = await fetch(WEBAPP_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: 'login',
-                        employee_id: selectedEmployeeId,
-                        pin: pin
-                    })
+                const payload = JSON.stringify({
+                    action: 'login',
+                    employee_id: selectedEmployeeId,
+                    pin: pin
                 });
                 
-                const result = await response.json();
+                console.log("[SRS] SŪTĀM:", payload);
+                
+                const body = new URLSearchParams();
+                body.append('data', payload);
+                
+                const response = await fetch(WEBAPP_URL, {
+                    method: 'POST',
+                    body: body
+                });
+                
+                console.log("[SRS] STATUS:", response.status);
+                const text = await response.text();
+                console.log("[SRS] TEXT:", text);
+                
+                const result = JSON.parse(text);
+                console.log("[SRS] JSON:", result);
                 
                 if (result.ok) {
+                    console.log("%c[SRS] VEIKSMĪGI -> SĀKUMS", "color:#22c55e;font-weight:bold");
                     localStorage.setItem('currentUser', JSON.stringify({
                         id: result.employee_id,
                         name: result.employee_name,
@@ -71,9 +86,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }));
                     window.location.href = 'pages/sakums.html';
                 } else {
+                    console.log("%c[SRS] NEVEIKSMĪGI", "color:#ef4444;font-weight:bold", result.reason);
                     loginError.style.display = 'block';
                 }
-            } catch (error) {
+            } catch(err) {
+                console.error("[SRS] ERR:", err);
                 loginError.style.display = 'block';
             }
         });
