@@ -1,7 +1,7 @@
 // Autentifikācija ar kopējo paroli un PIN
 
 const ACCESS_PASSWORD = "VainodeSAC123*";
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbytjy6XsclYWeHtxiA8S0gz7SWIIR-pHggYIlylp-Ze7P8eNPOGmXMJLVHe8dZ6LrAAbQ/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby-6TL8wqZIjpkn4GY1gkUe-6l_8pXvgPmHH_1MM6olEc9ayp85c9CDaanWFX0KtHUWiw/exec";
 
 document.addEventListener('DOMContentLoaded', function() {
     const accessBtn = document.getElementById('accessBtn');
@@ -72,3 +72,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
