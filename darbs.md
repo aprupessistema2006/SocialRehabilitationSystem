@@ -1,52 +1,50 @@
 # SOCIAL REHABILITĀCIJAS SISTĒMA - DARBĪBAS PLĀNS
 
 ## MĒRĶIS
-Izveidot pilnvērtīgu sociālās rehabilitācijas nodarbību uzskaites sistēmu pēc pirmais_uzdevums.txt prasībām. Dizains paliek tumšs ar premium IT efektu.
+Izveidot pilnvērtīgu sociālās rehabilitācijas nodarbību uzskaites sistēmu pēc pirmais_uzdevums.txt prasībām. Dizains paliek tumšs.
 
-## VISPĀRĒJIE PRINCIPI
-- [ ] Gaišs/labāks dizains netiek mainīts - paliek tumšs
+## PRINCIPI
+- [ ] Dizains netiek mainīts
 - [ ] GitHub Pages tikai frontend
-- [ ] Visi dati Google Sheets caur Apps Script Web App
+- [ ] Google Sheets caur Apps Script
 - [ ] Pieteikšanās ar kopējo paroli + PIN
 - [ ] Tiesības pēc lomas
-- [ ] Kreisa navigācija, augšdaļa, labā darba zona
-- [ ] Kaskādes saistītas
+- [ ] Kreisa navigācija
 
-## 1. SOLIS - KOPĪGAIS IZKĀRTOJUMS
-- [ ] 1.1. js/layout.js - sidebar/header/tiesības/logout
-- [ ] 1.2. Stili layoutam
-- [ ] 1.3. Pārbaudīt navigāciju
+## 1. BLOKS - KOPĪGAIS IZKĀRTOJUMS
+- [ ] 1.1. js/layout.js
+- [ ] 1.2. Stili
+- [ ] 1.3. Navigācija
 
-## 2. SOLIS - SĀKUMS
-- [ ] 2.1. pages/sakums.html`r
-- [ ] 2.2. 4 bloki + 3 pogas + tabula
-- [ ] 2.3. js/sakums.js`r
+## 2. BLOKS - SĀKUMS
+- [ ] 2.1. pages/sakums.html
+- [ ] 2.2. Bloki un tabula
+- [ ] 2.3. js/sakums.js
 
-## 3. SOLIS - JAUNA NODARBĪBA
-- [ ] 3.1. pages/jauna-nodarbiba.html`r
+## 3. BLOKS - JAUNA NODARBĪBA
+- [ ] 3.1. pages/jauna-nodarbiba.html
 - [ ] 3.2. Kaskādes loģika
-- [ ] 3.3. Obligātie lauki
-- [ ] 3.4. js/jauna-nodarbiba.js`r
+- [ ] 3.3. js/jauna-nodarbiba.js
 
-## 4. SOLIS - KLIENTI
-- [ ] 4.1. pages/klienti.html, pages/klienta-profilis.html`r
-- [ ] 4.2. js/klienti.js, js/klienta-profilis.js`r
+## 4. BLOKS - KLIENTI
+- [ ] 4.1. pages/klienti.html
+- [ ] 4.2. pages/klienta-profilis.html
+- [ ] 4.3. js/klienti.js
 
-## 5. SOLIS - NODARBĪBU VĒSTURE
-- [ ] 5.1. pages/nodarbibu-vesture.html, pages/labot-ierakstu.html`r
-- [ ] 5.2. js/nodarbibu-vesture.js, js/labot-ierakstu.js`r
+## 5. BLOKS - NODARBĪBU VĒSTURE
+- [ ] 5.1. pages/nodarbibu-vesture.html
+- [ ] 5.2. pages/labot-ierakstu.html
+- [ ] 5.3. js faili
 
-## 6. SOLIS - ADMIN
-- [ ] 6.1. pages/kaskades.html + js/kaskades.js`r
-- [ ] 6.2. pages/lietotaji.html + js/lietotaji.js`r
-- [ ] 6.3. pages/iestatijumi.html + js/iestatijumi.js`r
-- [ ] 6.4. pages/audita-zurnals.html + js/audita-zurnals.js`r
+## 6. BLOKS - ADMIN
+- [ ] 6.1. pages/kaskades.html
+- [ ] 6.2. pages/lietotaji.html
+- [ ] 6.3. pages/iestatijumi.html
+- [ ] 6.4. pages/audita-zurnals.html
 
-## 7. SOLIS - EKSPORTS
+## 7. BLOKS - EKSPORTS
 - [ ] 7.1. PDF/Excel
-- [ ] 7.2. Mobilā adaptācija
+- [ ] 7.2. Mobilā versija
 
-## APPS SCRIPT
-- [ ] Paplašināt Web App
-- [ ] Audit log
-- [ ] Visi CRUD darbi
+## STATUSS
+- [ ] Viss gatavs
