@@ -1,7 +1,7 @@
 // Autentifikācija ar kopējo paroli un PIN
 
 const ACCESS_PASSWORD = "VainodeSAC123*";
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycby-6TL8wqZIjpkn4GY1gkUe-6l_8pXvgPmHH_1MM6olEc9ayp85c9CDaanWFX0KtHUWiw/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwa4sFZz32tZAR2VCRUxyPfPs2Yb5qlPiaY0pVZcOByj-_LDpG-NFSTaAkxr_bwmg9nzA/exec";
 
 let selectedEmployeeId = "D001";
 
