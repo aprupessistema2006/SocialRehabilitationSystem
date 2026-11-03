@@ -1,0 +1,207 @@
+/* Sociālās rehabilitācijas sistēma - IT Elegant Feminine Premium Dizains */
+
+:root {
+    --bg-primary: #0f0a1e;
+    --bg-secondary: #151025;
+    --bg-glass: rgba(139, 92, 246, 0.08);
+    --border-glass-strong: rgba(168, 85, 247, 0.5);
+    --text-primary: #f8fafc;
+    --text-secondary: #e2e8f0;
+    --text-tertiary: #cbd5e1;
+    --accent-primary: #a855f7;
+    --accent-primary-light: #c084fc;
+    --accent-secondary: #ec4899;
+    --accent-secondary-light: #f472b6;
+    --error-color: #f43f5e;
+    --error-bg: linear-gradient(135deg, rgba(244, 63, 94, 0.2) 0%, rgba(244, 63, 94, 0.1) 100%);
+    --error-border: rgba(244, 63, 94, 0.5);
+    --shadow-glow-purple: 0 0 60px rgba(168, 85, 247, 0.4), 0 20px 40px rgba(0, 0, 0, 0.5);
+    --radius: 12px;
+    --radius-xl: 24px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulseGlow {
+    0%, 100% { filter: brightness(1) drop-shadow(0 0 20px rgba(168, 85, 247, 0.6)); }
+    50% { filter: brightness(1.2) drop-shadow(0 0 40px rgba(168, 85, 247, 0.6)); }
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 50%), radial-gradient(ellipse at bottom, #312e81 0%, #0f0a1e 50%);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    line-height: 1.8;
+    font-size: 14px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: radial-gradient(ellipse at top left, rgba(168, 85, 247, 0.3) 0%, transparent 50%), radial-gradient(ellipse at bottom right, rgba(236, 72, 153, 0.3) 0%, transparent 50%), radial-gradient(ellipse at center, #0f0a1e 0%, #050510 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container {
+    width: 100%;
+    max-width: 460px;
+    position: relative;
+    z-index: 2;
+}
+
+.login-box {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15) 0%, rgba(30, 27, 75, 0.4) 100%);
+    backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid var(--border-glass-strong);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-glow-purple);
+    padding: 52px 48px;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-box::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary), var(--accent-primary));
+    background-size: 400% 100%;
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+.login-logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+    animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.login-title {
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #f8fafc 0%, var(--accent-primary-light) 50%, var(--accent-secondary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    letter-spacing: -0.03em;
+}
+
+.login-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(30, 27, 75, 0.3) 100%);
+    backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(168, 85, 247, 0.3);
+    border-radius: var(--radius);
+    transition: all 0.4s ease;
+    font-weight: 500;
+}
+
+.form-input:hover {
+    border-color: var(--border-glass-strong);
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.3), 0 0 30px rgba(168, 85, 247, 0.4);
+}
+
+.btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 14px 24px;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+    color: white;
+    box-shadow: 0 8px 30px rgba(168, 85, 247, 0.5);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 12px 40px rgba(168, 85, 247, 0.7), 0 0 60px rgba(168, 85, 247, 0.5);
+    transform: translateY(-3px);
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.error-message {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: var(--error-bg);
+    border: 1.5px solid var(--error-border);
+    border-radius: var(--radius);
+    color: var(--error-color);
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 0 30px rgba(244, 63, 94, 0.3);
+}
