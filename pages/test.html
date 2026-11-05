@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="lv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tests - Sociālās rehabilitācijas sistēma</title>
 <link rel="stylesheet" href="../css/style.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></head>
+</head>
 <body><div class="app-layout">
 <aside class="sidebar"><div class="sidebar-header"><div class="sidebar-logo"><span class="sidebar-logo-text">Tests</span></div></div>
 <nav class="sidebar-nav"><a href="sakums.html" class="nav-link">Sākums</a><a href="test.html" class="nav-link">Tests</a></nav>
@@ -13,4 +13,19 @@
 <div class="form-actions" style="margin-top:12px"><button class="btn btn-primary" id="runBtn">Palaist testu</button></div>
 <pre id="out" style="margin-top:14px;white-space:pre-wrap;color:#e2e8f0;font-size:13px;line-height:1.6;"></pre>
 </div></div></div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija 1.0</footer></main></div>
-<script src="../js/config.js"></script><script src="../js/api.js"></script><script src="../js/layout.js"></script><script src="../js/test.js"></script></body></html>
+<script src="../js/config.js"></script>
+    <script>
+      (function(){
+        try{
+          var scripts=document.querySelectorAll("script[src]");
+          for(var i=0;i<scripts.length;i++){
+            var s=scripts[i]; var src=s.getAttribute("src");
+            if(src && src.indexOf("?v=")<0 && typeof APP_VERSION!==undefined){
+              s.setAttribute("src", src + "?v=" + APP_VERSION);
+            }
+          }
+        }catch(e){}
+      })();
+    </script>
+    <script src="../js/version.js"></script><script src="../js/api.js"></script><script src="../js/layout.js"></script><script src="../js/test.js"></script></body></html>
+

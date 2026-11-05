@@ -37,7 +37,7 @@
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     background: radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 50%), radial-gradient(ellipse at bottom, #312e81 0%, #0f0a1e 50%);
     background-attachment: fixed;
     color: var(--text-primary);
@@ -143,7 +143,7 @@ body {
 .form-input {
     width: 100%;
     padding: 14px 16px;
-    font-family: 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     font-size: 14px;
     color: var(--text-primary);
     background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(30, 27, 75, 0.3) 100%);
@@ -165,7 +165,7 @@ body {
 }
 
 .btn {
-    font-family: 'Inter', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     font-size: 12px;
     font-weight: 700;
     padding: 14px 24px;
@@ -246,6 +246,8 @@ body {
 .admin-only{display:flex;}
 @media(max-width:968px){.sidebar{transform:translateX(-100%);}.main-content{margin-left:0;}}.form-select,.form-textarea{width:100%;padding:12px 14px;font-family:Inter,sans-serif;font-size:14px;color:var(--text-primary);background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(30,27,75,.3));border:1.5px solid rgba(168,85,247,.3);border-radius:12px;}
 .form-select:focus,.form-textarea:focus,.form-input:focus{outline:none;border-color:var(--accent-primary);box-shadow:0 0 0 3px rgba(168,85,247,.25);}
+select option{background:#151025;color:#f8fafc;padding:10px 12px;font-size:14px;}
+select option:checked,select option:hover,select option:active{background:var(--accent-primary);color:#fff;}
 .form-textarea{resize:vertical;} .form-section{background:linear-gradient(135deg,rgba(139,92,246,.1),rgba(30,27,75,.35));border:1px solid rgba(168,85,247,.25);border-radius:16px;margin-bottom:20px;overflow:hidden;}
 .form-section-header{padding:16px 20px;border-bottom:1px solid rgba(168,85,247,.2);background:rgba(168,85,247,.12);} .form-section-title{font-size:15px;font-weight:700;color:#f8fafc;}
 .form-section-body{padding:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;} .form-group-full{grid-column:1/-1;}
@@ -260,3 +262,66 @@ body {
 .modal-body{padding:20px;} .badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(168,85,247,.2);color:#e9d5ff;border:1px solid rgba(168,85,247,.3);} .badge-ok{background:rgba(34,197,94,.15);color:#bbf7d0;border-color:rgba(34,197,94,.3);} .badge-off{background:rgba(244,63,94,.12);color:#fecdd3;border-color:rgba(244,63,94,.3);}
 .split-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;} .kascade-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;border:1px solid rgba(168,85,247,.2);border-radius:12px;background:rgba(139,92,246,.08);margin-bottom:8px;}
 .small{font-size:12px;color:#cbd5e1;} .muted{color:#94a3b8;}
+
+/* Atjaunot programmu poga - versijas kontrole, tikai pamata CSS */
+.app-update-btn{
+    position:fixed;
+    right:16px;
+    bottom:16px;
+    z-index:2147483647;
+    padding:10px 14px;
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:1px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+    background:linear-gradient(135deg,var(--accent-primary) 0%,var(--accent-secondary) 100%);
+    color:#fff;
+    box-shadow:0 8px 30px rgba(168,85,247,.55);
+    transition:all .3s ease;
+    display:none;
+}
+.app-update-btn:hover{
+    box-shadow:0 12px 40px rgba(168,85,247,.75),0 0 60px rgba(168,85,247,.5);
+    transform:translateY(-3px);
+}
+.app-update-btn:disabled{
+    opacity:.65;
+    cursor:not-allowed;
+    transform:none;
+}
+
+/* Globālais loading indikators - visas saglabāšanas un pārnesšanas darbības */
+.global-loading{
+  position:fixed;
+  inset:0;
+  z-index:999999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:14px;
+  background:rgba(15,10,30,.92);
+  backdrop-filter:blur(10px);
+}
+.global-loading.active{display:flex;}
+.spinner-ring{
+  width:44px;
+  height:44px;
+  border:4px solid rgba(168,85,247,.25);
+  border-top:4px solid var(--accent-primary);
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+.global-loading span{
+  color:#f8fafc;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:1px;
+  text-transform:uppercase;
+}

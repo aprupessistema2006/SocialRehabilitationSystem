@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="lv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Iestatījumi - Sociālās rehabilitācijas sistēma</title>
 <link rel="stylesheet" href="../css/style.css"><link rel="stylesheet" href="../css/iestatijumi.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></head>
+</head>
 <body><div class="app-layout">
 <aside class="sidebar"><div class="sidebar-header"><div class="sidebar-logo"><svg width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="url(#grad)"/><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a855f7"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs><path d="M16 8L8 12V24H12V18H20V24H24V12L16 8Z" fill="white"/></svg><span class="sidebar-logo-text">Sociālās rehabilitācijas sistēma</span></div><div class="sidebar-user"><div class="sidebar-user-name" id="userName"></div><div class="sidebar-user-role" id="userRole"></div></div></div>
 <nav class="sidebar-nav"><a href="sakums.html" class="nav-link">Sākums</a><a href="jauna-nodarbiba.html" class="nav-link">Jauna nodarbība</a><a href="klienti.html" class="nav-link">Klienti</a><a href="nodarbibu-vesture.html" class="nav-link">Nodarbību vēsture</a><a href="kaskades.html" class="nav-link admin-only">Kaskādes</a><a href="lietotaji.html" class="nav-link admin-only">Lietotāji</a><a href="iestatijumi.html" class="nav-link admin-only">Iestatījumi</a></nav>
@@ -20,4 +20,19 @@
 </div></div>
 <div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Integrācija</h3></div><div class="card-body"><div class="small muted">Frontend: GitHub Pages. Backend: Google Apps Script Web App. URL tiek glabāts <code>js/config.js</code>. Pēc <code>code.gs</code> izmaiņām Apps Script jāievieto/deploy manuāli.</div></div></div>
 </div></div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija 1.0</footer></main></div>
-<script src="../js/config.js"></script><script src="../js/api.js"></script><script src="../js/layout.js"></script><script src="../js/iestatijumi.js"></script></body></html>
+<script src="../js/config.js"></script>
+    <script>
+      (function(){
+        try{
+          var scripts=document.querySelectorAll("script[src]");
+          for(var i=0;i<scripts.length;i++){
+            var s=scripts[i]; var src=s.getAttribute("src");
+            if(src && src.indexOf("?v=")<0 && typeof APP_VERSION!==undefined){
+              s.setAttribute("src", src + "?v=" + APP_VERSION);
+            }
+          }
+        }catch(e){}
+      })();
+    </script>
+    <script src="../js/version.js"></script><script src="../js/api.js"></script><script src="../js/layout.js"></script><script src="../js/iestatijumi.js"></script></body></html>
+

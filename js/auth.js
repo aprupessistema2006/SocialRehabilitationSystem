@@ -1,7 +1,5 @@
-﻿const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxMlPaRFSj4zWIOdui313_qmP7L2tPA9dkbNVBYO9BWerKQDNKDL9ojbLgQWGOxmDfDrg/exec";
-// Autentifikācija ar kopējo paroli un PIN
+﻿// Autentifikācija ar kopējo paroli un PIN
 
-const ACCESS_PASSWORD = "VainodeSAC123*";
 let selectedEmployeeId = "D001";
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -35,7 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const response = await fetch(WEBAPP_URL, { method:'POST', body: body });
                 const result = JSON.parse(await response.text());
                 if (result.ok) {
+                    try { localStorage.clear(); sessionStorage.clear(); } catch(e) {}
                     localStorage.setItem('currentUser', JSON.stringify({ id:result.employee_id, name:result.employee_name, role:result.role }));
+                    try { if (result.app_version) localStorage.setItem('srs_app_version', String(result.app_version)); else if (typeof APP_VERSION !== "undefined") localStorage.setItem('srs_app_version', APP_VERSION); } catch(e) {}
                     window.location.href = 'pages/sakums.html';
                 } else loginError.style.display = 'block';
             } catch(err) { loginError.style.display = 'block'; }
