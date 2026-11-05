@@ -1,4 +1,4 @@
-﻿const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbySYSTCv9EMnXh-QAmB-rKepp3RJ880Z2kOdihAVXXw4MCeDo8hPW5zYevq5JseNHWrsg/exec";
+﻿const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxMlPaRFSj4zWIOdui313_qmP7L2tPA9dkbNVBYO9BWerKQDNKDL9ojbLgQWGOxmDfDrg/exec";
 // Autentifikācija ar kopējo paroli un PIN
 
 const ACCESS_PASSWORD = "VainodeSAC123*";
