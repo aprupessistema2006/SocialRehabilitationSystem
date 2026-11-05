@@ -37,11 +37,22 @@
                     Nepareiza piekļuves parole
                 </div>
             </div>
-            
+
+            <div id="employeeGate" style="display: none;">
+                <div class="form-group">
+                    <label for="employeeSelect" class="form-label">Izvēlieties darbinieku</label>
+                    <select id="employeeSelect" class="form-input"></select>
+                </div>
+                <button type="button" class="btn btn-primary btn-full" id="employeeNextBtn">Turpināt</button>
+                <div id="employeeError" class="error-message" style="display: none; margin-top: 16px;">
+                    Nav pieejamu darbinieku
+                </div>
+            </div>
+
             <div id="pinGate" style="display: none;">
                 <form id="loginForm" class="login-form" novalidate>
                     <div class="form-group">
-                        <label for="pin" class="form-label">PIN kods (Administrators)</label>
+                        <label for="pin" class="form-label">PIN kods</label>
                         <input type="password" id="pin" class="form-input" maxlength="20" placeholder="Ievadiet PIN" autocomplete="off" inputmode="numeric">
                     </div>
                     <button type="submit" class="btn btn-primary btn-full">Pieteikties</button>
