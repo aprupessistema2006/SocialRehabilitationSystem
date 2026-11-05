@@ -4,21 +4,21 @@
 Izveidot pilnvērtīgu sociālās rehabilitācijas nodarbību uzskaites sistēmu pēc pirmais_uzdevums.txt prasībām. Dizains paliek tumšs.
 
 ## PRINCIPI
-- [ ] Dizains netiek mainīts
-- [ ] GitHub Pages tikai frontend
-- [ ] Google Sheets caur Apps Script
-- [ ] Pieteikšanās ar kopējo paroli + PIN
-- [ ] Tiesības pēc lomas
-- [ ] Kreisa navigācija
+- [x] Dizains netiek mainīts
+- [x] GitHub Pages tikai frontend
+- [x] Google Sheets caur Apps Script
+- [x] Pieteikšanās ar kopējo paroli + PIN
+- [x] Tiesības pēc lomas
+- [x] Kreisa navigācija
 
 ## 1. BLOKS - KOPĪGAIS IZKĀRTOJUMS
-- [ ] 1.1. js/layout.js
-- [ ] 1.2. Stili
-- [ ] 1.3. Navigācija
+- [x] 1.1. js/layout.js
+- [x] 1.2. Stili
+- [x] 1.3. Navigācija
 
 ## 2. BLOKS - SĀKUMS
-- [ ] 2.1. pages/sakums.html
-- [ ] 2.2. Bloki un tabula
+- [x] 2.1. pages/sakums.html
+- [x] 2.2. Bloki un tabula
 - [ ] 2.3. js/sakums.js
 
 ## 3. BLOKS - JAUNA NODARBĪBA
@@ -47,4 +47,7 @@ Izveidot pilnvērtīgu sociālās rehabilitācijas nodarbību uzskaites sistēmu
 - [ ] 7.2. Mobilā versija
 
 ## STATUSS
-- [ ] Viss gatavs
+- [x] Pieteikšanās darbojas
+- [x] Google Sheets gatavs
+- [x] Apps Script savienots
+- [x] GitHub Pages darbojas
