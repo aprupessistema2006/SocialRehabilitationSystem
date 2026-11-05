@@ -1,6 +1,7 @@
 ﻿function api(action, payload){ payload=payload||{}; payload.action=action; payload.access_password=ACCESS_PASSWORD;
   if (!isAccessRemembered()) { window.location.href = '../index.html'; return Promise.reject({ok:false, reason:'nav_kopējā_parole'}); }
-  return fetch(WEBAPP_URL,{method:'POST',body:new URLSearchParams({data:JSON.stringify(payload)})}).then(function(r){return r.json();}); }
+  if (typeof window.showLoader === 'function') window.showLoader('Datu apstrāde...');
+  return fetch(WEBAPP_URL,{method:'POST',body:new URLSearchParams({data:JSON.stringify(payload)})}).then(function(r){return r.json();}).finally(function(){ if (typeof window.hideLoader === 'function') window.hideLoader(); }); }
 function currentUser(){ try{return JSON.parse(localStorage.getItem('currentUser')||'{}');}catch(e){return {};} }
 function requireUser(){ var u=currentUser(); if(!u.id){ window.location.href='../index.html'; return u; } if(!isAccessRemembered()){ window.location.href='../index.html'; return u; } return u; }
 function isAccessRemembered(){ try{ var t=localStorage.getItem(ACCESS_REMEMBER_KEY); if(!t) return false; return (Date.now()-Number(t))<ACCESS_REMEMBER_MS; }catch(e){return false;} }

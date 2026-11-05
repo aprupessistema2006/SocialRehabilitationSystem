@@ -19,11 +19,14 @@ function clearAccessRemember() {
 
 async function loadEmployees() {
     try {
+        if (typeof window.showLoader === 'function') window.showLoader('Ielādē datus...');
         const body = new URLSearchParams({ data: JSON.stringify({ action: 'getEmployees', access_password: ACCESS_PASSWORD }) });
         const response = await fetch(WEBAPP_URL, { method: 'POST', body: body });
         const result = await response.json();
         if (result.ok) _employees = result.employees || [];
+        else _employees = [];
     } catch (e) { _employees = []; }
+    finally { if (typeof window.hideLoader === 'function') window.hideLoader(); }
 }
 
 function renderEmployeeSelect() {
@@ -73,8 +76,10 @@ document.addEventListener('DOMContentLoaded', function() {
         accessBtn.addEventListener('click', async function() {
             accessError.style.display = 'none';
             if (accessPasswordInput.value === ACCESS_PASSWORD) {
+                if (typeof window.showLoader === 'function') window.showLoader('Ielādē datus...');
                 rememberAccess();
                 await gotoEmployeeStep();
+                if (typeof window.hideLoader === 'function') window.hideLoader();
             } else {
                 accessError.style.display = 'block';
             }
