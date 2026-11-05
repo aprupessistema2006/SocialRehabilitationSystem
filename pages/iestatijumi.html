@@ -19,6 +19,13 @@
 <div id="pageMsg" class="page-msg"></div>
 </div></div>
 <div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Integrācija</h3></div><div class="card-body"><div class="small muted">Frontend: GitHub Pages. Backend: Google Apps Script Web App. URL tiek glabāts <code>js/config.js</code>. Pēc <code>code.gs</code> izmaiņām Apps Script jāievieto/deploy manuāli.</div></div></div>
+<div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Sesijas pārvaldība</h3></div><div class="card-body">
+  <div class="form-group"><label class="form-label">Kopējās paroles derīgums</label>
+  <div class="session-timer"><div class="session-bar" id="sessionBar"></div><div class="session-label" id="sessionLabel">—</div></div>
+  <div class="small muted" style="margin-top:8px">Pēc derīguma termiņa beigām būs jāievada kopējā parole no jauna. Šis indikators atjaunojas automātiski.</div>
+</div>
+<div class="form-actions"><button class="btn btn-secondary" id="extendSession">Atjaunināt sesiju</button></div>
+</div></div>
 </div></div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija 1.0</footer></main></div>
 <script src="../js/config.js"></script>
     <script>

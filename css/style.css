@@ -221,6 +221,8 @@ body {
 .nav-link:hover{background:rgba(168,85,247,.2);color:#fff;}
 .nav-link.active{background:linear-gradient(90deg,rgba(168,85,247,.35),rgba(236,72,153,.2));color:#c084fc;font-weight:700;}
 .sidebar-footer{padding:12px 10px;border-top:1px solid rgba(168,85,247,.3);}
+.session-indicator{position:fixed;bottom:12px;right:16px;font-size:11px;color:#64748b;background:rgba(15,10,30,.6);padding:4px 10px;border-radius:999px;border:1px solid rgba(168,85,247,.25);z-index:90;opacity:.7;transition:opacity .3s;}
+.session-indicator.show{opacity:1;}
 .nav-link-danger{color:#f43f5e;}
 .main-content{flex:1;margin-left:280px;min-height:100vh;display:flex;flex-direction:column;}
 .main-header{padding:18px 40px;border-bottom:1px solid rgba(168,85,247,.3);background:rgba(15,10,30,.8);backdrop-filter:blur(20px);}
