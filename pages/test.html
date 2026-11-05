@@ -1,0 +1,16 @@
+﻿<!DOCTYPE html>
+<html lang="lv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tests - Sociālās rehabilitācijas sistēma</title>
+<link rel="stylesheet" href="../css/style.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></head>
+<body><div class="app-layout">
+<aside class="sidebar"><div class="sidebar-header"><div class="sidebar-logo"><span class="sidebar-logo-text">Tests</span></div></div>
+<nav class="sidebar-nav"><a href="sakums.html" class="nav-link">Sākums</a><a href="test.html" class="nav-link">Tests</a></nav>
+<div class="sidebar-footer"><a href="#" class="nav-link nav-link-danger" id="logoutBtn">Iziet</a></div></aside>
+<main class="main-content"><header class="main-header"><h1 class="main-header-title">End-to-end tests</h1></header><div class="main-body">
+<div class="card"><div class="card-header"><h3 class="card-title">API / datu tests</h3></div><div class="card-body">
+<p class="small muted">Šis tests darbojas tikai pēc tam, kad lokālais <code>code.gs</code> ir ievietots Apps Script un Web App ir pāredeployots. Tas ieliek testa datus: 2 klientus, 2 darbiniekus (D001/1234 ADMIN, D002/5678 USER), aizpildītu kaskādi un parauga nodarbību (ja tabulas tukšas).</p>
+<div class="form-actions" style="margin-top:12px"><button class="btn btn-primary" id="runBtn">Palaist testu</button></div>
+<pre id="out" style="margin-top:14px;white-space:pre-wrap;color:#e2e8f0;font-size:13px;line-height:1.6;"></pre>
+</div></div></div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija 1.0</footer></main></div>
+<script src="../js/config.js"></script><script src="../js/api.js"></script><script src="../js/layout.js"></script><script src="../js/test.js"></script></body></html>

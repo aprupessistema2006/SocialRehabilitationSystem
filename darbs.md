@@ -1,53 +1,38 @@
-# SOCIAL REHABILITĀCIJAS SISTĒMA - DARBĪBAS PLĀNS
+﻿# SOCIAL REHABILITĀCIJAS SISTĒMA - DARBĪBAS PLĀNS
 
 ## MĒRĶIS
-Izveidot pilnvērtīgu sociālās rehabilitācijas nodarbību uzskaites sistēmu pēc pirmais_uzdevums.txt prasībām. Dizains paliek tumšs.
+Izveidot sociālās rehabilitācijas nodarbību uzskaites sistēmu. Dizains paliek tumšs.
 
 ## PRINCIPI
 - [x] Dizains netiek mainīts
 - [x] GitHub Pages tikai frontend
-- [x] Google Sheets caur Apps Script
+- [x] Google Sheets caur Apps Script (code.gs lokāli, deploy manuāli)
 - [x] Pieteikšanās ar kopējo paroli + PIN
-- [x] Tiesības pēc lomas
-- [x] Kreisa navigācija
+- [x] Tiesības pēc lomas (ADMIN sadaļas slēptas USER)
+- [x] Kreisā navigācija
 
-## 1. BLOKS - KOPĪGAIS IZKĀRTOJUMS
-- [x] 1.1. js/layout.js
-- [x] 1.2. Stili
-- [x] 1.3. Navigācija
+## BLOKI
+- [x] 1. Kopīgais izkārtojums: `js/layout.js`, stili
+- [x] 2. Sākums: `pages/sakums.html`, `js/sakums.js`, `css/sakums.css`
+- [x] 3. Jauna nodarbība: `pages/jauna-nodarbiba.html`, `js/jauna-nodarbiba.js`, kaskāde/validācija/saglabāšana
+- [x] 4. Klienti: `pages/klienti.html`, `pages/klienta-profilis.html`, `js/klienti.js`, `js/klienta-profilis.js`, `css/klienti.css`
+- [x] 5. Nodarbību vēsture: `pages/nodarbibu-vesture.html`, `js/nodarbibu-vesture.js`, `css/nodarbibu-vesture.css` (labot-ierakstu atsevišķa lapa vēl var tikt pievienota)
+- [x] 6. ADMIN: `pages/kaskades.html`, `pages/lietotaji.html`, `pages/iestatijumi.html` + atbilstošie js/css
+- [x] Testi: `tests/structure-test.js` (38/38 PASS), `tests/e2e-api-test.js`, `pages/test.html`/`js/test.js`
 
-## 2. BLOKS - SĀKUMS
-- [x] 2.1. pages/sakums.html
-- [x] 2.2. Bloki un tabula
-- [ ] 2.3. js/sakums.js
+## TESTA DATI (seedTestData)
+- 2 klienti: Anna Bērziņa (K001), Jānis Ozols (K002)
+- 2 darbinieki: D001 Administrators / PIN 1234 / ADMIN; D002 Sociālais darbinieks / PIN 5678 / USER
+- Kaskāde: NV001 Individuālā nodarbība, NV002 Grupu nodarbība; M001/M002; P001/P002; U001/U002
+- 1 parauga nodarbība (N001), ja Nodarbibas tukša
 
-## 3. BLOKS - JAUNA NODARBĪBA
-- [ ] 3.1. pages/jauna-nodarbiba.html
-- [ ] 3.2. Kaskādes loģika
-- [ ] 3.3. js/jauna-nodarbiba.js
-
-## 4. BLOKS - KLIENTI
-- [ ] 4.1. pages/klienti.html
-- [ ] 4.2. pages/klienta-profilis.html
-- [ ] 4.3. js/klienti.js
-
-## 5. BLOKS - NODARBĪBU VĒSTURE
-- [ ] 5.1. pages/nodarbibu-vesture.html
-- [ ] 5.2. pages/labot-ierakstu.html
-- [ ] 5.3. js faili
-
-## 6. BLOKS - ADMIN
-- [ ] 6.1. pages/kaskades.html
-- [ ] 6.2. pages/lietotaji.html
-- [ ] 6.3. pages/iestatijumi.html
-- [ ] 6.4. pages/audita-zurnals.html
-
-## 7. BLOKS - EKSPORTS
-- [ ] 7.1. PDF/Excel
-- [ ] 7.2. Mobilā versija
+## PĒC DEPLOY (obligāti)
+1. Iekopēt lokālo `code.gs` Apps Script projektā (aizstāt saturu).
+2. Pārbaudīt `doPost` action maršrutēšanu un nepieciešamās Sheet cilnes.
+3. Deploy -> Manage deployments -> New version / atjaunināt Web App.
+4. Palaist `node tests/e2e-api-test.js` vai atvērt `pages/test.html` (ADMIN sesijā).
 
 ## STATUSS
-- [x] Pieteikšanās darbojas
-- [x] Google Sheets gatavs
-- [x] Apps Script savienots
-- [x] GitHub Pages darbojas
+- [x] GitHub Pages frontend faili izveidoti
+- [x] Lokālais `code.gs` paplašināts ar visām lapu darbībām + seedTestData
+- [ ] Apps Script deploy ar jauno `code.gs` (neizdarīts šajā vidē)

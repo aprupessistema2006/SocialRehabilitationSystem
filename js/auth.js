@@ -1,8 +1,7 @@
+﻿const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwa4sFZz32tZAR2VCRUxyPfPs2Yb5qlPiaY0pVZcOByj-_LDpG-NFSTaAkxr_bwmg9nzA/exec";
 // Autentifikācija ar kopējo paroli un PIN
 
 const ACCESS_PASSWORD = "VainodeSAC123*";
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwa4sFZz32tZAR2VCRUxyPfPs2Yb5qlPiaY0pVZcOByj-_LDpG-NFSTaAkxr_bwmg9nzA/exec";
-
 let selectedEmployeeId = "D001";
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -13,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const accessError = document.getElementById('accessError');
     const loginForm = document.getElementById('loginForm');
     const loginError = document.getElementById('loginError');
-    
     if (accessBtn) {
         accessBtn.addEventListener('click', function() {
             accessError.style.display = 'none';
@@ -26,55 +24,21 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-    
-    if (accessPasswordInput) {
-        accessPasswordInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') accessBtn.click();
-        });
-    }
-    
+    if (accessPasswordInput) accessPasswordInput.addEventListener('keypress', function(e){ if(e.key==='Enter') accessBtn.click(); });
     if (loginForm) {
         loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            loginError.style.display = 'none';
-            
+            e.preventDefault(); loginError.style.display = 'none';
             const pin = document.getElementById('pin').value.trim();
-            if (!pin) {
-                loginError.style.display = 'block';
-                return;
-            }
-            
+            if (!pin) { loginError.style.display = 'block'; return; }
             try {
-                const payload = JSON.stringify({
-                    action: 'login',
-                    employee_id: selectedEmployeeId,
-                    pin: pin
-                });
-                
-                const body = new URLSearchParams();
-                body.append('data', payload);
-                
-                const response = await fetch(WEBAPP_URL, {
-                    method: 'POST',
-                    body: body
-                });
-                
-                const text = await response.text();
-                const result = JSON.parse(text);
-                
+                const body = new URLSearchParams(); body.append('data', JSON.stringify({ action:'login', employee_id:selectedEmployeeId, pin:pin }));
+                const response = await fetch(WEBAPP_URL, { method:'POST', body: body });
+                const result = JSON.parse(await response.text());
                 if (result.ok) {
-                    localStorage.setItem('currentUser', JSON.stringify({
-                        id: result.employee_id,
-                        name: result.employee_name,
-                        role: result.role
-                    }));
+                    localStorage.setItem('currentUser', JSON.stringify({ id:result.employee_id, name:result.employee_name, role:result.role }));
                     window.location.href = 'pages/sakums.html';
-                } else {
-                    loginError.style.display = 'block';
-                }
-            } catch(err) {
-                loginError.style.display = 'block';
-            }
+                } else loginError.style.display = 'block';
+            } catch(err) { loginError.style.display = 'block'; }
         });
     }
 });
