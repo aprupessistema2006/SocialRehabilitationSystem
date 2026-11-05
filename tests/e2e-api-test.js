@@ -19,6 +19,15 @@ function post(action, payload = {}) {
   const body = new URLSearchParams({ data: JSON.stringify({ action, ...payload }) }).toString();
   return new Promise((resolve, reject) => {
     const req = https.request(WEBAPP_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(body) } }, (res) => {
+      if ([301,302,303,307].includes(res.statusCode) && res.headers.location) {
+        https.get(res.headers.location, (g) => {
+          let data = ''; g.on('data', c => data += c); g.on('end', () => {
+            try { resolve({ status: g.statusCode, json: JSON.parse(data), raw: data }); }
+            catch (e) { resolve({ status: g.statusCode, json: null, raw: data, parseError: String(e) }); }
+          });
+        }).on('error', reject);
+        return;
+      }
       let data = ''; res.on('data', c => data += c); res.on('end', () => {
         try { resolve({ status: res.statusCode, json: JSON.parse(data), raw: data }); }
         catch (e) { resolve({ status: res.statusCode, json: null, raw: data, parseError: String(e) }); }
