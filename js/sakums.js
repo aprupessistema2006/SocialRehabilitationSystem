@@ -5,7 +5,7 @@
   if (typeof WEBAPP_URL === 'undefined') { if (msg) msg.textContent = 'Nav konfigurēts WEBAPP_URL.'; return; }
   fetch(WEBAPP_URL, {
     method: 'POST',
-    body: new URLSearchParams({ data: JSON.stringify({ action: 'getSakums', employee_id: user.id }) })
+    body: new URLSearchParams({ data: JSON.stringify({ action: 'getSakums', employee_id: user.id, access_password: ACCESS_PASSWORD }) })
   }).then(function(r){ return r.json(); }).then(function(res){
     if (!res.ok) { if (msg) msg.textContent = 'Kļūda ielādējot datus.'; return; }
     setText('statAktivie', res.aktivie);

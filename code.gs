@@ -1,5 +1,13 @@
 ﻿const SS_ID = "1RaPuUUcr7YY3vCBT7zwbsvt_ZRR0B1Tv5SCRvZSa35A";
 const APP_VERSION = "1.0.2";
+const ACCESS_PASSWORD = "VainodeSAC123*";
+
+function checkAccess(data) {
+  if (!data || data.access_password !== ACCESS_PASSWORD) {
+    return false;
+  }
+  return true;
+}
 
 function getSheet(sheetName) {
   const ss = SpreadsheetApp.openById(SS_ID);
@@ -61,6 +69,7 @@ function doPost(e) {
     else if (e.postData && e.postData.contents) { try { data = JSON.parse(e.postData.contents); } catch(err) { data = {}; } }
     var a = data.action;
     if (a === 'getAppInfo') return corsJsonOut(getAppInfo());
+    if (!checkAccess(data)) return corsJsonOut({ok:false, reason:'nav_kopējā_parole'});
     if (a === 'getEmployees') return corsJsonOut({ok:true, employees:getAktivieDarbinieki()});
     if (a === 'login' && data.employee_id && data.pin) return corsJsonOut(pieteiktiesArPinUnId(data.employee_id, data.pin));
     if (a === 'getSakums') return corsJsonOut(JSON.parse(getSakums({ parameter:{data:JSON.stringify(data)} }).getContentAsString()));
@@ -84,9 +93,11 @@ function doPost(e) {
 }
 // --- CORS helpers ---
 function addCorsHeaders(output) {
-  output.setHeader('Access-Control-Allow-Origin', '*');
-  output.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-  output.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  output.setHeaders({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type'
+  });
   return output;
 }
 function corsJsonOut(obj){

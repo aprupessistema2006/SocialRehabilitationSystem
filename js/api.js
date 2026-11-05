@@ -1,4 +1,4 @@
-﻿function api(action, payload){ payload=payload||{}; payload.action=action;
+﻿function api(action, payload){ payload=payload||{}; payload.action=action; payload.access_password=ACCESS_PASSWORD;
   if (!isAccessRemembered()) { window.location.href = '../index.html'; return Promise.reject({ok:false, reason:'nav_kopējā_parole'}); }
   return fetch(WEBAPP_URL,{method:'POST',body:new URLSearchParams({data:JSON.stringify(payload)})}).then(function(r){return r.json();}); }
 function currentUser(){ try{return JSON.parse(localStorage.getItem('currentUser')||'{}');}catch(e){return {};} }

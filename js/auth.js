@@ -19,7 +19,7 @@ function clearAccessRemember() {
 
 async function loadEmployees() {
     try {
-        const body = new URLSearchParams({ data: JSON.stringify({ action: 'getEmployees' }) });
+        const body = new URLSearchParams({ data: JSON.stringify({ action: 'getEmployees', access_password: ACCESS_PASSWORD }) });
         const response = await fetch(WEBAPP_URL, { method: 'POST', body: body });
         const result = await response.json();
         if (result.ok) _employees = result.employees || [];
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const pin = document.getElementById('pin').value.trim();
             if (!pin) { loginError.style.display = 'block'; return; }
             try {
-                const body = new URLSearchParams(); body.append('data', JSON.stringify({ action:'login', employee_id:selectedEmployeeId, pin:pin }));
+                const body = new URLSearchParams(); body.append('data', JSON.stringify({ action:'login', employee_id:selectedEmployeeId, pin:pin, access_password: ACCESS_PASSWORD }));
                 const response = await fetch(WEBAPP_URL, { method:'POST', body: body });
                 const result = await response.json();
                 if (result.ok) {
