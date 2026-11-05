@@ -1,11 +1,43 @@
 ﻿const SS_ID = "1RaPuUUcr7YY3vCBT7zwbsvt_ZRR0B1Tv5SCRvZSa35A";
 const APP_VERSION = "1.0.2";
-const ACCESS_PASSWORD = "VainodeSAC123*";
+
+function getAccessPassword() {
+  try {
+    var sh = getSheet('Iestatijumi');
+    var d = sh.getDataRange().getValues();
+    for (var i = 1; i < d.length; i++) {
+      if (String(d[i][0]) === 'access_password' && d[i][1] != null && String(d[i][1]).trim() !== '') {
+        return String(d[i][1]).trim();
+      }
+    }
+  } catch (e) {}
+  var props = PropertiesService.getScriptProperties();
+  var p = props.getProperty('ACCESS_PASSWORD');
+  if (p) return p;
+  return 'VainodeSAC123*';
+}
 
 function checkAccess(data) {
-  if (!data || data.access_password !== ACCESS_PASSWORD) {
-    return false;
-  }
+  if (!data) return false;
+  if (data.access_token) return validateToken(data.access_token);
+  if (data.access_password) return data.access_password === getAccessPassword();
+  return false;
+}
+
+function grantToken() {
+  var token = 'tok_' + Utilities.getUuid().replace(/-/g, '') + '_' + Date.now();
+  var exp = Date.now() + 8 * 60 * 60 * 1000;
+  var props = PropertiesService.getScriptProperties();
+  props.setProperty('TOKEN_' + token, String(exp));
+  return { ok: true, token: token, expires_in: 8 * 60 * 60 };
+}
+
+function validateToken(token) {
+  if (!token) return false;
+  var props = PropertiesService.getScriptProperties();
+  var exp = props.getProperty('TOKEN_' + token);
+  if (!exp) return false;
+  if (Number(exp) < Date.now()) { props.deleteProperty('TOKEN_' + token); return false; }
   return true;
 }
 
@@ -71,7 +103,15 @@ function doPost(e) {
     if (a === 'getAppInfo') return corsJsonOut(getAppInfo());
     if (!checkAccess(data)) return corsJsonOut({ok:false, reason:'nav_kopējā_parole'});
     if (a === 'getEmployees') return corsJsonOut({ok:true, employees:getAktivieDarbinieki()});
-    if (a === 'login' && data.employee_id && data.pin) return corsJsonOut(pieteiktiesArPinUnId(data.employee_id, data.pin));
+    if (a === 'login' && data.employee_id && data.pin) {
+    var r = pieteiktiesArPinUnId(data.employee_id, data.pin);
+    if (r && r.ok) {
+      var t = grantToken();
+      r.token = t.token;
+      r.expires_in = t.expires_in;
+    }
+    return corsJsonOut(r);
+  }
     if (a === 'getSakums') return corsJsonOut(JSON.parse(getSakums({ parameter:{data:JSON.stringify(data)} }).getContentAsString()));
     if (a === 'getKlienti') return corsJsonOut(getKlienti());
     if (a === 'saveKlients') return corsJsonOut(saveKlients(data));

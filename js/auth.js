@@ -113,6 +113,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (result.ok) {
                     try { localStorage.clear(); sessionStorage.clear(); } catch(e) {}
                     rememberAccess();
+                    if (result.token) { try { localStorage.setItem('srs_access_token', String(result.token)); } catch(e) {} }
                     localStorage.setItem('currentUser', JSON.stringify({ id:result.employee_id, name:result.employee_name, role:result.role }));
                     try { if (result.app_version) localStorage.setItem('srs_app_version', String(result.app_version)); else if (typeof APP_VERSION !== "undefined") localStorage.setItem('srs_app_version', APP_VERSION); } catch(e) {}
                     window.location.href = 'pages/sakums.html';
