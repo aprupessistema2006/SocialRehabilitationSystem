@@ -16,7 +16,7 @@ if (!m) throw new Error('WEBAPP_URL not found in js/config.js');
 const WEBAPP_URL = m[1];
 
 function post(action, payload = {}) {
-  const body = new URLSearchParams({ data: JSON.stringify({ action, ...payload }) }).toString();
+  const body = new URLSearchParams({ data: JSON.stringify({ action, access_password: 'VainodeSAC123*', ...payload }) }).toString();
   return new Promise((resolve, reject) => {
     const req = https.request(WEBAPP_URL, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(body) } }, (res) => {
       if ([301,302,303,307].includes(res.statusCode) && res.headers.location) {
