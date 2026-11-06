@@ -133,9 +133,6 @@ function doPost(e) {
 }
 // --- CORS helpers ---
 function addCorsHeaders(output) {
-  output.setHeader('Access-Control-Allow-Origin', '*');
-  output.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
-  output.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   return output;
 }
 function corsJsonOut(obj){
