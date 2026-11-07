@@ -41,7 +41,7 @@ function renderCharts(){
   // 1. Bar chart: nodarbības pēc klienta
   var byClient = groupBy(nb, function(r){ return r.klients || 'Nezināms'; });
   var clientItems = Object.entries(byClient).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 8);
-  renderBarChart('chartClients', clientItems, 'Nodarbības');
+  renderBarChart('chartClients', clientItems, clientItems.length);
 
   // 2. Pie chart: nodarbības pēc darbinieka
   var byWorker = groupBy(nb, function(r){ return r.darbinieks || 'Nezināms'; });
@@ -52,7 +52,7 @@ function renderCharts(){
   var byDate = groupBy(nb, function(r){ return r.datums || '-'; });
   var dates = Object.keys(byDate).sort().slice(-14);
   var dateItems = dates.map(function(d){ return [d, byDate[d] || 0]; });
-  renderLineChart('chartTimeline', dateItems);
+  renderLineChart('chartTimeline', dateItems, dateItems.length);
 
   // 4. Pie chart: nodarbību veidu sadalījums
   var byType = groupBy(nb, function(r){ return r.nodarbiba_nosaukums || 'Nezināms'; });
@@ -78,18 +78,21 @@ function groupBy(arr, keyFn){
 }
 
 /* ---------- CSS bar chart ---------- */
-function renderBarChart(id, items, unitLabel){
+function renderBarChart(id, items, barCount){
   var container = byId(id);
   if (!container) return;
+  container.style.setProperty('--bar-count', barCount);
   if (!items.length) { container.innerHTML = '<div class="css-bar-empty">Nav datu.</div>'; return; }
   var maxVal = Math.max.apply(null, items.map(function(it){ return it[1]; }));
+  if (maxVal <= 0) maxVal = 1;
   var html = '';
   items.forEach(function(it, i){
-    var pct = maxVal > 0 ? Math.round((it[1] / maxVal) * 100) : 0;
+    var pct = Math.round((it[1] / maxVal) * 100);
     var color = ST.colors[i % ST.colors.length];
-    var label = String(it[0]).length > 18 ? String(it[0]).slice(0, 17) + '…' : String(it[0]);
+    var lighter = lightenColor(color, 30);
+    var label = String(it[0]).length > 16 ? String(it[0]).slice(0, 15) + '…' : String(it[0]);
     html += '<div class="css-bar" style="--h:' + pct + '%;--c:' + color + ';">' +
-      '<div class="css-bar-fill" style="height:' + pct + '%;background:linear-gradient(180deg,' + color + ',' + lightenColor(color, 30) + ');"></div>' +
+      '<div class="css-bar-fill" style="height:' + pct + '%;background:linear-gradient(180deg,' + color + ',' + lighter + ');"></div>' +
       '<span class="css-bar-value">' + it[1] + '</span>' +
       '<span class="css-bar-label" title="' + esc(it[0]) + '">' + esc(label) + '</span>' +
       '</div>';
@@ -103,6 +106,7 @@ function renderPieChart(id, items){
   if (!container) return;
   if (!items.length) { container.innerHTML = '<div class="css-empty">Nav datu.</div>'; return; }
   var total = items.reduce(function(sum, it){ return sum + it[1]; }, 0);
+  if (total <= 0) total = 1;
   var startAngle = 0;
   var slicesHtml = '';
   var legendHtml = '';
@@ -110,22 +114,21 @@ function renderPieChart(id, items){
     var pct = total > 0 ? (it[1] / total) * 100 : 0;
     var angle = pct * 3.6;
     var color = ST.colors[i % ST.colors.length];
-    var label = String(it[0]).length > 16 ? String(it[0]).slice(0, 15) + '…' : String(it[0]);
+    var label = String(it[0]).length > 14 ? String(it[0]).slice(0, 13) + '…' : String(it[0]);
     var endAngle = startAngle + angle;
     var largeArc = angle > 180 ? 1 : 0;
-    // SVG path for pie slice
-    var x1 = Math.cos(toRad(startAngle)) * 70 + 70;
-    var y1 = Math.sin(toRad(startAngle)) * 70 + 70;
-    var x2 = Math.cos(toRad(endAngle)) * 70 + 70;
-    var y2 = Math.sin(toRad(endAngle)) * 70 + 70;
-    var pathD = 'M 70 70 L ' + x1 + ' ' + y1 + ' A 70 70 0 ' + largeArc + ' 1 ' + x2 + ' ' + y2 + ' Z';
+    var x1 = Math.cos(toRad(startAngle)) * 65 + 65;
+    var y1 = Math.sin(toRad(startAngle)) * 65 + 65;
+    var x2 = Math.cos(toRad(endAngle)) * 65 + 65;
+    var y2 = Math.sin(toRad(endAngle)) * 65 + 65;
+    var pathD = 'M 65 65 L ' + x1 + ' ' + y1 + ' A 65 65 0 ' + largeArc + ' 1 ' + x2 + ' ' + y2 + ' Z';
     slicesHtml += '<path d="' + pathD + '" fill="' + color + '" />';
     legendHtml += '<div class="css-pie-legend-item"><div class="css-pie-legend-dot" style="background:' + color + '"></div><span>' + esc(label) + '</span><span style="font-weight:700;color:#f8fafc;">' + it[1] + ' (' + pct.toFixed(1) + '%)</span></div>';
     startAngle = endAngle;
   });
   container.innerHTML =
     '<div class="css-pie-chart">' +
-    '<svg width="140" height="140" style="display:block;">' + slicesHtml + '</svg>' +
+    '<svg width="130" height="130" class="css-pie-svg">' + slicesHtml + '</svg>' +
     '<div class="css-pie-center"><div class="css-pie-total">' + total + '</div><div class="css-pie-sub">kopā</div></div>' +
     '</div>' +
     '<div class="css-pie-legend">' + legendHtml + '</div>';
@@ -141,18 +144,19 @@ function lightenColor(hex, pct){
 }
 
 /* ---------- CSS line chart ---------- */
-function renderLineChart(id, items){
+function renderLineChart(id, items, lineCount){
   var container = byId(id);
   if (!container) return;
+  container.style.setProperty('--line-count', lineCount);
   if (!items.length) { container.innerHTML = '<div class="css-empty">Nav datu.</div>'; return; }
   var maxVal = Math.max.apply(null, items.map(function(it){ return it[1]; }));
+  if (maxVal <= 0) maxVal = 1;
   var dotsHtml = '';
   var labelsHtml = '';
-  var valuesHtml = '';
   items.forEach(function(it, i){
     var pct = maxVal > 0 ? (it[1] / maxVal) * 100 : 0;
-    var label = String(it[0]).length > 8 ? String(it[0]).slice(0, 7) + '…' : String(it[0]);
-    dotsHtml += '<div class="css-line-point" style="flex:1;">' +
+    var label = String(it[0]).length > 6 ? String(it[0]).slice(0, 5) + '…' : String(it[0]);
+    dotsHtml += '<div class="css-line-point">' +
       '<div class="css-line-dot" style="bottom:' + pct + '%;"></div>' +
       '<span class="css-line-value">' + it[1] + '</span>' +
       '<span class="css-line-label" style="transform-origin:' + (i === 0 ? 'left bottom' : i === items.length - 1 ? 'right bottom' : 'center bottom') + ';">' + esc(label) + '</span>' +
