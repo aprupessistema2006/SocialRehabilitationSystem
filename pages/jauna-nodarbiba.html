@@ -5,7 +5,7 @@
 </head>
 <body><div class="app-layout">
 <aside class="sidebar"><div class="sidebar-header"><div class="sidebar-logo"><svg width="28" height="28" viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="url(#grad)"/><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a855f7"/><stop offset="100%" style="stop-color:#ec4899"/></linearGradient></defs><path d="M16 8L8 12V24H12V18H20V24H24V12L16 8Z" fill="white"/></svg><span class="sidebar-logo-text">Sociālās rehabilitācijas sistēma</span></div><div class="sidebar-user"><div class="sidebar-user-name" id="userName"></div><div class="sidebar-user-role" id="userRole"></div></div></div>
-<nav class="sidebar-nav"><a href="sakums.html" class="nav-link">Sākums</a><a href="jauna-nodarbiba.html" class="nav-link">Jauna nodarbība</a><a href="klienti.html" class="nav-link">Klienti</a><a href="nodarbibu-vesture.html" class="nav-link">Nodarbību vēsture</a><a href="kaskades.html" class="nav-link admin-only">Kaskādes</a><a href="lietotaji.html" class="nav-link admin-only">Lietotāji</a><a href="iestatijumi.html" class="nav-link admin-only">Iestatījumi</a></nav>
+<nav class="sidebar-nav"><div class="nav-category">Darbi un nodarbības</div><a href="sakums.html" class="nav-link"><span>Sākums</span></a><a href="jauna-nodarbiba.html" class="nav-link"><span>Jauna nodarbība</span></a><a href="nodarbibu-vesture.html" class="nav-link"><span>Nodarbību vēsture</span></a><div class="nav-category">Klienti</div><a href="klienti.html" class="nav-link"><span>Klienti</span></a><a href="klienta-profilis.html" class="nav-link"><span>Klienta profils</span></a><div class="nav-category admin-only">Sistēmas administracija</div><a href="kaskades.html" class="nav-link admin-only"><span>Kaskādes</span></a><a href="lietotaji.html" class="nav-link admin-only"><span>Lietotāji</span></a><a href="iestatijumi.html" class="nav-link admin-only"><span>Iestatījumi</span></a></nav>
 <div class="sidebar-footer"><a href="#" class="nav-link nav-link-danger" id="logoutBtn">Iziet</a></div></aside>
 <main class="main-content"><header class="main-header"><h1 class="main-header-title">Jauna nodarbība</h1></header><div class="main-body">
 <div class="page-header"><h2 class="page-title">Jauna nodarbība</h2><p class="page-subtitle">Reģistrēt jaunu sociālās rehabilitācijas nodarbību</p></div>
@@ -24,8 +24,15 @@
   <button type="button" class="step-chip is-locked" data-step="3" id="stepChip3"><span class="step-n">3</span><span class="step-t">Problēma</span></button>
   <span class="step-line"></span>
   <button type="button" class="step-chip is-locked" data-step="4" id="stepChip4"><span class="step-n">4</span><span class="step-t">Uzdevums</span></button>
-</div>
-<div class="form-group form-group-full sp-field" data-sp="nv">
+ </div>
+ <div class="step-progress" id="stepProgressWrap" style="margin-top:10px;">
+   <div class="step-progress-head" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+     <span class="step-progress-text" id="stepProgressText">Pilnība: 0%</span>
+     <span class="step-auto-wrap"><input type="checkbox" id="autoModeToggle" checked class="auto-toggle"><label for="autoModeToggle" class="auto-label">Auto-izvēles režīms</label></span>
+   </div>
+   <div class="step-progress-bar"><div class="step-progress-fill" id="stepProgressFill"></div></div>
+ </div>
+ <div class="form-group form-group-full sp-field" data-sp="nv">
   <label class="form-label" for="spTriggerNv">Nodarbības nosaukums *</label>
   <input type="hidden" id="activityType" required>
   <button type="button" class="sp-trigger" id="spTriggerNv" aria-haspopup="dialog"><span class="sp-trigger-text" id="spTextNv">Izvēlieties nodarbības veidu...</span><span class="sp-trigger-meta"><span class="sp-pill" id="spPillNv"></span><span class="sp-chevron">↗</span></span></button>

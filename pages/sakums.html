@@ -18,10 +18,14 @@
                 <div class="sidebar-user"><div class="sidebar-user-name" id="userName"></div><div class="sidebar-user-role" id="userRole"></div></div>
             </div>
             <nav class="sidebar-nav">
+                <div class="nav-category">Darbi un nodarbības</div>
                 <a href="sakums.html" class="nav-link"><span>Sākums</span></a>
                 <a href="jauna-nodarbiba.html" class="nav-link"><span>Jauna nodarbība</span></a>
-                <a href="klienti.html" class="nav-link"><span>Klienti</span></a>
                 <a href="nodarbibu-vesture.html" class="nav-link"><span>Nodarbību vēsture</span></a>
+                <div class="nav-category">Klienti</div>
+                <a href="klienti.html" class="nav-link"><span>Klienti</span></a>
+                <a href="klienta-profilis.html" class="nav-link"><span>Klienta profils</span></a>
+                <div class="nav-category admin-only">Sistēmas administracija</div>
                 <a href="kaskades.html" class="nav-link admin-only"><span>Kaskādes</span></a>
                 <a href="lietotaji.html" class="nav-link admin-only"><span>Lietotāji</span></a>
                 <a href="iestatijumi.html" class="nav-link admin-only"><span>Iestatījumi</span></a>
@@ -39,9 +43,10 @@
                     <div class="stat-card"><div class="stat-label">Mani ieraksti</div><div class="stat-value" id="statMani">0</div></div>
                 </div>
                 <div class="quick-actions">
-                    <a href="jauna-nodarbiba.html" class="quick-action-btn">+ Jauna nodarbība</a>
-                    <a href="klienti.html" class="quick-action-btn">Atvērt klientus</a>
-                    <a href="nodarbibu-vesture.html" class="quick-action-btn">Nodarbību vēsture</a>
+                    <a href="jauna-nodarbiba.html" class="quick-action-btn"><span class="qa-icon">+</span><div class="qa-info"><div class="qa-title">Jauna nodarbība</div><div class="qa-sub">Reģistrēt rehabilitācijas nodarbību</div></div></a>
+                    <a href="klienti.html" class="quick-action-btn"><span class="qa-icon">👥</span><div class="qa-info"><div class="qa-title">Klienti</div><div class="qa-sub">Klientu saraksts un dati</div></div></a>
+                    <a href="nodarbibu-vesture.html" class="quick-action-btn"><span class="qa-icon">📜</span><div class="qa-info"><div class="qa-title">Nodarbību vēsture</div><div class="qa-sub">Vēsturiskie ieraksti</div></div></a>
+                    <a href="kaskades.html" class="quick-action-btn admin-only"><span class="qa-icon">🌳</span><div class="qa-info"><div class="qa-title">Kaskādes</div><div class="qa-sub">Nodarbības koka pārvaldība (ADMIN)</div></div></a>
                 </div>
                 <div class="card">
                     <div class="card-header"><h3 class="card-title">Pēdējās reģistrētās nodarbības</h3></div>

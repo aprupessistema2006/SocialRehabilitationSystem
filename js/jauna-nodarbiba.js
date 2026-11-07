@@ -6,6 +6,7 @@
 };
 var SP_ORDER=['nv','goal','problem','task'];
 var spState={k:null, sel:{nv:null,goal:null,problem:null,task:null}, open:null, autoTimer:null};
+var spAuto=true;
 
 async function initJauna(){
   var u=requireUser(); var emp=byId('employee'); if(emp) emp.value=u.name||'';
@@ -31,6 +32,7 @@ function initCascadePickers(){
   ['spModalClose','spModalCancel'].forEach(function(id){ var b=byId(id); if(b) b.addEventListener('click', function(){ closePicker(spState.open); }); });
   document.addEventListener('keydown', function(e){ if(!spState.open) return; if(e.key==='Escape'){ e.preventDefault(); closePicker(spState.open); } if(e.key==='ArrowDown'||e.key==='ArrowUp'){ e.preventDefault(); moveFocus(spState.open, e.key==='ArrowDown'?1:-1); } if(e.key==='Enter' && document.activeElement && document.activeElement.classList.contains('sp-option')){ e.preventDefault(); document.activeElement.click(); } });
   var rs=byId('resetCascade'); if(rs) rs.addEventListener('click', function(){ clearFrom('nv', true); openPicker('nv'); });
+  var at=byId('autoModeToggle'); if(at){ at.checked=spAuto; at.addEventListener('change', function(){ spAuto=!!at.checked; renderAllPickers(); }); }
   document.querySelectorAll('[data-open]').forEach(function(b){ b.addEventListener('click', function(){ var k=b.getAttribute('data-open'); if(!byId(triggerId(k)).classList.contains('is-locked')) openPicker(k); else{ var p=SP[k].parent; if(p) openPicker(p); } }); });
   document.querySelectorAll('.step-chip').forEach(function(b){ b.addEventListener('click', function(){ if(b.classList.contains('is-locked')) return; var k=SP_ORDER[parseInt(b.getAttribute('data-step'),10)-1]; if(k) openPicker(k); }); });
   renderAllPickers();
@@ -89,20 +91,22 @@ function onSelect(k, item, isAuto){
   SP[k].auto=!!isAuto; var justOpen=spState.open; spState.open=null; var modal=byId('spModal'); if(modal){modal.hidden=true; modal.setAttribute('aria-hidden','true');} document.body.classList.remove('sp-modal-open');
   clearFrom(k, false);
   var idx=SP_ORDER.indexOf(k);
-  if(idx < SP_ORDER.length-1){
-    var nk=SP_ORDER[idx+1];
-    SP[nk].items=childrenOf(nk, item.id);
-    renderAllPickers(); updateSummary(); updateStepper();
-    if(k==='nv'){ try{ localStorage.setItem('srs_last_nv', item.id); }catch(e){} }
-    if(SP[nk].items.length===1){
-      if(spState.autoTimer) clearTimeout(spState.autoTimer);
-      spState.autoTimer=setTimeout(function(){ onSelect(nk, SP[nk].items[0], true); }, 180);
-    } else if(SP[nk].items.length>1){
-      setTimeout(function(){ openPicker(nk); }, 80);
+    if(idx < SP_ORDER.length-1){
+      var nk=SP_ORDER[idx+1];
+      SP[nk].items=childrenOf(nk, item.id);
+      renderAllPickers(); updateSummary(); updateStepper();
+      if(k==='nv'){ try{ localStorage.setItem('srs_last_nv', item.id); }catch(e){} }
+      if(spAuto && SP[nk].items.length===1){
+        if(spState.autoTimer) clearTimeout(spState.autoTimer);
+        spState.autoTimer=setTimeout(function(){ onSelect(nk, SP[nk].items[0], true); }, 180);
+      } else if(!spAuto && SP[nk].items.length>1){
+        setTimeout(function(){ openPicker(nk); }, 80);
+      } else if(!spAuto && SP[nk].items.length===1){
+        setTimeout(function(){ openPicker(nk); }, 80);
+      } else {
+        setNote(nk, 'Šim izvēlētajam solim nav pieejamu nākamo opciju.');
+      }
     } else {
-      setNote(nk, 'Šim izvēlētajam solim nav pieejamu nākamo opciju.');
-    }
-  } else {
     renderAllPickers(); updateSummary(); updateStepper();
   }
   if(justOpen){ var t=byId(triggerId(justOpen)); if(t) t.focus(); }
@@ -158,12 +162,17 @@ function moveFocus(k,dir){
 }
 
 function updateStepper(){
+  var done=0;
   SP_ORDER.forEach(function(k,i){
     var chip=byId('stepChip'+(i+1)); if(!chip) return;
     var parentOk=!SP[k].parent || !!spState.sel[SP[k].parent];
-    var done=!!spState.sel[k]; var active=spState.open===k || (!done && parentOk);
-    chip.classList.toggle('is-done', done); chip.classList.toggle('is-active', active && !done); chip.classList.toggle('is-locked', !parentOk);
+    var d=!!spState.sel[k]; if(d) done++;
+    var active=spState.open===k || (!d && parentOk);
+    chip.classList.toggle('is-done', d); chip.classList.toggle('is-active', active && !d); chip.classList.toggle('is-locked', !parentOk);
   });
+  var pct=Math.round((done/SP_ORDER.length)*100);
+  var pt=byId('stepProgressText'); if(pt) pt.textContent='Pilnība: '+pct+'%  ('+done+' no '+SP_ORDER.length+' solī)';
+  var fill=byId('stepProgressFill'); if(fill) fill.style.width=pct+'%';
 }
 function updateSummary(){
   var ok=spState.sel.nv&&spState.sel.goal&&spState.sel.problem&&spState.sel.task;
@@ -192,3 +201,4 @@ async function saveJauna(u){
 }
 function fmtDate(iso){ if(!iso) return ''; var s=String(iso).trim(); if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s; if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; } var d=new Date(s); if(!isNaN(d)){ var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return dd+'.'+mm+'.'+d.getFullYear(); } var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1]; return s; }
 document.addEventListener('DOMContentLoaded', function(){ if(byId('activityForm')) initJauna(); });
+var wireCascade = initCascadePickers;
