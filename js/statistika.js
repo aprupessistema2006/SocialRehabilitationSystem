@@ -1,5 +1,5 @@
-/* Statistika - tīra CSS analīze, bez kanva un ārpusējām bibliotēmām */
-var ST = { nodarbibas: [], klienti: [], sakums: {}, colors: ['#a855f7','#ec4899','#818cf8','#f472b6','#c4b5fd','#fbcfe8','#22c55e','#f43f5e'] };
+/* Statistika - profesionāla CSS analīze, bez kanva un ārpusējām bibliotēmām */
+var ST = { nodarbibas: [], klienti: [], sakums: {}, colors: ['#a855f7','#ec4899','#818cf8','#f472b6','#c4b5fd','#fbcfe8','#22c55e','#f43f5e'], fsTarget: null };
 
 async function initStatistika(){
   var u = requireUser();
@@ -12,6 +12,7 @@ async function initStatistika(){
     ]);
     renderKPI(u);
     renderCharts();
+    initFullscreen();
     byId('statMsg').textContent = '';
   } catch (e) {
     byId('statMsg').textContent = 'Neizdevās ielādēt statistiku.';
@@ -128,7 +129,7 @@ function renderPieChart(id, items){
   });
   container.innerHTML =
     '<div class="css-pie-chart">' +
-    '<svg width="130" height="130" class="css-pie-svg">' + slicesHtml + '</svg>' +
+    '<svg width="120" height="120" class="css-pie-svg">' + slicesHtml + '</svg>' +
     '<div class="css-pie-center"><div class="css-pie-total">' + total + '</div><div class="css-pie-sub">kopā</div></div>' +
     '</div>' +
     '<div class="css-pie-legend">' + legendHtml + '</div>';
@@ -152,7 +153,6 @@ function renderLineChart(id, items, lineCount){
   var maxVal = Math.max.apply(null, items.map(function(it){ return it[1]; }));
   if (maxVal <= 0) maxVal = 1;
   var dotsHtml = '';
-  var labelsHtml = '';
   items.forEach(function(it, i){
     var pct = maxVal > 0 ? (it[1] / maxVal) * 100 : 0;
     var label = String(it[0]).length > 6 ? String(it[0]).slice(0, 5) + '…' : String(it[0]);
@@ -163,6 +163,54 @@ function renderLineChart(id, items, lineCount){
       '</div>';
   });
   container.innerHTML = '<div class="css-line-chart">' + dotsHtml + '</div>';
+}
+
+/* ---------- Fullscreen modal ---------- */
+function initFullscreen(){
+  var fsModal = byId('fsModal');
+  var fsClose = byId('fsClose');
+  var fsBody = byId('fsBody');
+  var fsTitle = byId('fsTitle');
+
+  // Close button
+  fsClose.addEventListener('click', closeFullscreen);
+
+  // Backdrop click
+  fsModal.addEventListener('click', function(e){
+    if(e.target === fsModal) closeFullscreen();
+  });
+
+  // Esc key
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && fsModal.style.display !== 'none') closeFullscreen();
+  });
+
+  // Fullscreen buttons on each chart card
+  document.querySelectorAll('.btn-fullscreen').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var chartId = btn.getAttribute('data-fs');
+      var sourceEl = byId(chartId);
+      var titleEl = btn.closest('.chart-card-head').querySelector('.chart-card-title');
+      ST.fsTarget = chartId;
+      fsTitle.textContent = titleEl ? titleEl.textContent : 'Diagramma';
+      fsBody.innerHTML = '';
+      // Clone the chart content for fullscreen
+      var clone = sourceEl.cloneNode(true);
+      // Remove inline styles that constrain size in normal view
+      clone.style.removeProperty('--bar-count');
+      clone.style.removeProperty('--line-count');
+      fsBody.appendChild(clone);
+      fsModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    });
+  });
+}
+
+function closeFullscreen(){
+  var fsModal = byId('fsModal');
+  fsModal.style.display = 'none';
+  document.body.style.overflow = '';
+  ST.fsTarget = null;
 }
 
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }

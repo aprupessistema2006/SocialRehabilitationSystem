@@ -21,33 +21,92 @@
 <!-- DIAGRAMMAS RINDAS -->
 <div class="charts-row">
   <div class="chart-card">
-    <div class="chart-card-head"><h3 class="chart-card-title">Nodarbības pēc klienta</h3><p class="chart-card-sub">Sadalījums, cik nodarbības ir reģistrētas katram klientam</p></div>
-    <div class="chart-body css-bar-chart" id="chartClients"></div>
+    <div class="chart-card-head">
+      <h3 class="chart-card-title">Nodarbības pēc klienta</h3>
+      <p class="chart-card-sub">Sadalījums, cik nodarbības ir reģistrētas katram klientam</p>
+      <div class="chart-card-actions">
+        <button type="button" class="btn-fullscreen" data-fs="chartClients" title="Pilnekrāns">⛶</button>
+      </div>
+    </div>
+    <div class="chart-body">
+      <h4>Nodarbības pēc klienta</h4>
+      <div class="css-bar-chart" id="chartClients"></div>
+    </div>
   </div>
   <div class="chart-card">
-    <div class="chart-card-head"><h3 class="chart-card-title">Nodarbības pēc darbinieka</h3><p class="chart-card-sub">Kāds darbinieks ir veicis cik nodarbību (pie šķērļa procenti)</p></div>
-    <div class="chart-body css-pie-chart" id="chartWorkers"></div>
+    <div class="chart-card-head">
+      <h3 class="chart-card-title">Nodarbības pēc darbinieka</h3>
+      <p class="chart-card-sub">Kāds darbinieks ir veicis cik nodarbību (pie šķērļa procenti)</p>
+      <div class="chart-card-actions">
+        <button type="button" class="btn-fullscreen" data-fs="chartWorkers" title="Pilnekrāns">⛶</button>
+      </div>
+    </div>
+    <div class="chart-body">
+      <h4>Nodarbības pēc darbinieka</h4>
+      <div class="css-pie-chart" id="chartWorkers"></div>
+    </div>
   </div>
 </div>
 <div class="charts-row">
   <div class="chart-card chart-full">
-    <div class="chart-card-head"><h3 class="chart-card-title">Nodarbības laika gaitā</h3><p class="chart-card-sub">Ierakstu skaits pēc datuma (pēdējie 14 dienas)</p></div>
-    <div class="chart-body css-line-chart" id="chartTimeline"></div>
+    <div class="chart-card-head">
+      <h3 class="chart-card-title">Nodarbības laika gaitā</h3>
+      <p class="chart-card-sub">Ierakstu skaits pēc datuma (pēdējie 14 dienas)</p>
+      <div class="chart-card-actions">
+        <button type="button" class="btn-fullscreen" data-fs="chartTimeline" title="Pilnekrāns">⛶</button>
+      </div>
+    </div>
+    <div class="chart-body">
+      <h4>Nodarbības laika gaitā</h4>
+      <div class="css-line-chart" id="chartTimeline"></div>
+    </div>
   </div>
 </div>
 <div class="charts-row">
   <div class="chart-card">
-    <div class="chart-card-head"><h3 class="chart-card-title">Nodarbību veidu sadalījums</h3><p class="chart-card-sub">Procentuālais sadalījums pēc nodarbības nosaukuma</p></div>
-    <div class="chart-body css-pie-chart" id="chartTypes"></div>
+    <div class="chart-card-head">
+      <h3 class="chart-card-title">Nodarbību veidu sadalījums</h3>
+      <p class="chart-card-sub">Procentuālais sadalījums pēc nodarbības nosaukuma</p>
+      <div class="chart-card-actions">
+        <button type="button" class="btn-fullscreen" data-fs="chartTypes" title="Pilnekrāns">⛶</button>
+      </div>
+    </div>
+    <div class="chart-body">
+      <h4>Nodarbību veidu sadalījums</h4>
+      <div class="css-pie-chart" id="chartTypes"></div>
+    </div>
   </div>
   <div class="chart-card">
-    <div class="chart-card-head"><h3 class="chart-card-title">Pildības statuss</h3><p class="chart-card-sub">Cik daļa no nodarbībām ir pilnībā pildītas (pēc “Pēc apmācību programmas tika pildīts”)</p></div>
-    <div class="chart-body css-pie-chart" id="chartStatus"></div>
+    <div class="chart-card-head">
+      <h3 class="chart-card-title">Pildības statuss</h3>
+      <p class="chart-card-sub">Cik daļa no nodarbībām ir pilnībā pildītas (pēc “Pēc apmācību programmas tika pildīts”)</p>
+      <div class="chart-card-actions">
+        <button type="button" class="btn-fullscreen" data-fs="chartStatus" title="Pilnekrāns">⛶</button>
+      </div>
+    </div>
+    <div class="chart-body">
+      <h4>Pildības statuss</h4>
+      <div class="css-pie-chart" id="chartStatus"></div>
+    </div>
   </div>
 </div>
 
 <div id="statMsg" class="page-msg"></div>
 </div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija <span class="app-version-num"></span></footer></main></div>
+
+<!-- Pilnekrāna modāls katrai diagrammai -->
+<div class="chart-fullscreen" id="fsModal">
+  <div class="fs-wrapper">
+    <div class="fs-header">
+      <h3 class="fs-title" id="fsTitle">Diagramma</h3>
+      <button type="button" class="fs-close" id="fsClose">✕</button>
+    </div>
+    <div class="fs-body" id="fsBody">
+      <!-- Diagramma tiks ievietota šeit -->
+    </div>
+  </div>
+</div>
+
 <script src="../js/config.js?v=1.0.6"></script>
 <script>
 (function(){var v=(typeof APP_VERSION!=='undefined'?APP_VERSION:(localStorage.getItem('srs_app_version')||Date.now()));var s=["../js/version.js","../js/api.js","../js/layout.js","../js/statistika.js"];for(var i=0;i<s.length;i++)document.write('<script src="'+s[i]+'?v='+encodeURIComponent(v)+'"><\/script>');})();
