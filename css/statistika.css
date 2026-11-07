@@ -1,4 +1,4 @@
-/* Statistika - professionāla analīze ar diagrammiem */
+/* Statistika - tīra CSS analīze, bez kanva un ārpusējām bibliotēmām */
 .stat-card-blue{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(30,27,75,.4));border-color:rgba(99,102,241,.45);} .stat-card-blue .stat-value{background:linear-gradient(135deg,#818cf8,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .stat-card-purple{background:linear-gradient(135deg,rgba(168,85,247,.18),rgba(30,27,75,.4));border-color:rgba(168,85,247,.45);} .stat-card-purple .stat-value{background:linear-gradient(135deg,#a855f7,#d8b4fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
 .stat-card-pink{background:linear-gradient(135deg,rgba(236,72,153,.18),rgba(30,27,75,.4));border-color:rgba(236,72,153,.45);} .stat-card-pink .stat-value{background:linear-gradient(135deg,#ec4899,#fbcfe8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
@@ -11,9 +11,38 @@
 .chart-card-head{padding:20px 24px;border-bottom:1px solid rgba(168,85,247,.2);background:rgba(168,85,247,.08);}
 .chart-card-title{margin:0 0 4px;font-size:16px;font-weight:800;color:#f8fafc;}
 .chart-card-sub{margin:0;font-size:12px;color:#94a3b8;}
-.chart-card-body{padding:16px 24px 24px;position:relative;height:300px;overflow:hidden;}
-.chart-card.chart-full .chart-card-body{height:320px;}
-.chart-card canvas{width:100%;display:block;}
+.chart-body{padding:16px 24px 24px;position:relative;overflow:hidden;}
+.chart-body h4{margin:0 0 12px;font-size:13px;color:#cbd5e1;text-transform:uppercase;letter-spacing:.5px;}
+
+/* CSS bar chart - stabiņi ar ierobežoto augstumu */
+.css-bar-chart{display:flex;align-items:flex-end;gap:8px;height:200px;padding-bottom:24px;overflow:hidden;}
+.css-bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;background:rgba(168,85,247,.1);border-radius:8px 8px 0 0;transition:all .3s ease;position:relative;min-height:0;}
+.css-bar:hover{background:rgba(168,85,247,.25);transform:scaleY(1.02);}
+.css-bar-fill{width:100%;background:linear-gradient(180deg,#a855f7,#c4b5fe);border-radius:6px 6px 0 0;transition:height .5s ease;position:relative;}
+.css-bar-label{font-size:11px;color:#cbd5e1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;text-align:center;}
+.css-bar-value{font-size:10px;font-weight:800;color:#f8fafc;position:absolute;top:-20px;white-space:nowrap;}
+.css-bar-empty{display:flex;align-items:center;justify-content:center;height:200px;color:#94a3b8;font-size:13px;}
+
+/* CSS pie/donut chart */
+.css-pie-chart{display:flex;align-items:center;justify-content:center;height:220px;position:relative;overflow:hidden;}
+.css-pie-slice{position:absolute;width:140px;height:140px;border-radius:50%;clip:rect(0px,70px,140px,70px);transition:transform .5s ease;}
+.css-pie-slice-inner{position:absolute;width:140px;height:140px;border-radius:50%;clip:rect(0px,70px,140px,70px);}
+.css-pie-center{position:absolute;width:70px;height:70px;border-radius:50%;background:rgba(15,10,30,.95);border:2px solid rgba(168,85,247,.3);top:35px;left:35px;display:flex;align-items:center;justify-content:center;flex-direction:center;z-index:10;}
+.css-pie-total{font-size:11px;font-weight:800;color:#f8fafc;}
+.css-pie-sub{font-size:10px;color:#94a3b8;margin-top:2px;}
+.css-pie-legend{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:center;margin-top:14px;}
+.css-pie-legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#cbd5e1;cursor:default;}
+.css-pie-legend-dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto;}
+
+/* CSS line chart */
+.css-line-chart{display:flex;align-items:flex-end;gap:6px;height:180px;padding-bottom:24px;overflow:hidden;}
+.css-line-point{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;min-height:0;}
+.css-line-dot{width:8px;height:8px;background:#a855f7;border-radius:50%;box-shadow:0 0 8px rgba(168,85,247,.5);transition:all .3s ease;}
+.css-line-dot:hover{transform:scale(1.5);background:#c4b5fe;}
+.css-line-value{font-size:10px;color:#cbd5e1;margin-top:4px;}
+.css-line-label{font-size:10px;color:#94a3b8;white-space:nowrap;transform:rotate(-45deg);transform-origin:right bottom;margin-bottom:4px;text-align:right;}
+.css-line-empty{display:flex;align-items:center;justify-content:center;height:180px;color:#94a3b8;font-size:13px;}
+
 .chart-empty{grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;}
 .chart-empty b{color:#c084fc;}
 
