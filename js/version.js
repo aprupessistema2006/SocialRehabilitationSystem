@@ -4,82 +4,81 @@
   function safeGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
   function safeSet(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
 
-  function clearDeviceStorage(){
+  async function clearDeviceStorage(){
     try{ localStorage.clear(); }catch(e){}
     try{ sessionStorage.clear(); }catch(e){}
     if('indexedDB' in window){
       try{
         if(typeof indexedDB.databases==='function'){
-          indexedDB.databases().then(function(dbs){ dbs.forEach(function(db){ if(db.name) indexedDB.deleteDatabase(db.name); }); });
+          var dbs=await indexedDB.databases();
+          await Promise.all((dbs||[]).map(function(db){ return db && db.name ? new Promise(function(res){ var r=indexedDB.deleteDatabase(db.name); r.onsuccess=r.onerror=r.onblocked=function(){res();}; }) : Promise.resolve(); }));
         }
       }catch(e){}
     }
     if('caches' in window){
-      try{ caches.keys().then(function(keys){ return Promise.all(keys.map(function(k){ return caches.delete(k); })); }); }catch(e){}
+      try{ var keys=await caches.keys(); await Promise.all(keys.map(function(k){ return caches.delete(k); })); }catch(e){}
     }
     if('serviceWorker' in navigator){
-      try{ navigator.serviceWorker.getRegistrations().then(function(regs){ regs.forEach(function(r){ r.unregister(); }); }); }catch(e){}
+      try{ var regs=await navigator.serviceWorker.getRegistrations(); await Promise.all(regs.map(function(r){ return r.unregister(); })); }catch(e){}
     }
   }
 
   function reloadClean(reason){
     try{
-      var u=new URL(window.location.href);
-      u.searchParams.set('_v', String(typeof APP_VERSION!=='undefined'?APP_VERSION:Date.now()));
-      u.searchParams.set('_r', String(Date.now()));
-      if(reason) u.searchParams.set('_reason', reason);
-      window.location.replace(u.toString());
-    }catch(e){ window.location.reload(); }
+      var base = window.location.pathname + (window.location.hash || '');
+      var sep = base.indexOf('?')>=0 ? '&' : '?';
+      var u = base + sep + '_v=' + encodeURIComponent(String(typeof APP_VERSION!=='undefined'?APP_VERSION:Date.now())) + '&_r=' + String(Date.now()) + (reason? '&_reason='+encodeURIComponent(reason):'');
+      window.location.replace(u);
+    }catch(e){ window.location.reload(true); }
   }
 
-  function hardResetAndReload(reason){
-    clearDeviceStorage();
+  async function hardResetAndReload(reason){
+    await clearDeviceStorage();
     reloadClean(reason);
   }
 
-  function ensureUpdateButton(localV, remoteV){
-    var btn=document.getElementById('appUpdateBtn');
-    if(!btn){
-      btn=document.createElement('button');
-      btn.id='appUpdateBtn'; btn.type='button'; btn.className='app-update-btn';
-      btn.textContent='Atjaunot programmu';
+  function showUpdateBanner(localV, remoteV){
+    if(window.__srsUpdateShown) return; window.__srsUpdateShown = true;
+    var wrap=document.getElementById('appUpdateBanner');
+    if(!wrap){
+      wrap=document.createElement('div');
+      wrap.id='appUpdateBanner'; wrap.className='app-update-banner';
+      wrap.innerHTML = '<div class="app-update-banner-inner">'
+        + '<div class="app-update-icon">🔄</div>'
+        + '<div class="app-update-text"><div class="app-update-title">Programma ir atjaunināta</div>'
+        + '<div class="app-update-sub">Lai darbotos pareizi un rādītu jaunākos datus, lūdzu nospiediet pogu.</div></div>'
+        + '<button type="button" id="appUpdateBtn" class="app-update-btn-big">Atjaunot tagad</button></div>';
+      document.body.appendChild(wrap);
+      var btn=document.getElementById('appUpdateBtn');
       btn.addEventListener('click', function(){
-        window.__srsResetStarted = true;
-        btn.disabled=true;
-        btn.textContent='Iztīra atmiņu un atjaunino...';
+        if(window.__srsResetStarted) return; window.__srsResetStarted=true;
+        btn.disabled=true; btn.textContent='Atjauno...';
         hardResetAndReload('manual');
       });
-      document.body.appendChild(btn);
     }
-    btn.style.display='inline-flex';
-    btn.title='Lokālā versija: '+(localV||'-')+', servera versija: '+(remoteV||'-');
-    return btn;
+    wrap.style.display='block';
+    try{ wrap.setAttribute('data-ver', (localV||'-')+'→'+(remoteV||'-')); }catch(e){}
   }
 
-  function hideUpdateButton(){
-    var btn=document.getElementById('appUpdateBtn');
-    if(btn) btn.style.display='none';
+  function hideUpdateBanner(){
+    var w=document.getElementById('appUpdateBanner'); if(w) w.style.display='none';
   }
 
   function compareAndAct(remoteV){
     var remote=String(remoteV==null?'':remoteV).trim(); if(!remote) return;
     var local=String(safeGet(APP_VERSION_KEY)||'').trim();
-    if(!local){ safeSet(APP_VERSION_KEY, remote); hideUpdateButton(); return; }
-    if(local !== remote){
-      ensureUpdateButton(local, remote);
-      // Automātiskais hard reset pēc 3s, ja lietotājs nespiest poga — nodrošina, ka jaunais kods vienmēr ielādēsies
-      setTimeout(function(){
-        if(document.getElementById('appUpdateBtn') && !window.__srsResetStarted){
-          window.__srsResetStarted = true;
-          hardResetAndReload('version_mismatch_auto');
-        }
-      }, 3000);
-    } else {
-      hideUpdateButton();
-    }
+    if(!local){ safeSet(APP_VERSION_KEY, remote); hideUpdateBanner(); return; }
+    if(local !== remote){ showUpdateBanner(local, remote); }
+    else { hideUpdateBanner(); }
   }
 
   async function checkVersion(){
+    // Also honor ?_reason=version_mismatch_auto style reloads: if local mismatches known APP_VERSION constant, prompt
+    try{
+      var local=String(safeGet(APP_VERSION_KEY)||'').trim();
+      var codeV=String(typeof APP_VERSION!=='undefined'?APP_VERSION:'').trim();
+      if(local && codeV && local!==codeV){ showUpdateBanner(local, codeV); }
+    }catch(e){}
     if(typeof WEBAPP_URL==='undefined' || !WEBAPP_URL) return;
     try{
       var ctrl=('AbortController' in window)?new AbortController():null;
@@ -90,7 +89,7 @@
       var txt=await res.text(); var json=JSON.parse(txt);
       var remote=json && (json.app_version || json.version || (json.iestatijumi && (json.iestatijumi.app_version||json.iestatijumi.version)));
       if(remote) compareAndAct(remote);
-    }catch(e){ /* offline/stale backend: do not block app; local data keeps working */ }
+    }catch(e){ /* offline/stale backend: do not block app */ }
   }
 
   window.SRSVersion={check:checkVersion,hardReset:function(){ hardResetAndReload('forced'); },getLocal:function(){ return safeGet(APP_VERSION_KEY); }};
