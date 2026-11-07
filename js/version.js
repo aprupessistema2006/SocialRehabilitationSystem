@@ -67,18 +67,17 @@
   function compareAndAct(remoteV){
     var remote=String(remoteV==null?'':remoteV).trim(); if(!remote) return;
     var local=String(safeGet(APP_VERSION_KEY)||'').trim();
-    if(!local){ safeSet(APP_VERSION_KEY, remote); hideUpdateBanner(); return; }
-    if(local !== remote){ showUpdateBanner(local, remote); }
-    else { hideUpdateBanner(); }
+    // Sinhronizācija fonā: ja versijas sakrīt (vai lokālā vēl nav), saglabājam klusām un nerādām pogu.
+    if(!local || local === remote){
+      safeSet(APP_VERSION_KEY, remote);
+      hideUpdateBanner();
+      return;
+    }
+    // Versijas nesakrīt -> rādam atjaunināšanas pogu (lietotājs apstiprina).
+    showUpdateBanner(local, remote);
   }
 
   async function checkVersion(){
-    // Also honor ?_reason=version_mismatch_auto style reloads: if local mismatches known APP_VERSION constant, prompt
-    try{
-      var local=String(safeGet(APP_VERSION_KEY)||'').trim();
-      var codeV=String(typeof APP_VERSION!=='undefined'?APP_VERSION:'').trim();
-      if(local && codeV && local!==codeV){ showUpdateBanner(local, codeV); }
-    }catch(e){}
     if(typeof WEBAPP_URL==='undefined' || !WEBAPP_URL) return;
     try{
       var ctrl=('AbortController' in window)?new AbortController():null;
@@ -89,7 +88,7 @@
       var txt=await res.text(); var json=JSON.parse(txt);
       var remote=json && (json.app_version || json.version || (json.iestatijumi && (json.iestatijumi.app_version||json.iestatijumi.version)));
       if(remote) compareAndAct(remote);
-    }catch(e){ /* offline/stale backend: do not block app */ }
+    }catch(e){ /* offline/stale backend: nerādām pogu, nebloķējam lietotni */ }
   }
 
   window.SRSVersion={check:checkVersion,hardReset:function(){ hardResetAndReload('forced'); },getLocal:function(){ return safeGet(APP_VERSION_KEY); }};
