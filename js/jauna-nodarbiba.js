@@ -9,7 +9,7 @@ var spState={k:null, sel:{nv:null,goal:null,problem:null,task:null}, open:null, 
 
 async function initJauna(){
   var u=requireUser(); var emp=byId('employee'); if(emp) emp.value=u.name||'';
-  var date=byId('activityDate'); if(date && !date.value){ var d=new Date(); date.value=d.toISOString().slice(0,10); }
+  var date=byId('activityDate'); if(date && !date.value){ var d=new Date(); var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); date.value=d.getFullYear()+'-'+mm+'-'+dd; }
   byId('clearForm').addEventListener('click', function(){ if(confirm('Notīrīt formu?')) location.reload(); });
   try{
     var res=await Promise.all([api('getKlienti'), api('getKaskade')]);
@@ -190,5 +190,5 @@ async function saveJauna(u){
   }catch(e){ setMsg('formAlert','Servera kļūda.','alert-error'); }
   btn.disabled=false;
 }
-function fmtDate(iso){ if(!iso) return ''; var p=iso.split('-'); return p.length===3? (p[2]+'.'+p[1]+'.'+p[0]) : iso; }
+function fmtDate(iso){ if(!iso) return ''; var s=String(iso).trim(); if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s; var p=s.split('-'); if(p.length===3 && p[0].length===4) return p[2].slice(0,2)+'.'+p[1]+'.'+p[0]; var d=new Date(s); if(!isNaN(d)){ var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return dd+'.'+mm+'.'+d.getFullYear(); } return s; }
 document.addEventListener('DOMContentLoaded', function(){ if(byId('activityForm')) initJauna(); });
