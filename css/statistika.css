@@ -13,7 +13,7 @@
 .chart-card-sub{margin:0;font-size:12px;color:#94a3b8;}
 .chart-card-body{padding:16px 24px 24px;position:relative;height:340px;overflow:hidden;}
 .chart-card.chart-full .chart-card-body{height:360px;}
-.chart-card canvas{width:100%;height:auto;display:block;}
+.chart-card canvas{width:100%;display:block;}
 .chart-empty{grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;}
 .chart-empty b{color:#c084fc;}
 
