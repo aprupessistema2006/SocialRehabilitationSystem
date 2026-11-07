@@ -63,3 +63,14 @@ function initLayout(){var user=JSON.parse(localStorage.getItem('currentUser')||'
 
   window.addEventListener('load', function(){ setTimeout(hideLoader, 300); });
 })();
+
+/* Globālais modal aizvēršanas kontroles - backdrop klikšķis un Esc taustiņš visiem modaliem */
+(function(){
+  function closeAll(){
+    document.querySelectorAll('.modal-backdrop').forEach(function(m){ m.style.display='none'; });
+  }
+  document.addEventListener('click', function(e){
+    if(e.target.classList.contains('modal-backdrop')){ closeAll(); }
+  });
+  document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeAll(); } });
+})();
