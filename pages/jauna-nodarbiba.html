@@ -15,11 +15,68 @@
 <div class="form-group"><label class="form-label">Datums *</label><input type="date" id="activityDate" class="form-input" required></div>
 <div class="form-group"><label class="form-label">Darbinieks</label><input type="text" id="employee" class="form-input" readonly></div>
 </div></div>
-<div class="form-section"><div class="form-section-header"><h3 class="form-section-title">Nodarbības kaskādes izvēles</h3></div><div class="form-section-body">
-<div class="form-group form-group-full"><label class="form-label">Nodarbības nosaukums *</label><select id="activityType" class="form-select" required><option value="">Izvēlieties...</option></select></div>
-<div class="form-group form-group-full"><label class="form-label">Mērķis *</label><select id="goal" class="form-select" required disabled><option value="">Vispirms izvēlieties nodarbības nosaukumu</option></select></div>
-<div class="form-group form-group-full"><label class="form-label">Klienta problēma *</label><select id="problem" class="form-select" required disabled><option value="">Vispirms izvēlieties mērķi</option></select></div>
-<div class="form-group form-group-full"><label class="form-label">Uzdevums *</label><select id="task" class="form-select" required disabled><option value="">Vispirms izvēlieties klienta problēmu</option></select></div>
+<div class="form-section cascade-section"><div class="form-section-header"><h3 class="form-section-title">Nodarbības kaskādes izvēles</h3><p class="cascade-hint">Izvēlieties soli pa solim. Meklējiet tekstā, lai ātri atrastu vajadzīgo.</p></div><div class="form-section-body cascade-body">
+<div class="cascade-stepper" id="cascadeStepper" aria-label="Kaskādes soļi">
+  <button type="button" class="step-chip" data-step="1" id="stepChip1"><span class="step-n">1</span><span class="step-t">Nodarbība</span></button>
+  <span class="step-line"></span>
+  <button type="button" class="step-chip is-locked" data-step="2" id="stepChip2"><span class="step-n">2</span><span class="step-t">Mērķis</span></button>
+  <span class="step-line"></span>
+  <button type="button" class="step-chip is-locked" data-step="3" id="stepChip3"><span class="step-n">3</span><span class="step-t">Problēma</span></button>
+  <span class="step-line"></span>
+  <button type="button" class="step-chip is-locked" data-step="4" id="stepChip4"><span class="step-n">4</span><span class="step-t">Uzdevums</span></button>
+</div>
+<div class="form-group form-group-full sp-field" data-sp="nv">
+  <label class="form-label" for="spTriggerNv">Nodarbības nosaukums *</label>
+  <input type="hidden" id="activityType" required>
+  <button type="button" class="sp-trigger" id="spTriggerNv" aria-haspopup="listbox" aria-expanded="false"><span class="sp-trigger-text" id="spTextNv">Izvēlieties nodarbības veidu...</span><span class="sp-trigger-meta"><span class="sp-pill" id="spPillNv"></span><span class="sp-chevron">▾</span></span></button>
+  <div class="sp-preview" id="spPreviewNv" hidden></div>
+  <div class="sp-panel" id="spPanelNv" hidden>
+    <div class="sp-panel-head"><div class="sp-search-wrap"><input type="text" class="sp-search" id="spSearchNv" placeholder="Meklēt nodarbību..." autocomplete="off"><button type="button" class="sp-clear" id="spClearNv" aria-label="Notīrīt">×</button></div><div class="sp-panel-meta"><span id="spCountNv"></span><button type="button" class="sp-link" data-close="nv">Aizvērt</button></div></div>
+    <div class="sp-list" id="spListNv" role="listbox"></div>
+  </div>
+</div>
+<div class="form-group form-group-full sp-field" data-sp="goal">
+  <label class="form-label" for="spTriggerGoal">Mērķis *</label>
+  <input type="hidden" id="goal" required>
+  <button type="button" class="sp-trigger is-locked" id="spTriggerGoal" aria-haspopup="listbox" aria-expanded="false"><span class="sp-trigger-text" id="spTextGoal">Vispirms izvēlieties nodarbības nosaukumu</span><span class="sp-trigger-meta"><span class="sp-pill" id="spPillGoal"></span><span class="sp-chevron">▾</span></span></button>
+  <div class="sp-note" id="spNoteGoal" hidden></div>
+  <div class="sp-preview" id="spPreviewGoal" hidden></div>
+  <div class="sp-panel" id="spPanelGoal" hidden>
+    <div class="sp-panel-head"><div class="sp-bc" id="spBcGoal"></div><div class="sp-search-wrap"><input type="text" class="sp-search" id="spSearchGoal" placeholder="Meklēt mērķi pēc teksta..." autocomplete="off"><button type="button" class="sp-clear" id="spClearGoal" aria-label="Notīrīt">×</button></div><div class="sp-panel-meta"><span id="spCountGoal"></span><button type="button" class="sp-link" data-close="goal">Aizvērt</button></div></div>
+    <div class="sp-list" id="spListGoal" role="listbox"></div>
+  </div>
+</div>
+<div class="form-group form-group-full sp-field" data-sp="problem">
+  <label class="form-label" for="spTriggerProblem">Klienta problēma *</label>
+  <input type="hidden" id="problem" required>
+  <button type="button" class="sp-trigger is-locked" id="spTriggerProblem" aria-haspopup="listbox" aria-expanded="false"><span class="sp-trigger-text" id="spTextProblem">Vispirms izvēlieties mērķi</span><span class="sp-trigger-meta"><span class="sp-pill" id="spPillProblem"></span><span class="sp-chevron">▾</span></span></button>
+  <div class="sp-note" id="spNoteProblem" hidden></div>
+  <div class="sp-preview" id="spPreviewProblem" hidden></div>
+  <div class="sp-panel" id="spPanelProblem" hidden>
+    <div class="sp-panel-head"><div class="sp-bc" id="spBcProblem"></div><div class="sp-search-wrap"><input type="text" class="sp-search" id="spSearchProblem" placeholder="Meklēt problēmu..." autocomplete="off"><button type="button" class="sp-clear" id="spClearProblem" aria-label="Notīrīt">×</button></div><div class="sp-panel-meta"><span id="spCountProblem"></span><button type="button" class="sp-link" data-close="problem">Aizvērt</button></div></div>
+    <div class="sp-list" id="spListProblem" role="listbox"></div>
+  </div>
+</div>
+<div class="form-group form-group-full sp-field" data-sp="task">
+  <label class="form-label" for="spTriggerTask">Uzdevums *</label>
+  <input type="hidden" id="task" required>
+  <button type="button" class="sp-trigger is-locked" id="spTriggerTask" aria-haspopup="listbox" aria-expanded="false"><span class="sp-trigger-text" id="spTextTask">Vispirms izvēlieties klienta problēmu</span><span class="sp-trigger-meta"><span class="sp-pill" id="spPillTask"></span><span class="sp-chevron">▾</span></span></button>
+  <div class="sp-note" id="spNoteTask" hidden></div>
+  <div class="sp-preview" id="spPreviewTask" hidden></div>
+  <div class="sp-panel" id="spPanelTask" hidden>
+    <div class="sp-panel-head"><div class="sp-bc" id="spBcTask"></div><div class="sp-search-wrap"><input type="text" class="sp-search" id="spSearchTask" placeholder="Meklēt uzdevumu..." autocomplete="off"><button type="button" class="sp-clear" id="spClearTask" aria-label="Notīrīt">×</button></div><div class="sp-panel-meta"><span id="spCountTask"></span><button type="button" class="sp-link" data-close="task">Aizvērt</button></div></div>
+    <div class="sp-list" id="spListTask" role="listbox"></div>
+  </div>
+</div>
+<div class="sp-summary form-group-full" id="cascadeSummary" hidden>
+  <div class="sp-summary-head"><h4>Pārskatīt izvēli pirms saglabāšanas</h4><button type="button" class="sp-link" id="resetCascade">Sākt kaskādi no jauna</button></div>
+  <div class="sp-summary-grid">
+    <div class="sp-sum-item"><span class="sp-sum-k">Nodarbība</span><div class="sp-sum-v" id="sumNv"></div><button type="button" class="sp-link" data-open="nv">Mainīt</button></div>
+    <div class="sp-sum-item"><span class="sp-sum-k">Mērķis</span><div class="sp-sum-v" id="sumGoal"></div><button type="button" class="sp-link" data-open="goal">Mainīt</button></div>
+    <div class="sp-sum-item"><span class="sp-sum-k">Problēma</span><div class="sp-sum-v" id="sumProblem"></div><button type="button" class="sp-link" data-open="problem">Mainīt</button></div>
+    <div class="sp-sum-item"><span class="sp-sum-k">Uzdevums</span><div class="sp-sum-v" id="sumTask"></div><button type="button" class="sp-link" data-open="task">Mainīt</button></div>
+  </div>
+</div>
 </div></div>
 <div class="form-section"><div class="form-section-header"><h3 class="form-section-title">Nodarbības apraksts</h3></div><div class="form-section-body">
 <div class="form-group form-group-full"><label class="form-label">Refleksija *</label><textarea id="reflection" class="form-textarea" rows="3" required></textarea></div>
