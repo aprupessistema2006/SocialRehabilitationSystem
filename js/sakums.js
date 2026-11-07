@@ -33,6 +33,6 @@ function loadSakums() {
   }).catch(function(){ if (msg) msg.textContent = 'Neizdevās savienoties ar serveri.'; });
 }
 function setText(id, v){ var el=document.getElementById(id); if(el) el.textContent = (v==null?'0':v); }
-function fmtDate(v){ if(!v) return ''; var s=String(v); if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s; var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1]; var d=new Date(s); if(!isNaN(d)){ var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return dd+'.'+mm+'.'+d.getFullYear(); } return s; }
+function fmtDate(v){ if(!v) return ''; var s=String(v).trim(); if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s; if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; } var d=new Date(s); if(!isNaN(d)){ var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return dd+'.'+mm+'.'+d.getFullYear(); } var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1]; return s; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
 document.addEventListener('DOMContentLoaded', loadSakums);
