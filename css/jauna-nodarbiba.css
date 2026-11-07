@@ -104,3 +104,10 @@ body.sp-modal-open{overflow:hidden;}
   .sp-modal-title{font-size:18px;}
   .sp-modal-tip{display:none;}
 }
+
+/* Saglabātās atbildes / predloġi - nodarbības apraksts */
+.preset-group{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:6px 0 14px;padding:12px 16px;border-radius:14px;background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(236,72,153,.05));border:1px solid rgba(168,85,247,.25);}
+.preset-group .form-label{margin-bottom:0;font-size:11px;}
+.preset-group .form-select,.preset-group .form-input{min-width:170px;max-width:260px;}
+.preset-actions{display:flex;gap:8px;flex:0 0 auto;}
+.preset-actions .btn{padding:10px 14px;font-size:12px;}

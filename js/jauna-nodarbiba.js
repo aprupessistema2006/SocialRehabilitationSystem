@@ -7,6 +7,8 @@
 var SP_ORDER=['nv','goal','problem','task'];
 var spState={k:null, sel:{nv:null,goal:null,problem:null,task:null}, open:null, autoTimer:null};
 var spAuto=true;
+var PRESET_KEY='srs_activity_presets';
+var PRESET_FIELDS=['reflection','motivation','process','mood','evaluation','implementation','comment'];
 
 async function initJauna(){
   var u=requireUser(); var emp=byId('employee'); if(emp) emp.value=u.name||'';
@@ -19,6 +21,7 @@ async function initJauna(){
     if(cRes.ok) spState.k=cRes;
   }catch(e){ setMsg('formAlert','Neizdevās ielādēt datus.','alert-error'); }
   initCascadePickers();
+  initPresets();
   byId('activityForm').addEventListener('submit', async function(e){ e.preventDefault(); await saveJauna(u); });
 }
 
@@ -200,5 +203,39 @@ async function saveJauna(u){
   btn.disabled=false;
 }
 function fmtDate(iso){ if(!iso) return ''; var s=String(iso).trim(); if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s; if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; } var d=new Date(s); if(!isNaN(d)){ var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return dd+'.'+mm+'.'+d.getFullYear(); } var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1]; return s; }
+function loadPresets(){ try{ return JSON.parse(localStorage.getItem(PRESET_KEY)||'[]'); }catch(e){ return []; } }
+function savePresets(arr){ try{ localStorage.setItem(PRESET_KEY, JSON.stringify(arr)); }catch(e){} }
+function renderPresets(){
+  var el=byId('activityPreset'); if(!el) return;
+  var cur=el.value; var presets=loadPresets();
+  el.innerHTML='<option value="">Izvēlieties saglabāto...</option>';
+  presets.forEach(function(pr){ var o=document.createElement('option'); o.value=pr.name; o.textContent=pr.name; el.appendChild(o); });
+  el.value=cur;
+}
+function fillPreset(name){
+  var presets=loadPresets(); var pr=presets.find(function(p){ return p.name===name; }); if(!pr) return;
+  PRESET_FIELDS.forEach(function(f){ var el=byId(f); if(el) el.value=pr[f]||''; });
+  setMsg('formAlert','Predlogs „'+esc(name)+'” lietots.', '');
+}
+function saveCurrentAsPreset(){
+  var name=prompt('Ievadiet jaunā predloga nosaukumu:'); if(!name || !String(name).trim()) return; name=String(name).trim();
+  var presets=loadPresets(); var data={name:name};
+  PRESET_FIELDS.forEach(function(f){ var el=byId(f); data[f]=el?String(el.value||''):''; });
+  presets=presets.filter(function(p){ return p.name!==name; });
+  presets.push(data); savePresets(presets); renderPresets();
+  var el=byId('activityPreset'); if(el) el.value=name;
+  setMsg('formAlert','Predlogs „'+esc(name)+'” saglabāts.', '');
+}
+function clearPresetFields(){
+  PRESET_FIELDS.forEach(function(f){ var el=byId(f); if(el) el.value=''; });
+  var el=byId('activityPreset'); if(el) el.value='';
+  setMsg('formAlert','Lauki notīrīti.', '');
+}
+function initPresets(){
+  renderPresets();
+  var el=byId('activityPreset'); if(el) el.addEventListener('change', function(){ if(this.value) fillPreset(this.value); });
+  var sb=byId('savePresetBtn'); if(sb) sb.addEventListener('click', saveCurrentAsPreset);
+  var cb=byId('clearPresetBtn'); if(cb) cb.addEventListener('click', clearPresetFields);
+}
 document.addEventListener('DOMContentLoaded', function(){ if(byId('activityForm')) initJauna(); });
 var wireCascade = initCascadePickers;
