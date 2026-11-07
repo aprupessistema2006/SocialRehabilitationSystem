@@ -1,0 +1,20 @@
+/* Statistika - professionāla analīze ar diagrammiem */
+.stat-card-blue{background:linear-gradient(135deg,rgba(99,102,241,.18),rgba(30,27,75,.4));border-color:rgba(99,102,241,.45);} .stat-card-blue .stat-value{background:linear-gradient(135deg,#818cf8,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-card-purple{background:linear-gradient(135deg,rgba(168,85,247,.18),rgba(30,27,75,.4));border-color:rgba(168,85,247,.45);} .stat-card-purple .stat-value{background:linear-gradient(135deg,#a855f7,#d8b4fe);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-card-pink{background:linear-gradient(135deg,rgba(236,72,153,.18),rgba(30,27,75,.4));border-color:rgba(236,72,153,.45);} .stat-card-pink .stat-value{background:linear-gradient(135deg,#ec4899,#fbcfe8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.stat-card-indigo{background:linear-gradient(135deg,rgba(79,70,229,.18),rgba(30,27,75,.4));border-color:rgba(79,70,229,.45);} .stat-card-indigo .stat-value{background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+.charts-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:24px;margin-bottom:24px;}
+.chart-card{background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(30,27,75,.4));border:1px solid rgba(168,85,247,.3);border-radius:20px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.6);transition:transform .25s ease,border-color .25s ease;display:flex;flex-direction:column;min-height:380px;}
+.chart-card:hover{transform:translateY(-3px);border-color:rgba(168,85,247,.55);box-shadow:0 30px 80px rgba(0,0,0,.7);}
+.chart-card.chart-full{min-height:340px;}
+.chart-card-head{padding:20px 24px;border-bottom:1px solid rgba(168,85,247,.2);background:rgba(168,85,247,.08);}
+.chart-card-title{margin:0 0 4px;font-size:16px;font-weight:800;color:#f8fafc;}
+.chart-card-sub{margin:0;font-size:12px;color:#94a3b8;}
+.chart-card-body{flex:1;padding:16px 24px 24px;display:flex;align-items:center;justify-content:center;position:relative;}
+.chart-card canvas{max-width:100%;max-height:100%;display:block;}
+.chart-empty{grid-column:1/-1;text-align:center;padding:40px;color:#94a3b8;}
+.chart-empty b{color:#c084fc;}
+
+@media(max-width:900px){.charts-row{grid-template-columns:1fr;}}
+@media(max-width:640px){.stat-card{padding:20px;}}
