@@ -37,6 +37,11 @@ function renderCharts(){
   var nb = ST.nodarbibas || [];
   if (!nb.length) { document.getElementById('statMsg').textContent = 'Nav ierakstu analīzei. Pievienojiet darbus un atgriežieties šeit.'; return; }
 
+  // Iestata explicitais kanva augstums, lai Chart.js neizvelktu stabus bezgalībai
+  ['chartClients','chartWorkers','chartTimeline','chartTypes','chartStatus'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.height=280;
+  });
+
   // 1. Bar: nodarbības pēc klienta
   var byClient = groupBy(nb, function(r){ return r.klients || 'Nezināms'; });
   var clientLabels = Object.keys(byClient).sort(function(a, b){ return byClient[b] - byClient[a]; }).slice(0, 8);
