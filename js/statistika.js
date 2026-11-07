@@ -39,7 +39,7 @@ function renderCharts(){
 
   // Iestata explicitais kanva augstums, lai Chart.js neizvelktu stabus bezgalībai
   ['chartClients','chartWorkers','chartTimeline','chartTypes','chartStatus'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.height=280;
+    var el=document.getElementById(id); if(el) { el.height=280; el.style.height='280px'; }
   });
 
   // 1. Bar: nodarbības pēc klienta
@@ -57,8 +57,7 @@ function renderCharts(){
           data: clientData,
           backgroundColor: 'rgba(168,85,247,.7)',
           borderColor: '#a855f7',
-          borderWidth: 1,
-          borderRadius: 6
+          borderWidth: 1
         }]
       },
       options: {
@@ -68,6 +67,7 @@ function renderCharts(){
         scales: {
           y: {
             beginAtZero: true,
+            suggestedMax: 10,
             ticks: { stepSize: 1, color: '#cbd5e1', font: { size: 11 } },
             grid: { color: 'rgba(168,85,247,.15)' }
           },
@@ -147,6 +147,7 @@ function renderCharts(){
         scales: {
           y: {
             beginAtZero: true,
+            suggestedMax: 10,
             ticks: { stepSize: 1, color: '#cbd5e1', font: { size: 11 } },
             grid: { color: 'rgba(168,85,247,.15)' }
           },
