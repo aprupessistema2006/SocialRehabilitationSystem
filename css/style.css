@@ -230,7 +230,7 @@ body {
 .main-content{flex:1;margin-left:280px;min-height:100vh;display:flex;flex-direction:column;}
 .main-header{padding:18px 40px;border-bottom:1px solid rgba(168,85,247,.3);background:rgba(15,10,30,.8);backdrop-filter:blur(20px);}
 .main-header-title{font-size:20px;font-weight:800;background:linear-gradient(135deg,#f8fafc 0%,#c084fc 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.main-body{flex:1;padding:32px 40px;max-width:1400px;margin:0 auto;width:100%;animation:pageFade .5s ease both;}
+.main-body{flex:1;padding:32px 40px;max-width:1400px;margin:0 auto;width:100%;animation:pageFade .5s ease both;overflow-y:auto;}
 @keyframes pageFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .page-header{margin-bottom:32px;}
 .page-title{font-size:28px;font-weight:800;color:#f8fafc;letter-spacing:-.02em;}
