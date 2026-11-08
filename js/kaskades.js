@@ -101,7 +101,7 @@ function renderNode(node, depth){
     btnAdd.addEventListener('click', function(e){ e.stopPropagation(); e.preventDefault(); openAdd({type:l.child? lvlByKey(l.child).type : null, prop: l.prop, parentId: node.id}, 'Pievienot '+lvlByKey(l.child).label.toLowerCase()); });
     actions.appendChild(btnAdd);
   }
-  content.appendChild(toggle); content.appendChild(icon); content.appendChild(idSpan); content.appendChild(nameSpan); content.appendChild(badge); content.appendChild(actions);
+  if(toggle) content.appendChild(toggle); content.appendChild(icon); content.appendChild(idSpan); content.appendChild(nameSpan); content.appendChild(badge); content.appendChild(actions);
   wrap.appendChild(content);
   if(showChildren){
     var children=document.createElement('div'); children.className='tree-node-children';
