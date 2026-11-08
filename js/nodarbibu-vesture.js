@@ -5,6 +5,11 @@ async function initHist(){ requireUser(); try{ await Promise.all([loadKlienti(),
   ['qClient','qWorker','qDate'].forEach(function(id){ byId(id).addEventListener('input', renderHist); });
   byId('clearFilters').addEventListener('click', function(){ byId('qClient').value=''; byId('qWorker').value=''; byId('qDate').value=''; _selectedClients.clear(); renderClients(); renderHist(); });
   byId('viewClose').addEventListener('click', function(){ byId('viewModal').style.display='none'; });
+  byId('viewExportBtn').addEventListener('click', function(){
+    var r = window._currentViewRecord;
+    if(!r){ alert('Nav ieraksta eksportam.'); return; }
+    exportActivityToExcel(r);
+  });
   byId('filterClients').addEventListener('change', function(){ _selectedClients=new Set(Array.from(byId('filterClients').selectedOptions).map(function(o){ return o.value; })); renderClients(); renderHist(); });
   byId('exportSelectedBtn').addEventListener('click', function(){ var data=_selectedClients.size? _hist.filter(function(r){ return _selectedClients.has(r.klients); }):_hist; exportNodarbibasToExcel(data, 'nodarbibu_klienti_'+new Date().toISOString().slice(0,10)+'.xlsx'); });
   byId('exportExcelBtn').addEventListener('click', function(){ exportNodarbibasToExcel(_hist, 'nodarbibu_visiem_'+new Date().toISOString().slice(0,10)+'.xlsx'); });

@@ -197,7 +197,12 @@ async function saveJauna(u){
       refleksija:byId('reflection').value, motivacija:byId('motivation').value, gaita:byId('process').value, garastavoklis:byId('mood').value, vertejums:byId('evaluation').value, pildits:byId('implementation').value, komentars:byId('comment').value,
       employee_id:u.id, darbinieks:u.name};
     var res=await api('saveNodarbiba', payload);
-    if(res.ok){ setMsg('formAlert','Nodarbība saglabāta.','alert-success'); setTimeout(function(){ window.location.href='sakums.html'; }, 700); }
+    if(res.ok){
+      setMsg('formAlert','Nodarbība saglabāta. Excel veidle sagatavojas...','');
+      try{ await exportActivityToExcel(payload); }catch(e){}
+      setMsg('formAlert','Nodarbība saglabāta.','alert-success');
+      setTimeout(function(){ window.location.href='sakums.html'; }, 600);
+    }
     else setMsg('formAlert','Neizdevās saglabāt.','alert-error');
   }catch(e){ setMsg('formAlert','Servera kļūda.','alert-error'); }
   btn.disabled=false;
