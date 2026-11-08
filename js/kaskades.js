@@ -20,10 +20,6 @@ async function initKaskades(){
   var u=requireUser();
   if(u.role!=='ADMIN'){ byId('adminWarn').style.display='block'; byId('kascadeWrap').style.display='none'; return; }
   byId('reloadK').addEventListener('click', loadK);
-  byId('seedBtn').addEventListener('click', async function(){
-    byId('pageMsg').textContent='Ievietot testa datus...';
-    try{ await api('seedTestData'); await loadK(); byId('pageMsg').textContent='Testa dati ievietoti (ja tabulas bija tukšas).'; }catch(e){ byId('pageMsg').textContent='Kļūda ielādējo testa datus.'; }
-  });
   if(byId('addRootBtn')){ byId('addRootBtn').addEventListener('click', function(){ openAdd({type:'NV',prop:null,parentId:null}, 'Jauns nodarbības veids (sakne)'); }); }
   var search=byId('kascadeSearch'); if(search){ search.addEventListener('input', function(){ K.q=this.value||''; renderTree(); }); }
   var activeOnly=byId('kascadeActiveOnly'); if(activeOnly){ activeOnly.addEventListener('change', function(){ K.activeOnly=this.checked; renderTree(); }); }
