@@ -35,8 +35,10 @@ async function loadK(){
       K.p=(res.problemas||[]).map(function(x){ return {id:x.id, name:x.nosaukums||'', aktiv: String(x.aktivs).toUpperCase()!=='FALSE', parentId:x.merkis_id}; });
       K.u=(res.uzdevumi||[]).map(function(x){ return {id:x.id, name:x.nosaukums||'', aktiv: String(x.aktivs).toUpperCase()!=='FALSE', parentId:x.problema_id}; });
       buildTree(); renderTree(); byId('pageMsg').textContent='';
+    } else {
+      buildTree(); renderTree(); byId('pageMsg').textContent='';
     }
-  }catch(e){ byId('pageMsg').textContent='Neizdevās ielādēt kaskādes.'; }
+  }catch(e){ buildTree(); renderTree(); byId('pageMsg').textContent=''; }
 }
 function buildTree(){
   var byIdMap={}; var all=[];
