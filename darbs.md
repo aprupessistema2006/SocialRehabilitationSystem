@@ -38,5 +38,5 @@ Izveidot sociālās rehabilitācijas nodarbību uzskaites sistēmu. Dizains pali
 ## STATUSS
 - [x] GitHub Pages frontend faili izveidoti
 - [x] Lokālais `code.gs` paplašināts ar visām lapu darbībām (seedTestData bez testa datiem)
-- [x] Versija 2.0.0
+- [x] Versija 2.0.1
 - [ ] Apps Script deploy ar jauno `code.gs` (neizdarīts šajā vidē)
