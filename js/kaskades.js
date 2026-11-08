@@ -97,12 +97,12 @@ function renderNode(node, depth){
   var btnDel=document.createElement('button'); btnDel.className='tree-node-action'; btnDel.title='Dzēst'; btnDel.setAttribute('aria-label','Dzēst'); btnDel.textContent='×';
   btnDel.addEventListener('click', function(e){ e.stopPropagation(); e.preventDefault(); delItem(node.id, node.type); });
   actions.appendChild(btnEdit); actions.appendChild(btnDel);
-  if(l.child){
-    var btnAdd=document.createElement('button'); btnAdd.className='tree-node-action'; btnAdd.title='Pievienot '+lvlByKey(l.child).label; btnAdd.setAttribute('aria-label','Pievienot '+lvlByKey(l.child).label); btnAdd.textContent='+';
-    btnAdd.dataset.type=node.type; btnAdd.dataset.prop=l.prop; btnAdd.dataset.id=node.id;
-    btnAdd.addEventListener('click', function(e){ e.stopPropagation(); e.preventDefault(); openAdd({type:l.child? lvlByKey(l.child).type : null, prop: l.prop, parentId: node.id}, 'Pievienot '+lvlByKey(l.child).label.toLowerCase()); });
-    actions.appendChild(btnAdd);
-  }
+if(l.child){
+     var btnAdd=document.createElement('button'); btnAdd.className='tree-node-action tree-node-action-add'; btnAdd.title='Pievienot '+lvlByKey(l.child).label; btnAdd.setAttribute('aria-label','Pievienot '+lvlByKey(l.child).label); btnAdd.textContent='+';
+     btnAdd.dataset.type=node.type; btnAdd.dataset.prop=l.prop; btnAdd.dataset.id=node.id;
+     btnAdd.addEventListener('click', function(e){ e.stopPropagation(); e.preventDefault(); openAdd({type:l.child? lvlByKey(l.child).type : null, prop: l.prop, parentId: node.id}, 'Pievienot '+lvlByKey(l.child).label.toLowerCase()); });
+     actions.appendChild(btnAdd);
+    }
   if(toggle) content.appendChild(toggle); content.appendChild(icon); content.appendChild(idSpan); content.appendChild(nameSpan); content.appendChild(badge); content.appendChild(actions);
   wrap.appendChild(content);
   if(showChildren){
