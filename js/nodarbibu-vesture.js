@@ -18,6 +18,6 @@ function renderHist(){ var qc=(byId('qClient').value||'').toLowerCase(), qw=(byI
   }); if(!tb.children.length) tb.innerHTML='<tr><td colspan="6">Nav ierakstu.</td></tr>';
   tb.querySelectorAll('[data-view]').forEach(function(b){ b.addEventListener('click', function(){ var r=_hist.find(function(x){return String(x.id)===String(b.dataset.view);}); if(r) viewRec(r); }); });
 }
-function viewRec(r){ var fields=[['ID',r.id],['Datums',r.datums],['Klients',r.klients],['Darbinieks',r.darbinieks],['Nodarbība',r.nodarbiba_nosaukums],['Mērķis',r.merkis],['Problēma',r.problema],['Uzdevums',r.uzdevums],['Refleksija',r.refleksija],['Motivācija',r.motivacija],['Gaita',r.gaita],['Garastāvoklis',r.garastavoklis],['Vērtējums',r.vertejums],['Pildīts',r.pildits],['Komentārs',r.komentars]];
+function viewRec(r){ window._currentViewRecord = r; var fields=[['ID',r.id],['Datums',r.datums],['Klients',r.klients],['Darbinieks',r.darbinieks],['Nodarbība',r.nodarbiba_nosaukums],['Mērķis',r.merkis],['Problēma',r.problema],['Uzdevums',r.uzdevums],['Refleksija',r.refleksija],['Motivācija',r.motivacija],['Gaita',r.gaita],['Garastāvoklis',r.garastavoklis],['Vērtējums',r.vertejums],['Pildīts',r.pildits],['Komentārs',r.komentars]];
   byId('viewBody').innerHTML=fields.map(function(f){ return '<div style="margin-bottom:10px"><div class="small muted">'+esc(f[0])+'</div><div>'+esc(f[1]||'-')+'</div></div>'; }).join(''); byId('viewModal').style.display='flex'; }
 document.addEventListener('DOMContentLoaded', function(){ if(byId('histBody')) initHist(); });

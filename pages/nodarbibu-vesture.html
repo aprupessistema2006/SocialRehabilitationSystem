@@ -13,10 +13,10 @@
 <div class="card"><div class="card-body" style="padding:0;"><div class="table-container"><table class="table"><thead><tr><th>ID</th><th>Datums</th><th>Klients</th><th>Nodarbība</th><th>Darbinieks</th><th>Darbība</th></tr></thead><tbody id="histBody"></tbody></table></div></div></div>
 <div id="pageMsg" class="page-msg"></div>
 </div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija <span class="app-version-num"></span></footer></main></div>
-<div class="modal-backdrop" id="viewModal"><div class="modal"><div class="modal-header"><h3>Nodarbības ieraksts</h3></div><div class="modal-body" id="viewBody"></div><div class="modal-footer"><button class="btn btn-secondary" id="viewClose">Aizvērt</button></div></div></div>
+<div class="modal-backdrop" id="viewModal"><div class="modal"><div class="modal-header"><h3>Nodarbības ieraksts</h3></div><div class="modal-body" id="viewBody"></div><div class="modal-footer"><button class="btn btn-success" id="viewExportBtn">Export uz Excel formu</button><button class="btn btn-secondary" id="viewClose">Aizvērt</button></div></div></div>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="../js/config.js?v=1.0.6"></script>
 <script>
-(function(){var v=(typeof APP_VERSION!=="undefined"?APP_VERSION:(localStorage.getItem("srs_app_version")||Date.now()));var s=["../js/version.js","../js/api.js","../js/layout.js","../js/excel-export.js","../js/nodarbibu-vesture.js"];for(var i=0;i<s.length;i++)document.write('<script src="'+s[i]+'?v='+encodeURIComponent(v)+'"><\/script>');})();
+(function(){var v=(typeof APP_VERSION!=="undefined"?APP_VERSION:(localStorage.getItem("srs_app_version")||Date.now()));var s=["../js/version.js","../js/api.js","../js/layout.js","../js/excel-export.js","../js/template-fill.js","../js/nodarbibu-vesture.js"];for(var i=0;i<s.length;i++)document.write('<script src="'+s[i]+'?v='+encodeURIComponent(v)+'"><\/script>');})();
 </script></body></html>
 
