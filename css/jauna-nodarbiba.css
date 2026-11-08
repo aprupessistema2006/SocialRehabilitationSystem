@@ -42,7 +42,7 @@
 @keyframes spFade{from{opacity:0;transform:translateY(-2px)}to{opacity:1;transform:none}}
 
 body.sp-modal-open{overflow:hidden;}
-.sp-modal{position:fixed;inset:0;z-index:500;display:flex;align-items:center;justify-content:center;padding:18px;}
+.sp-modal{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:18px;}
 .sp-modal[hidden]{display:none;}
 .sp-modal-backdrop{position:absolute;inset:0;background:rgba(8,5,20,.72);backdrop-filter:blur(8px);animation:spFade .14s ease;}
 .sp-modal-dialog{position:relative;width:min(980px,100%);max-height:min(88vh,920px);display:flex;flex-direction:column;border-radius:22px;border:1px solid rgba(168,85,247,.38);background:linear-gradient(180deg,rgba(27,20,52,.99),rgba(14,10,28,.995));box-shadow:0 30px 90px rgba(0,0,0,.62),0 0 0 1px rgba(168,85,247,.08);overflow:hidden;animation:spPop .18s ease;}
@@ -99,8 +99,8 @@ body.sp-modal-open{overflow:hidden;}
   .cascade-stepper{gap:6px;}
   .step-line{display:none;}
   .step-chip{padding:7px 10px;font-size:11px;}
-  .sp-modal{padding:0;align-items:flex-end;}
-  .sp-modal-dialog{width:100%;max-height:92vh;border-radius:22px 22px 0 0;}
+  .sp-modal{padding:18px;align-items:center;justify-content:center;}
+  .sp-modal-dialog{width:100%;max-height:min(92vh,920px);border-radius:22px;}
   .sp-modal-title{font-size:18px;}
   .sp-modal-tip{display:none;}
 }
