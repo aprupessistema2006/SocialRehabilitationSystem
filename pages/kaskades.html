@@ -55,23 +55,55 @@
         <div class="main-body">
             <div class="page-header">
                 <h2 class="page-title">Kaskāžu pārvaldība</h2>
-                <p class="page-subtitle page-note">Interaktīvs koka skats - Nodarbību veidi, mērķi, problēmas un uzdevumi (ADMIN)</p>
-                <a href="sakums.html" class="btn btn-secondary" style="margin-left:auto;">← Atpakaļ uz sākumu</a>
+                <p class="page-subtitle page-note">Vizuāla struktūra: Nodarbības veids → Mērķis → Problēma → Uzdevums. Izvēlieties elementu, lai redzētu tā apakšlīmeņus un pievienotu jaunus. (ADMIN)</p>
+                <a href="sakums.html" class="btn btn-secondary" style="margin-left:auto;">← Atpakaļ</a>
             </div>
             <div id="adminWarn" class="alert alert-error" style="display:none;">Šī sadaļa pieejama tikai ADMIN lomai.</div>
             <div id="kascadeWrap">
-                <div class="toolbar">
-                    <button class="btn btn-secondary" id="reloadK">Pārlādēt</button>
-                    <button class="btn btn-secondary" id="addRootBtn">Jaunā sakne</button>
-                    <div class="search-box">
-                        <input id="kascadeSearch" class="form-input" placeholder="Meklēt visā kaskādē...">
+                <div class="k-topbar">
+                    <button class="btn btn-secondary" id="reloadK" type="button">Pārlādēt</button>
+                    <button class="btn btn-primary" id="addRootBtn" type="button">+ Jauns nodarbības veids</button>
+                    <div class="k-search-wrap">
+                        <input id="kascadeSearch" class="form-input" placeholder="Meklēt visā kaskādē (nosaukums vai ID)…" autocomplete="off">
+                        <div id="searchResults" class="k-search-results" hidden></div>
                     </div>
-                    <div class="filter-group"><input type="checkbox" id="kascadeActiveOnly"><label for="kascadeActiveOnly">Tikai aktīvie</label></div>
+                    <label class="k-check"><input type="checkbox" id="kascadeActiveOnly"><span>Tikai aktīvie</span></label>
                 </div>
-                <div id="cascadeHint" class="kascade-hint"></div>
-                <div class="tree-container" id="treeContainer">
-                    <div class="tree" id="cascadeTree"></div>
+                <div id="kPath" class="k-path" aria-label="Izvēlētais ceļš"></div>
+                <div class="k-board" id="kBoard" role="navigation" aria-label="Kaskādes līmeņi">
+                    <section class="k-col" data-col="nv" aria-label="Nodarbību veidi">
+                        <header class="k-col-head k-level-nv">
+                            <div class="k-col-title"><span class="k-level-dot"></span><span>1. Nodarbības veidi</span></div>
+                            <div class="k-col-meta"><span id="count-nv" class="k-count">0</span><button type="button" class="k-add-btn" data-add="nv" title="Pievienot nodarbības veidu">+</button></div>
+                        </header>
+                        <div class="k-col-body" id="col-nv"></div>
+                    </section>
+                    <div class="k-arrow" aria-hidden="true">→</div>
+                    <section class="k-col" data-col="m" aria-label="Mērķi">
+                        <header class="k-col-head k-level-m">
+                            <div class="k-col-title"><span class="k-level-dot"></span><span>2. Mērķi</span></div>
+                            <div class="k-col-meta"><span id="count-m" class="k-count">0</span><button type="button" class="k-add-btn" data-add="m" title="Pievienot mērķi">+</button></div>
+                        </header>
+                        <div class="k-col-body" id="col-m"><div class="k-placeholder">← Izvēlieties nodarbības veidu</div></div>
+                    </section>
+                    <div class="k-arrow" aria-hidden="true">→</div>
+                    <section class="k-col" data-col="p" aria-label="Problēmas">
+                        <header class="k-col-head k-level-p">
+                            <div class="k-col-title"><span class="k-level-dot"></span><span>3. Problēmas</span></div>
+                            <div class="k-col-meta"><span id="count-p" class="k-count">0</span><button type="button" class="k-add-btn" data-add="p" title="Pievienot problēmu">+</button></div>
+                        </header>
+                        <div class="k-col-body" id="col-p"><div class="k-placeholder">← Izvēlieties mērķi</div></div>
+                    </section>
+                    <div class="k-arrow" aria-hidden="true">→</div>
+                    <section class="k-col" data-col="u" aria-label="Uzdevumi">
+                        <header class="k-col-head k-level-u">
+                            <div class="k-col-title"><span class="k-level-dot"></span><span>4. Uzdevumi</span></div>
+                            <div class="k-col-meta"><span id="count-u" class="k-count">0</span><button type="button" class="k-add-btn" data-add="u" title="Pievienot uzdevumu">+</button></div>
+                        </header>
+                        <div class="k-col-body" id="col-u"><div class="k-placeholder">← Izvēlieties problēmu</div></div>
+                    </section>
                 </div>
+                <div id="kDetail" class="k-detail" hidden></div>
                 <div id="pageMsg" class="page-msg"></div>
             </div>
         </div>
@@ -86,24 +118,25 @@
         <div class="modal-body">
             <div class="form-group">
                 <label class="form-label">Nosaukums</label>
-                <input id="editName" class="form-input">
+                <textarea id="editName" class="form-input k-textarea" rows="4"></textarea>
             </div>
             <div class="form-group" id="editParentGroup" style="display:none;">
-                <label class="form-label">Vecāk elements</label>
+                <label class="form-label">Pieder pie (vecāks)</label>
                 <select id="editParent" class="form-select"></select>
+                <div class="small muted" style="margin-top:6px;">Mainot vecāku, elements un viss tā apakškoks pārvietojas uz citu vietu kaskādē.</div>
             </div>
             <div class="form-group">
-                <label class="form-label">Aktīvs</label>
+                <label class="form-label">Statuss</label>
                 <select id="editActive" class="form-select">
-                    <option value="true">Jā</option>
-                    <option value="false">Nē</option>
+                    <option value="true">Aktīvs</option>
+                    <option value="false">Neaktīvs</option>
                 </select>
             </div>
             <div id="editModalMsg" class="alert" style="display:none;"></div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" id="editCancel">Atcelt</button>
-            <button class="btn btn-primary" id="editSave">Saglabāt</button>
+            <button class="btn btn-secondary" id="editCancel" type="button">Atcelt</button>
+            <button class="btn btn-primary" id="editSave" type="button">Saglabāt</button>
         </div>
     </div>
 </div>
@@ -113,19 +146,20 @@
             <h3 id="addModalTitle">Pievienot</h3>
         </div>
         <div class="modal-body">
+            <div id="addContext" class="k-add-context" style="display:none;"></div>
             <div class="form-group">
                 <label class="form-label">Nosaukums</label>
-                <input id="addName" class="form-input" placeholder="Ievadiet nosaukumu">
+                <textarea id="addName" class="form-input k-textarea" rows="4" placeholder="Ievadiet nosaukumu…"></textarea>
             </div>
             <div class="form-group" id="addParentGroup">
-                <label class="form-label">Vecāk elements</label>
+                <label class="form-label">Pieder pie (vecāks)</label>
                 <select id="addParent" class="form-select"></select>
             </div>
             <div id="addModalMsg" class="alert" style="display:none;"></div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary" id="addCancel">Atcelt</button>
-            <button class="btn btn-primary" id="addSave">Pievienot</button>
+            <button class="btn btn-secondary" id="addCancel" type="button">Atcelt</button>
+            <button class="btn btn-primary" id="addSave" type="button">Pievienot</button>
         </div>
     </div>
 </div>
