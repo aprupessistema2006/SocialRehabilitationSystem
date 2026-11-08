@@ -1,5 +1,5 @@
 ﻿var _hist=[];
-async function initHist(){ requireUser(); try{ var res=await api('getNodarbibas'); _hist=res.ok?(res.nodarbibas||[]):[]; renderHist(); }catch(e){ byId('pageMsg').textContent='Neizdevās ielādēt vēsturi.'; }
+async function initHist(){ requireUser(); try{ var res=await api('getNodarbibas'); _hist=res.ok?(res.nodarbibas||[]):[]; window._hist=_hist; renderHist(); }catch(e){ byId('pageMsg').textContent='Neizdevās ielādēt vēsturi.'; }
   ['qClient','qWorker','qDate'].forEach(function(id){ byId(id).addEventListener('input', renderHist); });
   byId('clearFilters').addEventListener('click', function(){ byId('qClient').value=''; byId('qWorker').value=''; byId('qDate').value=''; renderHist(); });
   byId('viewClose').addEventListener('click', function(){ byId('viewModal').style.display='none'; });
