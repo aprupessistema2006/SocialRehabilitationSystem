@@ -21,10 +21,13 @@ Izveidot sociālās rehabilitācijas nodarbību uzskaites sistēmu. Dizains pali
 - [x] Testi: `tests/structure-test.js` (38/38 PASS), `tests/e2e-api-test.js`, `pages/test.html`/`js/test.js`
 
 ## TESTA DATI (seedTestData)
-- 2 klienti: Anna Bērziņa (K001), Jānis Ozols (K002)
-- 2 darbinieki: D001 Administrators / PIN 1234 / ADMIN; D002 Sociālais darbinieks / PIN 5678 / USER
-- Kaskāde: NV001 Individuālā nodarbība, NV002 Grupu nodarbība; M001/M002; P001/P002; U001/U002
-- 1 parauga nodarbība (N001), ja Nodarbibas tukša
+- Versija 2.0: testa dati netiek ievietoti automātiski.
+- Lietotājs veido datus patstāvīgi caur Kaskādēm (ADMIN):
+  1. Nodarbības veidi (sakne slānis)
+  2. Mērķi (saistīti ar nodarbības veidu)
+  3. Problēmas (saistīti ar mērķi)
+  4. Uzdevumi (saistīti ar problēmu)
+- Pēc kasādžu izveides šie elementi ir pieejami jaunas nodarbības formai.
 
 ## PĒC DEPLOY (obligāti)
 1. Iekopēt lokālo `code.gs` Apps Script projektā (aizstāt saturu).
@@ -34,5 +37,6 @@ Izveidot sociālās rehabilitācijas nodarbību uzskaites sistēmu. Dizains pali
 
 ## STATUSS
 - [x] GitHub Pages frontend faili izveidoti
-- [x] Lokālais `code.gs` paplašināts ar visām lapu darbībām + seedTestData
+- [x] Lokālais `code.gs` paplašināts ar visām lapu darbībām (seedTestData bez testa datiem)
+- [x] Versija 2.0.0
 - [ ] Apps Script deploy ar jauno `code.gs` (neizdarīts šajā vidē)

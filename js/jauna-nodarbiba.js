@@ -99,15 +99,17 @@ function onSelect(k, item, isAuto){
       SP[nk].items=childrenOf(nk, item.id);
       renderAllPickers(); updateSummary(); updateStepper();
       if(k==='nv'){ try{ localStorage.setItem('srs_last_nv', item.id); }catch(e){} }
-      if(spAuto && SP[nk].items.length===1){
-        if(spState.autoTimer) clearTimeout(spState.autoTimer);
-        spState.autoTimer=setTimeout(function(){ onSelect(nk, SP[nk].items[0], true); }, 180);
-      } else if(!spAuto && SP[nk].items.length>1){
-        setTimeout(function(){ openPicker(nk); }, 80);
-      } else if(!spAuto && SP[nk].items.length===1){
-        setTimeout(function(){ openPicker(nk); }, 80);
-      } else {
+      if(SP[nk].items.length===0){
         setNote(nk, 'Šim izvēlētajam solim nav pieejamu nākamo opciju.');
+      } else if(SP[nk].items.length===1){
+        if(spAuto){
+          if(spState.autoTimer) clearTimeout(spState.autoTimer);
+          spState.autoTimer=setTimeout(function(){ onSelect(nk, SP[nk].items[0], true); }, 180);
+        } else {
+          setTimeout(function(){ openPicker(nk); }, 80);
+        }
+      } else {
+        setTimeout(function(){ openPicker(nk); }, 80);
       }
     } else {
     renderAllPickers(); updateSummary(); updateStepper();
