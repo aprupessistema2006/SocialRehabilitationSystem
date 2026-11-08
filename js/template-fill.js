@@ -1,6 +1,6 @@
 /* Nodarbības veidņa templates aizpildītājs - Excel (.xlsx)
-   Ielādē nodarb_veid.xlsx veidni, saglabā visus stili/dizainu,
-   ieliek datus tikai noteiktām šķēlēm un lejupielādē. */
+   Ielādē oriģinālo nodarb_veid.xlsx veidni, saglabā visu formatējumu,
+   ieliek datus tikai noteiktām 13 šķēlēm un lejupielādē. */
 var TEMPLATE_CELLS = {
   'B3':  'klients',          // Klients
   'C24': 'darbinieks',       // Darbinieks
@@ -22,7 +22,7 @@ async function exportActivityToTemplate(activity){
     var resp = await fetch('../nodarb_veid.xlsx');
     if(!resp.ok) throw new Error('Nevarēja atvērt nodarb_veid.xlsx: ' + resp.status);
     var ab = await resp.arrayBuffer();
-    // cellStyles: true - saglabā visus formātumus, dizainu, šūnu lielumus, krāsas
+    // cellStyles: true - saglabā visus veidnes stilus, fontus, krāsas, sapludinātās šūnas, izmērus
     var wb = XLSX.read(ab, {type:'array', cellStyles: true});
     var ws = wb.Sheets[wb.SheetNames[0]];
     Object.keys(TEMPLATE_CELLS).forEach(function(cell){
@@ -31,13 +31,12 @@ async function exportActivityToTemplate(activity){
       if(!ws[cell]){
         ws[cell] = {t:'s', v:String(val), s:{}};
       } else {
-        // Saglabā esošo stilu (s), maina tikai vērtību (v)
+        // Saglabā esošo stilu (s), maina tikai vērtību (v) un tipu (t)
         var oldStyle = ws[cell].s || {};
         ws[cell] = {t: typeof val==='number'?'n':'s', v: val, s: oldStyle};
       }
     });
     var fname = 'Nodarbiba_forma_' + (activity.id||'') + '_' + new Date().toISOString().slice(0,10) + '.xlsx';
-    // cellStyles: true rakstā - saglabā stili izvadītajā failā
     XLSX.writeFile(wb, fname, {cellStyles: true, bookType:'xlsx'});
   }catch(e){
     console.error('Template fill error:', e);
