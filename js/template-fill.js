@@ -18,7 +18,7 @@ var TEMPLATE_CELLS = {
 
 async function exportActivityToTemplate(activity){
   try{
-    var resp = await fetch('nodarb_veid.xlsx');
+    var resp = await fetch('../nodarb_veid.xlsx');
     if(!resp.ok) throw new Error('Nevarēja atvērt nodarb_veid.xlsx: ' + resp.status);
     var ab = await resp.arrayBuffer();
     var wb = XLSX.read(ab, {type:'array'});
