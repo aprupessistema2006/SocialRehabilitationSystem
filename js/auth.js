@@ -59,6 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function gotoEmployeeStep() {
         await loadEmployees();
+        if ((_employees || []).length === 0) {
+            if (window.location.pathname.indexOf('pirmais-darbinieks') === -1) {
+                window.location.href = 'pages/pirmais-darbinieks.html';
+            }
+            return;
+        }
         renderEmployeeSelect();
         if (accessGate) accessGate.style.display = 'none';
         if (employeeError) employeeError.style.display = 'none';

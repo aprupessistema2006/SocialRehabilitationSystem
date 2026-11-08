@@ -198,8 +198,8 @@ async function saveJauna(u){
       employee_id:u.id, darbinieks:u.name};
     var res=await api('saveNodarbiba', payload);
     if(res.ok){
-      setMsg('formAlert','Nodarbība saglabāta. Excel veidle sagatavojas...','');
-      try{ await exportActivityToExcel(payload); }catch(e){}
+      setMsg('formAlert','Nodarbība saglabāta. Veidne tiek aizpildīta...','');
+      try{ await api('fillVeidne', payload); }catch(e){ /* veidne nav konfigurēta – nav kritisks */ }
       setMsg('formAlert','Nodarbība saglabāta.','alert-success');
       setTimeout(function(){ window.location.href='sakums.html'; }, 600);
     }

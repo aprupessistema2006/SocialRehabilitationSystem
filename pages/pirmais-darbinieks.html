@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="lv"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pirmais darbinieks - Sociālās rehabilitācijas sistēma</title>
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body class="login-page">
+<div class="login-container">
+<div class="login-box">
+<div class="login-header">
+<div class="login-logo"><svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="32" height="32" rx="8" fill="url(#grad1)"/><defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a855f7;stop-opacity:1" /><stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" /></linearGradient></defs><path d="M16 8L8 12V24H12V18H20V24H24V12L16 8Z" fill="white"/></svg></div>
+<h1 class="login-title">Pirmais darbinieks</h1>
+<p class="login-subtitle">Sistēmā vēl nav darbinieku. Izveido pirmo (administratora) kontu.</p>
+</div>
+
+<div class="form-group"><label class="form-label">Vārds</label><input type="text" id="firstVards" class="form-input" placeholder="Piemēram: Jānis"></div>
+<div class="form-group"><label class="form-label">Uzvārds</label><input type="text" id="firstUzvards" class="form-input" placeholder="Piemēram: Ozols"></div>
+<div class="form-group"><label class="form-label">PIN kods</label><input type="password" id="firstPin" class="form-input" maxlength="20" placeholder="Piemēram: 1234" inputmode="numeric"></div>
+<div class="form-group"><label class="form-label">PIN kods atkārtoti</label><input type="password" id="firstPin2" class="form-input" maxlength="20" placeholder="Atkārtot PIN" inputmode="numeric"></div>
+<div id="firstError" class="error-message" style="display:none; margin-top:16px;"></div>
+<button type="button" class="btn btn-primary btn-full" id="firstCreateBtn">Izveidot darbinieku un turpināt</button>
+<p class="small muted" style="margin-top:12px;">Loma tiks iestatīta automātiski: <b>ADMINISTRATORS</b>.</p>
+</div>
+</div>
+<script src="../js/config.js?v=1.0.6"></script>
+<script>
+(function(){
+  const WEBAPP = WEBAPP_URL;
+  const PW = ACCESS_PASSWORD;
+  const vardsEl=document.getElementById('firstVards');
+  const uzvardsEl=document.getElementById('firstUzvards');
+  const pinEl=document.getElementById('firstPin');
+  const pin2El=document.getElementById('firstPin2');
+  const btn=document.getElementById('firstCreateBtn');
+  const err=document.getElementById('firstError');
+
+  function showErr(msg){ err.textContent=msg; err.style.display='block'; }
+  function hideErr(){ err.style.display='none'; }
+
+  btn.addEventListener('click', async function(){
+    hideErr();
+    const vards=String(vardsEl.value||'').trim();
+    const uzvards=String(uzvardsEl.value||'').trim();
+    const pin=String(pinEl.value||'').trim();
+    const pin2=String(pin2El.value||'').trim();
+    if(!vards || !uzvards){ showErr('Ievadiet vārdu un uzvārdu.'); return; }
+    if(!pin){ showErr('Ievadiet PIN kodu.'); return; }
+    if(pin!==pin2){ showErr('PIN kodi nesakrīt.'); return; }
+
+    btn.disabled=true; btn.textContent='Izveido...';
+    try{
+      const body=new URLSearchParams();
+      body.append('data', JSON.stringify({
+        action:'createFirstEmployee',
+        access_password:PW,
+        vards:vards,
+        uzvards:uzvards,
+        pin:pin
+      }));
+      const response=await fetch(WEBAPP,{method:'POST',body:body});
+      const result=await response.json();
+      if(result.ok){
+        try{ localStorage.setItem(ACCESS_REMEMBER_KEY, String(Date.now())); }catch(e){}
+        window.location.href='../index.html';
+      } else {
+        showErr(result.reason || 'Neizdevās izveidot darbinieku.');
+        btn.disabled=false; btn.textContent='Izveidot darbinieku un turpināt';
+      }
+    }catch(errx){
+      showErr('Servera kļūda.');
+      btn.disabled=false; btn.textContent='Izveidot darbinieku un turpināt';
+    }
+  });
+})();
+</script>
+</body></html>
