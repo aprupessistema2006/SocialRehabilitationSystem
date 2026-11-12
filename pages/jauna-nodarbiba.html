@@ -11,9 +11,9 @@
 <div class="page-header"><h2 class="page-title">Jauna nodarbība</h2><p class="page-subtitle">Reģistrēt jaunu sociālās rehabilitācijas nodarbību</p></div>
 <form id="activityForm">
 <div class="form-section"><div class="form-section-header"><h3 class="form-section-title">Nodarbības pamatinformācija</h3></div><div class="form-section-body">
-<div class="form-group"><label class="form-label">Klients *</label><select id="client" class="form-select" required><option value="">Izvēlieties...</option></select></div>
-<div class="form-group"><label class="form-label">Datums *</label><input type="date" id="activityDate" class="form-input" required></div>
-<div class="form-group"><label class="form-label">Darbinieks</label><input type="text" id="employee" class="form-input" readonly></div>
+<div class="form-group"><label class="form-label" for="client">Klients *</label><select id="client" class="form-select" required><option value="">Izvēlieties...</option></select></div>
+<div class="form-group"><label class="form-label" for="activityDate">Datums *</label><input type="date" id="activityDate" class="form-input" required></div>
+<div class="form-group"><label class="form-label" for="employee">Darbinieks</label><input type="text" id="employee" class="form-input" readonly></div>
 </div></div>
 <div class="form-section cascade-section"><div class="form-section-header"><h3 class="form-section-title">Nodarbības kaskādes izvēles</h3><p class="cascade-hint">Izvēlieties soli pa solim. Meklējiet tekstā, lai ātri atrastu vajadzīgo.</p></div><div class="form-section-body cascade-body">
 <div class="cascade-stepper" id="cascadeStepper" aria-label="Kaskādes soļi">
@@ -88,18 +88,18 @@
 </div></div>
 <div class="form-section"><div class="form-section-header"><h3 class="form-section-title">Nodarbības apraksts</h3></div><div class="form-section-body">
 <div class="preset-group">
-  <label class="form-label">Saglabātas atbildes / predloġi</label>
+  <label class="form-label" for="activityPreset">Saglabātas atbildes / predloġi</label>
   <select id="activityPreset" class="form-select"><option value="">Izvēlieties saglabāto...</option></select>
   <input type="text" id="newPresetName" class="form-input" placeholder="Jauns nosaukums...">
   <div class="preset-actions"><button type="button" class="btn btn-secondary" id="savePresetBtn">Saglabā kā jaunu</button><button type="button" class="btn btn-secondary" id="clearPresetBtn">Notīrīt laukus</button></div>
 </div>
-<div class="form-group form-group-full"><label class="form-label">Refleksija *</label><textarea id="reflection" class="form-textarea" rows="3" required></textarea></div>
-<div class="form-group form-group-full"><label class="form-label">Klienta sadarbība un motivācija *</label><textarea id="motivation" class="form-textarea" rows="2" required></textarea></div>
-<div class="form-group form-group-full"><label class="form-label">Nodarbības gaita *</label><textarea id="process" class="form-textarea" rows="4" required></textarea></div>
-<div class="form-group"><label class="form-label">Klienta garastāvoklis</label><input type="text" id="mood" class="form-input"></div>
-<div class="form-group"><label class="form-label">Nodarbības vērtējums</label><input type="text" id="evaluation" class="form-input"></div>
-<div class="form-group"><label class="form-label">Pēc apmācību programmas tika pildīts</label><input type="text" id="implementation" class="form-input"></div>
-<div class="form-group form-group-full"><label class="form-label">Komentārs/piezīme</label><textarea id="comment" class="form-textarea" rows="2"></textarea></div>
+<div class="form-group form-group-full"><label class="form-label" for="reflection">Refleksija *</label><textarea id="reflection" class="form-textarea" rows="3" required></textarea></div>
+<div class="form-group form-group-full"><label class="form-label" for="motivation">Klienta sadarbība un motivācija *</label><textarea id="motivation" class="form-textarea" rows="2" required></textarea></div>
+<div class="form-group form-group-full"><label class="form-label" for="process">Nodarbības gaita *</label><textarea id="process" class="form-textarea" rows="4" required></textarea></div>
+<div class="form-group"><label class="form-label" for="mood">Klienta garastāvoklis</label><input type="text" id="mood" class="form-input"></div>
+<div class="form-group"><label class="form-label" for="evaluation">Nodarbības vērtējums</label><input type="text" id="evaluation" class="form-input"></div>
+<div class="form-group"><label class="form-label" for="implementation">Pēc apmācību programmas tika pildīts</label><input type="text" id="implementation" class="form-input"></div>
+<div class="form-group form-group-full"><label class="form-label" for="comment">Komentārs/piezīme</label><textarea id="comment" class="form-textarea" rows="2"></textarea></div>
 </div></div>
 <div id="formAlert" class="alert" style="display:none;"></div>
 <div class="form-actions"><button type="submit" class="btn btn-primary">Saglabāt</button><button type="button" class="btn btn-secondary" id="clearForm">Notīrīt formu</button><a href="sakums.html" class="btn btn-secondary">Atcelt</a></div>
