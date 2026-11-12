@@ -339,6 +339,10 @@ select option:checked,select option:hover,select option:active{background:var(--
 .qa-title{font-size:14px;font-weight:800;color:#f8fafc;}
 .qa-sub{font-size:12px;color:#94a3b8;margin-top:3px;}
 
+/* Modal logs - pārvilkšanas rokne (galvenes josla) */
+.sp-modal-head, .modal-header{cursor:grab;}
+.sp-modal-head:active, .modal-header:active{cursor:grabbing;}
+
 /* Mobilā navigācijas izvēlne un pielāgotais pelnās */
 .mobile-menu-toggle{
   display:none;

@@ -87,3 +87,37 @@ function initLayout(){var user=JSON.parse(localStorage.getItem('currentUser')||'
   overlay.addEventListener('click',close);
   document.addEventListener('keydown',function(e){ if(e.key==='Escape' && body.classList.contains('sidebar-open')){ e.preventDefault(); close(); } });
 })();
+
+/* Modal logs - pārvilkšana ar kursoru (tikai izkārtojuma lietojamība, nav funkcionālās izmaiņas) */
+(function(){
+  document.addEventListener('mousedown', function(e){
+    if(e.button !== 0) return;
+    if(e.target.closest('.sp-modal-close, .modal-close')) return;
+    var handle = e.target.closest('.sp-modal-head, .modal-header');
+    if(!handle) return;
+    var modal = handle.closest('.sp-modal, .modal-backdrop');
+    if(!modal) return;
+    var dialog = modal.querySelector('.sp-modal-dialog, .modal');
+    if(!dialog) return;
+    e.preventDefault();
+    var rect = dialog.getBoundingClientRect();
+    dialog.style.position = 'fixed';
+    dialog.style.left = rect.left + 'px';
+    dialog.style.top = rect.top + 'px';
+    dialog.style.width = rect.width + 'px';
+    dialog.style.margin = '0';
+    dialog.style.transform = 'none';
+    var startX = e.clientX, startY = e.clientY;
+    var startLeft = rect.left, startTop = rect.top;
+    function onMove(ev){
+      dialog.style.left = (startLeft + ev.clientX - startX) + 'px';
+      dialog.style.top = (startTop + ev.clientY - startY) + 'px';
+    }
+    function onUp(){
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  }, {capture:true});
+})();
