@@ -74,3 +74,16 @@ function initLayout(){var user=JSON.parse(localStorage.getItem('currentUser')||'
   });
   document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeAll(); } });
 })();
+
+/* Mobilā navigācijas izvēlne - rubena atvēršana/zūšana pārīkiem */
+(function(){
+  var btn=document.getElementById('mobileMenuBtn');
+  var overlay=document.getElementById('mobileOverlay');
+  var body=document.body;
+  if(!btn || !overlay) return;
+  function open(){ body.classList.add('sidebar-open'); btn.setAttribute('aria-expanded','true'); overlay.setAttribute('aria-hidden','false'); }
+  function close(){ body.classList.remove('sidebar-open'); btn.setAttribute('aria-expanded','false'); overlay.setAttribute('aria-hidden','true'); }
+  btn.addEventListener('click',function(){ body.classList.contains('sidebar-open')?close():open(); });
+  overlay.addEventListener('click',close);
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && body.classList.contains('sidebar-open')){ e.preventDefault(); close(); } });
+})();

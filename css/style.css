@@ -338,3 +338,58 @@ select option:checked,select option:hover,select option:active{background:var(--
 .qa-info{display:flex;flex-direction:column;min-width:0;}
 .qa-title{font-size:14px;font-weight:800;color:#f8fafc;}
 .qa-sub{font-size:12px;color:#94a3b8;margin-top:3px;}
+
+/* Mobilā navigācijas izvēlne un pielāgotais pelnās */
+.mobile-menu-toggle{
+  display:none;
+  align-items:center;
+  justify-content:center;
+  width:44px;
+  height:44px;
+  border-radius:10px;
+  border:1px solid rgba(168,85,247,.35);
+  background:rgba(168,85,247,.12);
+  color:#f8fafc;
+  cursor:pointer;
+  font-size:20px;
+  line-height:1;
+  flex:0 0 auto;
+}
+.mobile-menu-toggle:hover{background:rgba(168,85,247,.22);border-color:rgba(168,85,247,.55);}
+.mobile-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(3,2,8,.45);
+  z-index:104;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .25s ease;
+  backdrop-filter:blur(4px);
+}
+.sidebar-open .mobile-overlay{opacity:1;pointer-events:auto;}
+@media(max-width:968px){
+  .mobile-menu-toggle{display:flex;}
+  .sidebar{transform:translateX(-100%);}
+  .sidebar-open .sidebar{transform:translateX(0);z-index:106;}
+  .main-content{margin-left:0;}
+  .main-header{padding:12px 16px;}
+  .main-body{padding:20px 16px;}
+  .page-header{margin-bottom:24px;}
+  .page-title{font-size:22px;}
+  .form-section-body{grid-template-columns:1fr;}
+  .preset-group{flex-direction:column;align-items:flex-start;gap:8px;}
+  .preset-group .form-select,.preset-group .form-input{min-width:100%;max-width:100%;}
+  .preset-actions{width:100%;justify-content:stretch;}
+  .preset-actions .btn{width:100%;}
+  .form-actions{flex-direction:column;}
+  .form-actions .btn{width:100%;}
+  .sp-modal{padding:12px;}
+  .sp-modal-dialog{border-radius:16px;width:100%;max-height:min(95vh,920px);}
+}
+@media(max-width:480px){
+  .main-body{padding:16px 12px;}
+  .main-header{padding:10px 12px;}
+  .step-chip{padding:7px 10px;font-size:11px;}
+  .step-line{display:none;}
+  .cascade-stepper{gap:6px;}
+}
