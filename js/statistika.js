@@ -319,7 +319,9 @@ function openModal(chartInstance, title){
   var canvas = document.createElement('canvas');
   canvas.id = 'modalCanvas';
   canvas.style.width = '100%';
-  canvas.style.height = '100%';
+  canvas.style.height = 'auto';
+  canvas.width = 900;
+  canvas.height = 600;
   fsBody.appendChild(canvas);
   var ctx = canvas.getContext('2d');
   var clone = new Chart(ctx, {
@@ -343,6 +345,7 @@ function openModal(chartInstance, title){
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   ST.modalChart = clone;
+  setTimeout(function(){ if (ST.modalChart) ST.modalChart.resize(); }, 50);
   byId('fsClose').onclick = closeModal;
   modal.onclick = function(e){ if(e.target === modal) closeModal(); };
   document.onkeydown = function(e){ if(e.key === 'Escape') closeModal(); };

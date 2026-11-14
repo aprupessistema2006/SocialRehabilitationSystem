@@ -102,7 +102,7 @@ html,body{background:radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 55%), r
 
 /* Chart body - fills container, not compressed, not overflow */
 .chart-body{padding:26px 28px;flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:visible;}
-.chart-body canvas{width:100% !important;height:100% !important;max-width:640px;max-height:420px;display:block;margin:0 auto;}
+.chart-body canvas{width:100% !important;height:auto !important;max-width:640px;max-height:420px;display:block;margin:0 auto;}
 .css-empty{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding:50px;backdrop-filter:blur(8px);}
 
 /* Insights */
