@@ -310,21 +310,14 @@ function createChart(canvasId, type, title, labels, values, isRound){
 }
 
 function openModal(chartInstance, title){
-  var modal = byId('chartModal');
-  if (!modal){
-    modal = document.createElement('div');
-    modal.id = 'chartModal';
-    modal.className = 'chart-fullscreen';
-    modal.innerHTML = '<div class="fs-wrapper"><div class="fs-header"><h3 class="fs-title" id="fsTitle">Diagramma</h3><button type="button" class="fs-close" id="fsClose"><i class="fas fa-times"></i></button></div><div class="fs-body" id="fsBody"><canvas id="modalCanvas"></canvas></div></div>';
-    document.body.appendChild(modal);
-    byId('fsClose').addEventListener('click', closeModal);
-    modal.addEventListener('click', function(e){ if(e.target === modal) closeModal(); });
-    document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
-  }
-  byId('fsTitle').textContent = title;
+  var modal = byId('fsModal');
+  if (!modal) return;
+  var fsBody = byId('fsBody');
+  var fsTitle = byId('fsTitle');
   var canvas = byId('modalCanvas');
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
+  fsTitle.textContent = title;
+  fsBody.innerHTML = '';
+  fsBody.appendChild(canvas);
   var ctx = canvas.getContext('2d');
   var clone = new Chart(ctx, {
     type: chartInstance.config.type,
@@ -347,10 +340,13 @@ function openModal(chartInstance, title){
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
   ST.modalChart = clone;
+  byId('fsClose').onclick = closeModal;
+  modal.onclick = function(e){ if(e.target === modal) closeModal(); };
+  document.onkeydown = function(e){ if(e.key === 'Escape') closeModal(); };
 }
 
 function closeModal(){
-  var modal = byId('chartModal');
+  var modal = byId('fsModal');
   if (modal) modal.style.display = 'none';
   document.body.style.overflow = '';
   if (ST.modalChart){ try{ ST.modalChart.destroy(); }catch(e){} ST.modalChart = null; }
