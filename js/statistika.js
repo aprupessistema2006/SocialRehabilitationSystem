@@ -316,36 +316,38 @@ function openModal(chartInstance, title){
   var fsTitle = byId('fsTitle');
   fsTitle.textContent = title;
   fsBody.innerHTML = '';
-  var canvas = document.createElement('canvas');
-  canvas.id = 'modalCanvas';
-  canvas.style.width = '100%';
-  canvas.style.height = 'auto';
-  canvas.width = 900;
-  canvas.height = 600;
-  fsBody.appendChild(canvas);
-  var ctx = canvas.getContext('2d');
-  var clone = new Chart(ctx, {
-    type: chartInstance.config.type,
-    data: JSON.parse(JSON.stringify(chartInstance.config.data)),
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      indexAxis: chartInstance.config.options.indexAxis,
-      layout: { padding: 30 },
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: title, font: { size: 22, weight: 'bold' }, color: '#f8fafc', padding: 24 },
-        datalabels: chartInstance.config.options.plugins.datalabels,
-        tooltip: chartInstance.config.options.plugins.tooltip
-      },
-      scales: chartInstance.config.options.scales,
-      animation: { duration: 1200, easing: 'easeOutQuart' }
-    }
-  });
   modal.style.display = 'flex';
   document.body.style.overflow = 'hidden';
-  ST.modalChart = clone;
-  setTimeout(function(){ if (ST.modalChart) ST.modalChart.resize(); }, 50);
+  setTimeout(function(){
+    var canvas = document.createElement('canvas');
+    canvas.id = 'modalCanvas';
+    canvas.style.width = '100%';
+    canvas.style.height = 'auto';
+    canvas.width = 900;
+    canvas.height = 600;
+    fsBody.appendChild(canvas);
+    var ctx = canvas.getContext('2d');
+    var clone = new Chart(ctx, {
+      type: chartInstance.config.type,
+      data: JSON.parse(JSON.stringify(chartInstance.config.data)),
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: chartInstance.config.options.indexAxis,
+        layout: { padding: 30 },
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: title, font: { size: 22, weight: 'bold' }, color: '#f8fafc', padding: 24 },
+          datalabels: chartInstance.config.options.plugins.datalabels,
+          tooltip: chartInstance.config.options.plugins.tooltip
+        },
+        scales: chartInstance.config.options.scales,
+        animation: { duration: 1200, easing: 'easeOutQuart' }
+      }
+    });
+    ST.modalChart = clone;
+    setTimeout(function(){ if (ST.modalChart) ST.modalChart.resize(); }, 50);
+  }, 0);
   byId('fsClose').onclick = closeModal;
   modal.onclick = function(e){ if(e.target === modal) closeModal(); };
   document.onkeydown = function(e){ if(e.key === 'Escape') closeModal(); };
