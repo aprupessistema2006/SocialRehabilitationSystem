@@ -204,15 +204,19 @@ async function saveJauna(u){
       var veidneOk = false;
       try{
         var vres = await api('fillVeidne', payload);
-        if(vres && vres.ok && vres.downloadUrl){
+        if(vres && vres.ok && vres.fileBase64){
           veidneOk = true;
           setMsg('formAlert','Nodarbība saglabāta. Lejupielādē 1:1 veidni...','alert-success');
+          downloadBase64File(vres.fileBase64, vres.fileName || ('nodarbibas_veidne.xlsx'), vres.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        } else if(vres && vres.ok && vres.downloadUrl){
+          veidneOk = true;
+          setMsg('formAlert','Nodarbība saglabāta. Atver 1:1 veidni...','alert-success');
           window.open(vres.downloadUrl, '_blank');
         } else if(vres && vres.ok){
           veidneOk = true;
           setMsg('formAlert','Nodarbība saglabāta. Veidne aizpildīta (lejupielādes saite nav pieejama).','alert-success');
         } else if(vres && vres.reason){
-          setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt: '+vres.reason,'alert-error');
+          setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt: '+(vres.reason||'') + (vres.err?(' ('+vres.err+')'):'') + (vres.exportWarning?(' [export: '+vres.exportWarning+']'):'') ,'alert-error');
         }
       }catch(e){
         setMsg('formAlert','Nodarbība saglabāta, bet veidnes aizpilde/lejupielāde neizdevās.','alert-error');
@@ -224,6 +228,21 @@ async function saveJauna(u){
     else setMsg('formAlert','Neizdevās saglabāt.','alert-error');
   }catch(e){ setMsg('formAlert','Servera kļūda.','alert-error'); }
   btn.disabled=false;
+}
+function downloadBase64File(b64, filename, mime){
+  try{
+    var byteChars = atob(b64);
+    var byteNums = new Array(byteChars.length);
+    for(var i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
+    var blob = new Blob([new Uint8Array(byteNums)], {type: mime || 'application/octet-stream'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename || 'veidne.xlsx';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }catch(e){
+    console.error('downloadBase64File failed', e);
+  }
 }
 function fmtDate(iso){ if(!iso) return ''; var s=String(iso).trim(); if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s; if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; } var d=new Date(s); if(!isNaN(d)){ var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return dd+'.'+mm+'.'+d.getFullYear(); } var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1]; return s; }
 function loadPresets(){ try{ return JSON.parse(localStorage.getItem(PRESET_KEY)||'[]'); }catch(e){ return []; } }

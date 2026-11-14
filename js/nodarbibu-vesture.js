@@ -1,6 +1,17 @@
-﻿var _hist=[];
-var _klienti=[];
-var _selectedClients=new Set();
+﻿function downloadBase64File(b64, filename, mime){
+  try{
+    var byteChars = atob(b64);
+    var byteNums = new Array(byteChars.length);
+    for(var i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
+    var blob = new Blob([new Uint8Array(byteNums)], {type: mime || 'application/octet-stream'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename || 'veidne.xlsx';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }catch(e){ console.error('downloadBase64File failed', e); }
+}
+
 async function initHist(){ requireUser(); try{ await Promise.all([loadKlienti(),loadNodarbibas()]); renderClients(); renderHist(); }catch(e){ byId('pageMsg').textContent='Neizdevās ielādēt datus.'; }
   ['qClient','qWorker','qDate'].forEach(function(id){ byId(id).addEventListener('input', renderHist); });
   byId('clearFilters').addEventListener('click', function(){ byId('qClient').value=''; byId('qWorker').value=''; byId('qDate').value=''; _selectedClients.clear(); renderClients(); renderHist(); });
@@ -12,12 +23,14 @@ async function initHist(){ requireUser(); try{ await Promise.all([loadKlienti(),
     try{
       if(btn){ btn.disabled = true; btn.textContent = 'Aizpilda veidni...'; }
       var res = await api('fillVeidne', r);
-      if(res && res.ok && res.downloadUrl){
+      if(res && res.ok && res.fileBase64){
+        downloadBase64File(res.fileBase64, res.fileName || ('nodarbibas_veidne.xlsx'), res.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      } else if(res && res.ok && res.downloadUrl){
         window.open(res.downloadUrl, '_blank');
       } else if(res && res.ok){
-        alert('Veidne aizpildīta, bet lejupielādes saite nav pieejama.');
+        alert('Veidne aizpildīta, bet lejupielādes saite/fails nav pieejams.');
       } else {
-        alert('Neizdevās aizpildīt/lejupielādēt veidni: ' + (res && (res.reason||res.err) || 'nezināma kļūda'));
+        alert('Neizdevās aizpildīt/lejupielādēt veidni: ' + (res && (res.reason||res.err||res.exportWarning) || 'nezināma kļūda'));
       }
     }catch(e){
       alert('Servera kļūda, eksportējot veidni.');
