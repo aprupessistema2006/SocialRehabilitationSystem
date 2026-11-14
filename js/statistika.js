@@ -314,9 +314,12 @@ function openModal(chartInstance, title){
   if (!modal) return;
   var fsBody = byId('fsBody');
   var fsTitle = byId('fsTitle');
-  var canvas = byId('modalCanvas');
   fsTitle.textContent = title;
   fsBody.innerHTML = '';
+  var canvas = document.createElement('canvas');
+  canvas.id = 'modalCanvas';
+  canvas.style.width = '100%';
+  canvas.style.height = '100%';
   fsBody.appendChild(canvas);
   var ctx = canvas.getContext('2d');
   var clone = new Chart(ctx, {
