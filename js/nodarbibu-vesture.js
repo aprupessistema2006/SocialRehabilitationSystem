@@ -5,10 +5,25 @@ async function initHist(){ requireUser(); try{ await Promise.all([loadKlienti(),
   ['qClient','qWorker','qDate'].forEach(function(id){ byId(id).addEventListener('input', renderHist); });
   byId('clearFilters').addEventListener('click', function(){ byId('qClient').value=''; byId('qWorker').value=''; byId('qDate').value=''; _selectedClients.clear(); renderClients(); renderHist(); });
   byId('viewClose').addEventListener('click', function(){ byId('viewModal').style.display='none'; });
-  byId('viewExportBtn').addEventListener('click', function(){
+  byId('viewExportBtn').addEventListener('click', async function(){
     var r = window._currentViewRecord;
     if(!r){ alert('Nav ieraksta eksportam.'); return; }
-    exportActivityToExcel(r);
+    var btn = byId('viewExportBtn');
+    try{
+      if(btn){ btn.disabled = true; btn.textContent = 'Aizpilda veidni...'; }
+      var res = await api('fillVeidne', r);
+      if(res && res.ok && res.downloadUrl){
+        window.open(res.downloadUrl, '_blank');
+      } else if(res && res.ok){
+        alert('Veidne aizpildīta, bet lejupielādes saite nav pieejama.');
+      } else {
+        alert('Neizdevās aizpildīt/lejupielādēt veidni: ' + (res && (res.reason||res.err) || 'nezināma kļūda'));
+      }
+    }catch(e){
+      alert('Servera kļūda, eksportējot veidni.');
+    }finally{
+      if(btn){ btn.disabled = false; btn.textContent = 'Export uz Excel formu'; }
+    }
   });
   byId('filterClients').addEventListener('change', function(){ _selectedClients=new Set(Array.from(byId('filterClients').selectedOptions).map(function(o){ return o.value; })); renderClients(); renderHist(); });
   byId('exportSelectedBtn').addEventListener('click', function(){ var data=_selectedClients.size? _hist.filter(function(r){ return _selectedClients.has(r.klients); }):_hist; exportNodarbibasToExcel(data, 'nodarbibu_klienti_'+new Date().toISOString().slice(0,10)+'.xlsx'); });

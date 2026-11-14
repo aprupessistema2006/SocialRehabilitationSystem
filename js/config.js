@@ -1,4 +1,4 @@
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxWK-PzgO9ZJwlW-ZOFV12KSrvmWmTxoTfKKJ22OazZOUbW6I04COS844aQDNooev1qXw/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxF55oQcuqK8rsgURpPf7CqswxscosJcDHVQvrVzndErv_9bQgkeA7lbCNQASW1Yh3yUQ/exec";
 const ACCESS_PASSWORD = "VainodeSAC123*";
 const APP_VERSION = "2.0.2";
 const APP_VERSION_KEY = "srs_app_version";

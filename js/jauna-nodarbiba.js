@@ -201,9 +201,25 @@ async function saveJauna(u){
     var res=await api('saveNodarbiba', payload);
     if(res.ok){
       setMsg('formAlert','Nodarbība saglabāta. Veidne tiek aizpildīta...','');
-      try{ await api('fillVeidne', payload); }catch(e){ /* veidne nav konfigurēta – nav kritisks */ }
-      setMsg('formAlert','Nodarbība saglabāta.','alert-success');
-      setTimeout(function(){ window.location.href='sakums.html'; }, 600);
+      var veidneOk = false;
+      try{
+        var vres = await api('fillVeidne', payload);
+        if(vres && vres.ok && vres.downloadUrl){
+          veidneOk = true;
+          setMsg('formAlert','Nodarbība saglabāta. Lejupielādē 1:1 veidni...','alert-success');
+          window.open(vres.downloadUrl, '_blank');
+        } else if(vres && vres.ok){
+          veidneOk = true;
+          setMsg('formAlert','Nodarbība saglabāta. Veidne aizpildīta (lejupielādes saite nav pieejama).','alert-success');
+        } else if(vres && vres.reason){
+          setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt: '+vres.reason,'alert-error');
+        }
+      }catch(e){
+        setMsg('formAlert','Nodarbība saglabāta, bet veidnes aizpilde/lejupielāde neizdevās.','alert-error');
+      }
+      if(veidneOk){
+        setTimeout(function(){ window.location.href='sakums.html'; }, 1200);
+      }
     }
     else setMsg('formAlert','Neizdevās saglabāt.','alert-error');
   }catch(e){ setMsg('formAlert','Servera kļūda.','alert-error'); }
