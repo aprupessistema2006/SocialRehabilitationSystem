@@ -12,7 +12,21 @@
   }catch(e){ console.error('downloadBase64File failed', e); }
 }
 
-async function initHist(){ requireUser(); try{ await Promise.all([loadKlienti(),loadNodarbibas()]); renderClients(); renderHist(); }catch(e){ byId('pageMsg').textContent='Neizdevās ielādēt datus.'; }
+async function initHist(){
+  requireUser();
+  var errs=[];
+  try{
+    await Promise.all([
+      loadKlienti().catch(function(e){ errs.push('klienti: '+(e&&(e.reason||e.message)||String(e))); }),
+      loadNodarbibas().catch(function(e){ errs.push('nodarbības: '+(e&&(e.reason||e.message)||String(e))); })
+    ]);
+    renderClients();
+    renderHist();
+    if(errs.length){ byId('pageMsg').textContent='Daļa datu netika ielādēta ('+errs.join('; ')+').'; byId('pageMsg').style.display='block'; }
+  }catch(e){
+    byId('pageMsg').textContent='Neizdevās ielādēt datus: '+(e&&(e.reason||e.message)||String(e)); byId('pageMsg').style.display='block';
+  }
+}
   ['qClient','qWorker','qDate'].forEach(function(id){ byId(id).addEventListener('input', renderHist); });
   byId('clearFilters').addEventListener('click', function(){ byId('qClient').value=''; byId('qWorker').value=''; byId('qDate').value=''; _selectedClients.clear(); renderClients(); renderHist(); });
   byId('viewClose').addEventListener('click', function(){ byId('viewModal').style.display='none'; });
@@ -40,8 +54,18 @@ async function initHist(){ requireUser(); try{ await Promise.all([loadKlienti(),
   byId('exportSelectedBtn').addEventListener('click', function(){ var data=_selectedClients.size? _hist.filter(function(r){ return _selectedClients.has(r.klients); }):_hist; exportNodarbibasToExcel(data, 'nodarbibu_klienti_'+new Date().toISOString().slice(0,10)+'.xlsx'); });
   byId('exportExcelBtn').addEventListener('click', function(){ exportNodarbibasToExcel(_hist, 'nodarbibu_visiem_'+new Date().toISOString().slice(0,10)+'.xlsx'); });
 }
-async function loadKlienti(){ try{ var res=await api('getKlienti'); _klienti=(res.ok&&res.klienti)||[]; }catch(e){ _klienti=[]; } }
-async function loadNodarbibas(){ var res=await api('getNodarbibas'); _hist=res.ok?(res.nodarbibas||[]):[]; window._hist=_hist; }
+async function loadKlienti(){
+  try{
+    var res=await api('getKlienti');
+    if(res && res.ok){ _klienti = res.klienti || []; }
+    else { _klienti = []; throw (res || {reason:'nezināma kļūda'}); }
+  }catch(e){ _klienti=[]; throw e; }
+}
+async function loadNodarbibas(){
+  var res=await api('getNodarbibas');
+  if(res && res.ok){ _hist=res.nodarbibas||[]; window._hist=_hist; }
+  else { _hist=[]; window._hist=_hist; throw (res || {reason:'nezināma kļūda'}); }
+}
 function renderClients(){ var sel=byId('filterClients'); if(!sel) return; sel.innerHTML=''; (_klienti||[]).forEach(function(k){ var o=document.createElement('option'); o.value=k.vards||k.id||''; o.textContent=k.vards||k.id||''; if(_selectedClients.has(o.value)) o.selected=true; sel.appendChild(o); }); var el=byId('clientCount'); if(el) el.textContent=_selectedClients.size?'('+_selectedClients.size+' atlasīti)':'(visi)'; }
 function renderHist(){ var qc=(byId('qClient').value||'').toLowerCase(), qw=(byId('qWorker').value||'').toLowerCase(), qd=(byId('qDate').value||'').trim(); var tb=byId('histBody'); tb.innerHTML='';
   _hist.filter(function(r){ return (!_selectedClients.size||_selectedClients.has(r.klients)) && (!qc||String(r.klients||'').toLowerCase().indexOf(qc)>=0) && (!qw||String(r.darbinieks||'').toLowerCase().indexOf(qw)>=0) && (!qd||String(r.datums||'').indexOf(qd)>=0); }).slice().reverse().forEach(function(r){
