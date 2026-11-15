@@ -208,16 +208,11 @@ async function saveJauna(u){
           veidneOk = true;
           setMsg('formAlert','Nodarbība saglabāta. Lejupielādē 1:1 veidni...','alert-success');
           downloadBase64File(vres.fileBase64, vres.fileName || ('nodarbibas_veidne.xlsx'), vres.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        } else if(vres && vres.ok && vres.downloadUrl){
-          // Rezerves variants: tieša Sheets saite var pieprasīt Google piekļuvi lietotājam
-          veidneOk = true;
-          setMsg('formAlert','Nodarbība saglabāta. Veidne aizpildīta Google pusē, bet tiešai lejupielādei nepieciešams atjaunināts Apps Script (fileBase64).','alert-success');
-          window.open(vres.downloadUrl, '_blank');
         } else if(vres && vres.ok){
-          veidneOk = true;
-          setMsg('formAlert','Nodarbība saglabāta. Veidne aizpildīta Google pusē.','alert-success');
-        } else if(vres && vres.reason){
-          setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt/eksportēt: '+(vres.reason||'') + (vres.err?(' ('+vres.err+')'):'') + (vres.exportWarning?(' [export: '+vres.exportWarning+']'):'') ,'alert-error');
+          var why = (vres.exportWarning ? (' Eksporta kļūda: '+vres.exportWarning+'.') : '') + (vres.err ? (' '+vres.err) : '');
+          setMsg('formAlert','Nodarbība saglabāta, bet 1:1 fails netika atgriezts lejupielādei.' + why + ' Pārbaudiet, vai Apps Script ir ielādēts jaunais excel-veidne.gs un veikts jauns Deploy (New version).','alert-error');
+        } else {
+          setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt/eksportēt: '+((vres&&(vres.reason||vres.err||vres.exportWarning))||'nezināma kļūda'),'alert-error');
         }
       }catch(e){
         setMsg('formAlert','Nodarbība saglabāta, bet veidnes aizpilde/lejupielāde neizdevās.','alert-error');
