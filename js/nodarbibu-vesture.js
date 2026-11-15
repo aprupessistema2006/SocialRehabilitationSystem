@@ -26,9 +26,10 @@ async function initHist(){ requireUser(); try{ await Promise.all([loadKlienti(),
       if(res && res.ok && res.fileBase64){
         downloadBase64File(res.fileBase64, res.fileName || ('nodarbibas_veidne.xlsx'), res.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       } else if(res && res.ok && res.downloadUrl){
+        alert('Veidne aizpildīta Google pusē, bet serveris neatgrieza failu (fileBase64). Atvēršu rezerves saiti — tai var būt nepieciešama Google piekļuve izklājlapai.');
         window.open(res.downloadUrl, '_blank');
       } else if(res && res.ok){
-        alert('Veidne aizpildīta, bet lejupielādes saite/fails nav pieejams.');
+        alert('Veidne aizpildīta Google pusē, bet lejupielādes fails nav pieejams (pārbaudiet Apps Script versiju).');
       } else {
         alert('Neizdevās aizpildīt/lejupielādēt veidni: ' + (res && (res.reason||res.err||res.exportWarning) || 'nezināma kļūda'));
       }
