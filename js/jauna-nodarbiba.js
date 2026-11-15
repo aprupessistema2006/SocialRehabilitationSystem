@@ -207,7 +207,7 @@ async function saveJauna(u){
         if(vres && vres.ok && vres.fileBase64){
           veidneOk = true;
           setMsg('formAlert','Nodarbība saglabāta. Lejupielādē 1:1 veidni...','alert-success');
-          downloadBase64File(vres.fileBase64, vres.fileName || ('nodarbibas_veidne.xlsx'), vres.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          downloadBase64File(vres.fileBase64, vres.fileName || makeVeidneFileName(payload), vres.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         } else if(vres && vres.ok){
           var why = (vres.exportWarning ? (' Eksporta kļūda: '+vres.exportWarning+'.') : '') + (vres.err ? (' '+vres.err) : '');
           setMsg('formAlert','Nodarbība saglabāta, bet 1:1 fails netika atgriezts lejupielādei.' + why + ' Iekopējiet jauno excel-veidne.gs tajā pašā Apps Script projektā kā code.gs un izdariet Deploy → New version. Ja vajag, Apps Script projektā ieslēdziet Advanced Google Service "Drive API".','alert-error');
@@ -239,6 +239,11 @@ function downloadBase64File(b64, filename, mime){
   }catch(e){
     console.error('downloadBase64File failed', e);
   }
+}
+function makeVeidneFileName(rec){
+  var name=String((rec&&rec.klients)||'Klients').replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'') || 'Klients';
+  var d=fmtDate((rec&&rec.datums)||''); if(!d){ var dt=new Date(); d=('0'+dt.getDate()).slice(-2)+'.'+('0'+(dt.getMonth()+1)).slice(-2)+'.'+dt.getFullYear(); }
+  return name+'_Nodarbibas_veidne_'+d+'.xlsx';
 }
 function fmtDate(iso){ if(!iso) return ''; var s=String(iso).trim(); if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s; if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; } var d=new Date(s); if(!isNaN(d)){ var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); return dd+'.'+mm+'.'+d.getFullYear(); } var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1]; return s; }
 function loadPresets(){ try{ return JSON.parse(localStorage.getItem(PRESET_KEY)||'[]'); }catch(e){ return []; } }

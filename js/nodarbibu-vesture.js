@@ -15,6 +15,19 @@ function downloadBase64File(b64, filename, mime){
     setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
   }catch(e){ console.error('downloadBase64File failed', e); }
 }
+function fmtVeidneDate(v){
+  var s=String(v==null?'':v).trim(); if(!s) return '';
+  if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
+  var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1];
+  var d=new Date(s); if(!isNaN(d)){ var dd=('0'+d.getDate()).slice(-2), mm=('0'+(d.getMonth()+1)).slice(-2); return dd+'.'+mm+'.'+d.getFullYear(); }
+  return s;
+}
+function makeVeidneFileName(rec){
+  var name=String((rec&&rec.klients)||'Klients').replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'') || 'Klients';
+  var d=fmtVeidneDate((rec&&rec.datums)||''); if(!d){ var dt=new Date(); d=('0'+dt.getDate()).slice(-2)+'.'+('0'+(dt.getMonth()+1)).slice(-2)+'.'+dt.getFullYear(); }
+  return name+'_Nodarbibas_veidne_'+d+'.xlsx';
+}
 
 async function initHist(){
   requireUser();
@@ -41,7 +54,7 @@ async function initHist(){
       if(btn){ btn.disabled = true; btn.textContent = 'Aizpilda veidni...'; }
       var res = await api('fillVeidne', r);
       if(res && res.ok && res.fileBase64){
-        downloadBase64File(res.fileBase64, res.fileName || ('nodarbibas_veidne.xlsx'), res.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        downloadBase64File(res.fileBase64, res.fileName || makeVeidneFileName(r), res.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       } else if(res && res.ok){
         alert('1:1 veidnes fails netika atgriezts lejupielādei.' + (res.exportWarning?(' Eksporta kļūda: '+res.exportWarning):'') + (res.err?(' '+res.err):'') + ' Iekopējiet jauno excel-veidne.gs tajā pašā Apps Script projektā kā code.gs un izdariet Deploy → New version. Ja vajag, ieslēdziet Advanced Google Service "Drive API".');
       } else {
