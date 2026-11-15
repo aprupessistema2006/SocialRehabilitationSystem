@@ -1,4 +1,8 @@
-﻿function downloadBase64File(b64, filename, mime){
+﻿var _hist=[];
+var _klienti=[];
+var _selectedClients=new Set();
+
+function downloadBase64File(b64, filename, mime){
   try{
     var byteChars = atob(b64);
     var byteNums = new Array(byteChars.length);
@@ -22,15 +26,14 @@ async function initHist(){
     ]);
     renderClients();
     renderHist();
-    if(errs.length){ byId('pageMsg').textContent='Daļa datu netika ielādēta ('+errs.join('; ')+').'; byId('pageMsg').style.display='block'; }
+    if(errs.length){ var pm=byId('pageMsg'); if(pm){ pm.textContent='Daļa datu netika ielādēta ('+errs.join('; ')+').'; pm.style.display='block'; } }
   }catch(e){
-    byId('pageMsg').textContent='Neizdevās ielādēt datus: '+(e&&(e.reason||e.message)||String(e)); byId('pageMsg').style.display='block';
+    var pm2=byId('pageMsg'); if(pm2){ pm2.textContent='Neizdevās ielādēt datus: '+(e&&(e.reason||e.message)||String(e)); pm2.style.display='block'; }
   }
-}
-  ['qClient','qWorker','qDate'].forEach(function(id){ byId(id).addEventListener('input', renderHist); });
-  byId('clearFilters').addEventListener('click', function(){ byId('qClient').value=''; byId('qWorker').value=''; byId('qDate').value=''; _selectedClients.clear(); renderClients(); renderHist(); });
-  byId('viewClose').addEventListener('click', function(){ byId('viewModal').style.display='none'; });
-  byId('viewExportBtn').addEventListener('click', async function(){
+  ['qClient','qWorker','qDate'].forEach(function(id){ var el=byId(id); if(el) el.addEventListener('input', renderHist); });
+  var cf=byId('clearFilters'); if(cf) cf.addEventListener('click', function(){ byId('qClient').value=''; byId('qWorker').value=''; byId('qDate').value=''; _selectedClients.clear(); renderClients(); renderHist(); });
+  var vc=byId('viewClose'); if(vc) vc.addEventListener('click', function(){ byId('viewModal').style.display='none'; });
+  var ve=byId('viewExportBtn'); if(ve) ve.addEventListener('click', async function(){
     var r = window._currentViewRecord;
     if(!r){ alert('Nav ieraksta eksportam.'); return; }
     var btn = byId('viewExportBtn');
@@ -50,10 +53,11 @@ async function initHist(){
       if(btn){ btn.disabled = false; btn.textContent = 'Export uz Excel formu'; }
     }
   });
-  byId('filterClients').addEventListener('change', function(){ _selectedClients=new Set(Array.from(byId('filterClients').selectedOptions).map(function(o){ return o.value; })); renderClients(); renderHist(); });
-  byId('exportSelectedBtn').addEventListener('click', function(){ var data=_selectedClients.size? _hist.filter(function(r){ return _selectedClients.has(r.klients); }):_hist; exportNodarbibasToExcel(data, 'nodarbibu_klienti_'+new Date().toISOString().slice(0,10)+'.xlsx'); });
-  byId('exportExcelBtn').addEventListener('click', function(){ exportNodarbibasToExcel(_hist, 'nodarbibu_visiem_'+new Date().toISOString().slice(0,10)+'.xlsx'); });
+  var fc=byId('filterClients'); if(fc) fc.addEventListener('change', function(){ _selectedClients=new Set(Array.from(byId('filterClients').selectedOptions).map(function(o){ return o.value; })); renderClients(); renderHist(); });
+  var esb=byId('exportSelectedBtn'); if(esb) esb.addEventListener('click', function(){ var data=_selectedClients.size? _hist.filter(function(r){ return _selectedClients.has(r.klients); }):_hist; exportNodarbibasToExcel(data, 'nodarbibu_klienti_'+new Date().toISOString().slice(0,10)+'.xlsx'); });
+  var eeb=byId('exportExcelBtn'); if(eeb) eeb.addEventListener('click', function(){ exportNodarbibasToExcel(_hist, 'nodarbibu_visiem_'+new Date().toISOString().slice(0,10)+'.xlsx'); });
 }
+
 async function loadKlienti(){
   try{
     var res=await api('getKlienti');
@@ -67,12 +71,12 @@ async function loadNodarbibas(){
   else { _hist=[]; window._hist=_hist; throw (res || {reason:'nezināma kļūda'}); }
 }
 function renderClients(){ var sel=byId('filterClients'); if(!sel) return; sel.innerHTML=''; (_klienti||[]).forEach(function(k){ var o=document.createElement('option'); o.value=k.vards||k.id||''; o.textContent=k.vards||k.id||''; if(_selectedClients.has(o.value)) o.selected=true; sel.appendChild(o); }); var el=byId('clientCount'); if(el) el.textContent=_selectedClients.size?'('+_selectedClients.size+' atlasīti)':'(visi)'; }
-function renderHist(){ var qc=(byId('qClient').value||'').toLowerCase(), qw=(byId('qWorker').value||'').toLowerCase(), qd=(byId('qDate').value||'').trim(); var tb=byId('histBody'); tb.innerHTML='';
+function renderHist(){ var qc=(byId('qClient').value||'').toLowerCase(), qw=(byId('qWorker').value||'').toLowerCase(), qd=(byId('qDate').value||'').trim(); var tb=byId('histBody'); if(!tb) return; tb.innerHTML='';
   _hist.filter(function(r){ return (!_selectedClients.size||_selectedClients.has(r.klients)) && (!qc||String(r.klients||'').toLowerCase().indexOf(qc)>=0) && (!qw||String(r.darbinieks||'').toLowerCase().indexOf(qw)>=0) && (!qd||String(r.datums||'').indexOf(qd)>=0); }).slice().reverse().forEach(function(r){
     var tr=document.createElement('tr'); tr.innerHTML='<td>'+esc(r.id)+'</td><td>'+esc(r.datums)+'</td><td>'+esc(r.klients)+'</td><td>'+esc(r.nodarbiba_nosaukums)+'</td><td>'+esc(r.darbinieks)+'</td><td><button class="btn btn-secondary" data-view="'+esc(r.id)+'">Skatīt</button></td>'; tb.appendChild(tr);
   }); if(!tb.children.length) tb.innerHTML='<tr><td colspan="6">Nav ierakstu.</td></tr>';
   tb.querySelectorAll('[data-view]').forEach(function(b){ b.addEventListener('click', function(){ var r=_hist.find(function(x){return String(x.id)===String(b.dataset.view);}); if(r) viewRec(r); }); });
 }
 function viewRec(r){ window._currentViewRecord = r; var fields=[['ID',r.id],['Datums',r.datums],['Klients',r.klients],['Darbinieks',r.darbinieks],['Nodarbība',r.nodarbiba_nosaukums],['Mērķis',r.merkis],['Problēma',r.problema],['Uzdevums',r.uzdevums],['Refleksija',r.refleksija],['Motivācija',r.motivacija],['Gaita',r.gaita],['Garastāvoklis',r.garastavoklis],['Vērtējums',r.vertejums],['Pildīts',r.pildits],['Komentārs',r.komentars]];
-  byId('viewBody').innerHTML=fields.map(function(f){ return '<div style="margin-bottom:10px"><div class="small muted">'+esc(f[0])+'</div><div>'+esc(f[1]||'-')+'</div></div>'; }).join(''); byId('viewModal').style.display='flex'; }
+  var vb=byId('viewBody'); if(vb) vb.innerHTML=fields.map(function(f){ return '<div style="margin-bottom:10px"><div class="small muted">'+esc(f[0])+'</div><div>'+esc(f[1]||'-')+'</div></div>'; }).join(''); var vm=byId('viewModal'); if(vm) vm.style.display='flex'; }
 document.addEventListener('DOMContentLoaded', function(){ if(byId('histBody')) initHist(); });
