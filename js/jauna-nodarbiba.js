@@ -210,7 +210,7 @@ async function saveJauna(u){
           downloadBase64File(vres.fileBase64, vres.fileName || ('nodarbibas_veidne.xlsx'), vres.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         } else if(vres && vres.ok){
           var why = (vres.exportWarning ? (' Eksporta kļūda: '+vres.exportWarning+'.') : '') + (vres.err ? (' '+vres.err) : '');
-          setMsg('formAlert','Nodarbība saglabāta, bet 1:1 fails netika atgriezts lejupielādei.' + why + ' Pārbaudiet, vai Apps Script ir ielādēts jaunais excel-veidne.gs un veikts jauns Deploy (New version).','alert-error');
+          setMsg('formAlert','Nodarbība saglabāta, bet 1:1 fails netika atgriezts lejupielādei.' + why + ' Iekopējiet jauno excel-veidne.gs tajā pašā Apps Script projektā kā code.gs un izdariet Deploy → New version. Ja vajag, Apps Script projektā ieslēdziet Advanced Google Service "Drive API".','alert-error');
         } else {
           setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt/eksportēt: '+((vres&&(vres.reason||vres.err||vres.exportWarning))||'nezināma kļūda'),'alert-error');
         }
