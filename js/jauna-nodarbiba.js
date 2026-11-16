@@ -189,13 +189,17 @@ function updateSummary(){
 async function saveJauna(u){
   var reqVals=[['client','Klients'],['activityDate','Datums']];
   for(var i=0;i<reqVals.length;i++){ var el=byId(reqVals[i][0]); if(!el || !String(el.value||'').trim()){ setMsg('formAlert','Lūdzu aizpildiet: '+reqVals[i][1]+'.','alert-error'); el&&el.focus(); return; } }
+  var clientName = String(byId('client').value||'').trim();
+  if(!clientName){ setMsg('formAlert','Lūdzu izvēlēties klientu.','alert-error'); return; }
+  var dateVal = String(byId('activityDate').value||'').trim();
+  if(!dateVal){ setMsg('formAlert','Lūdzu norādīt datumu.','alert-error'); return; }
   var reqSp=[['nv','Nodarbības nosaukums','activityType'],['goal','Mērķis','goal'],['problem','Klienta problēma','problem'],['task','Uzdevums','task']];
   for(var j=0;j<reqSp.length;j++){ var hv=byId(reqSp[j][2]); if(!hv||!String(hv.value||'').trim()){ setMsg('formAlert','Lūdzu izvēlieties: '+reqSp[j][1]+'.','alert-error'); if(!byId(triggerId(reqSp[j][0])).classList.contains('is-locked')) openPicker(reqSp[j][0]); return; } }
   var reqText=[['reflection','Refleksija'],['motivation','Klienta sadarbība un motivācija'],['process','Nodarbības gaita']];
   for(var k=0;k<reqText.length;k++){ var et=byId(reqText[k][0]); if(!et || !String(et.value||'').trim()){ setMsg('formAlert','Lūdzu aizpildiet: '+reqText[k][1]+'.','alert-error'); et&&et.focus(); return; } }
   var btn=document.querySelector('#activityForm button[type=submit]'); btn.disabled=true; setMsg('formAlert','Saglabā...', '');
   try{
-    var payload={klients:byId('client').value, datums:fmtDate(byId('activityDate').value), nodarbiba_nosaukums:byId('activityType').value, merkis:byId('goal').value, problema:byId('problem').value, uzdevums:byId('task').value,
+    var payload={klients:clientName, datums:fmtDate(dateVal), nodarbiba_nosaukums:byId('activityType').value, merkis:byId('goal').value, problema:byId('problem').value, uzdevums:byId('task').value,
       refleksija:byId('reflection').value, motivacija:byId('motivation').value, gaita:byId('process').value, garastavoklis:byId('mood').value, vertejums:byId('evaluation').value, pildits:byId('implementation').value, komentars:byId('comment').value,
       employee_id:u.id, darbinieks:u.name};
     var res=await api('saveNodarbiba', payload);
