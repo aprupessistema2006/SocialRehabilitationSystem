@@ -202,27 +202,22 @@ async function saveJauna(u){
     var payload={klients:clientName, datums:fmtDate(dateVal), nodarbiba_nosaukums:byId('activityType').value, merkis:byId('goal').value, problema:byId('problem').value, uzdevums:byId('task').value,
       refleksija:byId('reflection').value, motivacija:byId('motivation').value, gaita:byId('process').value, garastavoklis:byId('mood').value, vertejums:byId('evaluation').value, pildits:byId('implementation').value, komentars:byId('comment').value,
       employee_id:u.id, darbinieks:u.name};
-    var res=await api('saveNodarbiba', payload);
+var res=await api('saveNodarbiba', payload);
     if(res.ok){
       setMsg('formAlert','Nodarbība saglabāta. Veidne tiek aizpildīta...','');
-      var veidneOk = false;
       try{
         var vres = await api('fillVeidne', payload);
         if(vres && vres.ok && vres.fileBase64){
-          veidneOk = true;
-          setMsg('formAlert','Nodarbība saglabāta. Lejupielādē 1:1 veidni...','alert-success');
-          downloadBase64File(vres.fileBase64, vres.fileName || makeVeidneFileName(payload), vres.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          setMsg('formAlert','1:1 veidne lejupielādējas...','alert-success');
+          downloadBase64File(vres.fileBase64, makeVeidneFileName(payload), vres.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+          setTimeout(function(){ window.location.href='sakums.html'; }, 700);
         } else if(vres && vres.ok){
-          var why = (vres.exportWarning ? (' Eksporta kļūda: '+vres.exportWarning+'.') : '') + (vres.err ? (' '+vres.err) : '');
-          setMsg('formAlert','Nodarbība saglabāta, bet 1:1 fails netika atgriezts lejupielādei.' + why + ' Iekopējiet jauno excel-veidne.gs tajā pašā Apps Script projektā kā code.gs un izdariet Deploy → New version. Ja vajag, Apps Script projektā ieslēdziet Advanced Google Service "Drive API".','alert-error');
+          setMsg('formAlert','Nodarbība saglabāta, bet 1:1 fails netika atgriezts lejupielādei.','alert-error');
         } else {
-          setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt/eksportēt: '+((vres&&(vres.reason||vres.err||vres.exportWarning))||'nezināma kļūda'),'alert-error');
+          setMsg('formAlert','Nodarbība saglabāta, bet veidni neizdevās aizpildīt: '+((vres&&(vres.reason||vres.err||vres.exportWarning))||'nezināma kļūda'),'alert-error');
         }
       }catch(e){
         setMsg('formAlert','Nodarbība saglabāta, bet veidnes aizpilde/lejupielāde neizdevās.','alert-error');
-      }
-      if(veidneOk){
-        setTimeout(function(){ window.location.href='sakums.html'; }, 1200);
       }
     }
     else setMsg('formAlert','Neizdevās saglabāt.','alert-error');
