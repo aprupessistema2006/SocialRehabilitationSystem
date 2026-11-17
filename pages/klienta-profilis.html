@@ -8,10 +8,81 @@
 <nav class="sidebar-nav"><div class="nav-category">Darbi un nodarbības</div><a href="sakums.html" class="nav-link"><span>Sākums</span></a><a href="jauna-nodarbiba.html" class="nav-link"><span>Jauna nodarbība</span></a><a href="nodarbibu-vesture.html" class="nav-link"><span>Nodarbību vēsture</span></a><div class="nav-category">Klienti</div><a href="klienti.html" class="nav-link"><span>Klienti</span></a><a href="klienta-profilis.html" class="nav-link"><span>Klienta profils</span></a><div class="nav-category admin-only">Sistēmas administracija</div><a href="kaskades.html" class="nav-link admin-only"><span>Kaskādes</span></a><a href="lietotaji.html" class="nav-link admin-only"><span>Lietotāji</span></a><a href="iestatijumi.html" class="nav-link admin-only"><span>Iestatījumi</span></a><div class="nav-category">Analīze</div><a href="statistika.html" class="nav-link"><span>Statistika</span></a></nav>
 <div class="sidebar-footer"><a href="#" class="nav-link nav-link-danger" id="logoutBtn">Iziet</a></div></aside>
 <main class="main-content"><header class="main-header"><h1 class="main-header-title">Klienta profils</h1></header><div class="main-body">
-<div class="page-header"><h2 class="page-title" id="clientTitle">Klienta profils</h2><p class="page-subtitle"><a class="table-link" href="klienti.html">← Atpakaļ uz klientiem</a></p></div>
-<div class="card"><div class="card-header"><h3 class="card-title">Informācija</h3></div><div class="card-body" id="clientInfo"><p>Izvēlieties klientu no saraksta, lai skatītu profilu.</p></div></div>
-<div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Nodarbību vēsture</h3></div><div class="card-body" style="padding:0;"><div class="table-container"><table class="table"><thead><tr><th>Datums</th><th>Nodarbība</th><th>Darbinieks</th><th>Ieraksta ID</th></tr></thead><tbody id="clientHist"><tr><td colspan="4">Nav datu.</td></tr></tbody></table></div></div></div>
-<div id="pageMsg" class="page-msg"></div>
+<div class="page-header profile-page-header">
+  <div>
+    <h2 class="page-title" id="clientTitle">Klienta profils</h2>
+    <p class="page-subtitle">Pārskatiet klienta informāciju un nodarbību vēsturi vienuviet.</p>
+  </div>
+  <p class="page-subtitle"><a class="table-link" href="klienti.html">← Uz klientu sarakstu</a></p>
+</div>
+
+<div class="card profile-picker-card" id="profilePickerCard">
+  <div class="card-header profile-picker-header">
+    <div>
+      <h3 class="card-title">Izvēlieties klientu</h3>
+      <p class="profile-picker-sub">Meklējiet pēc vārda vai statusa un atveriet profilu šajā lapā.</p>
+    </div>
+    <button type="button" class="btn btn-secondary profile-picker-toggle" id="togglePickerBtn" aria-expanded="true">Paslēpt sarakstu</button>
+  </div>
+  <div class="card-body" id="profilePickerBody">
+    <div class="profile-picker-toolbar">
+      <label class="profile-field">
+        <span>Meklēt klientu</span>
+        <input type="search" id="profileClientSearch" class="form-input" placeholder="Ievadiet vārdu vai ID..." autocomplete="off">
+      </label>
+      <label class="profile-field profile-field-small">
+        <span>Statuss</span>
+        <select id="profileClientStatus" class="form-input">
+          <option value="">Visi</option>
+          <option value="Aktīvs">Aktīvs</option>
+          <option value="Neaktīvs">Neaktīvs</option>
+        </select>
+      </label>
+    </div>
+    <div class="profile-picker-meta" id="profilePickerMeta"></div>
+    <div class="profile-client-list" id="profileClientList" role="listbox" aria-label="Klientu saraksts"></div>
+  </div>
+</div>
+
+<div id="profileContent" class="profile-content" hidden>
+  <div class="card profile-hero-card">
+    <div class="card-body profile-hero-body">
+      <div class="profile-avatar" id="profileAvatar" aria-hidden="true"></div>
+      <div class="profile-hero-main">
+        <div class="profile-hero-top">
+          <h3 class="profile-hero-name" id="profileName">—</h3>
+          <span id="profileStatusBadge" class="badge badge-off">—</span>
+        </div>
+        <div class="profile-hero-meta" id="profileHeroMeta"></div>
+      </div>
+      <div class="profile-stats" id="profileStats"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3 class="card-title">Informācija</h3></div>
+    <div class="card-body" id="clientInfo"></div>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <div class="card-header profile-history-header">
+      <h3 class="card-title">Nodarbību vēsture</h3>
+      <div class="profile-history-filter">
+        <input type="search" id="profileHistorySearch" class="form-input" placeholder="Meklēt vēsturē..." autocomplete="off">
+      </div>
+    </div>
+    <div class="card-body" style="padding:0;">
+      <div class="table-container">
+        <table class="table">
+          <thead><tr><th>Datums</th><th>Nodarbība</th><th>Darbinieks</th><th>Ieraksta ID</th></tr></thead>
+          <tbody id="clientHist"><tr><td colspan="4">Nav datu.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pageMsg" class="page-msg" aria-live="polite"></div>
 </div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija <span class="app-version-num"></span></footer></main></div>
 <script src="../js/config.js?v=2.0.11"></script>
 <script>
