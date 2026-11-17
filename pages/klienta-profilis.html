@@ -66,16 +66,21 @@
 
   <div class="card" style="margin-top:16px;">
     <div class="card-header profile-history-header">
-      <h3 class="card-title">Nodarbību vēsture</h3>
-      <div class="profile-history-filter">
+      <div>
+        <h3 class="card-title">Nodarbību vēsture</h3>
+        <p class="profile-picker-sub" style="margin:4px 0 0;">Lejupielādējiet atsevišķus ierakstus vai visu sarakstu (ar filtru).</p>
+      </div>
+      <div class="profile-history-actions">
         <input type="search" id="profileHistorySearch" class="form-input" placeholder="Meklēt vēsturē..." autocomplete="off">
+        <button type="button" class="btn btn-secondary" id="profileExportFilteredBtn" title="Lejupielādē redzamos (pēc meklēšanas)">Lejupielādēt filtrētos</button>
+        <button type="button" class="btn btn-primary" id="profileExportAllBtn" title="Lejupielādē visas šī klienta nodarbības">Lejupielādēt visus</button>
       </div>
     </div>
     <div class="card-body" style="padding:0;">
       <div class="table-container">
         <table class="table">
-          <thead><tr><th>Datums</th><th>Nodarbība</th><th>Darbinieks</th><th>Ieraksta ID</th></tr></thead>
-          <tbody id="clientHist"><tr><td colspan="4">Nav datu.</td></tr></tbody>
+          <thead><tr><th>Datums</th><th>Nodarbība</th><th>Darbinieks</th><th>Ieraksta ID</th><th>Darbība</th></tr></thead>
+          <tbody id="clientHist"><tr><td colspan="5">Nav datu.</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -84,8 +89,9 @@
 
 <div id="pageMsg" class="page-msg" aria-live="polite"></div>
 </div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija <span class="app-version-num"></span></footer></main></div>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script src="../js/config.js?v=2.0.11"></script>
 <script>
-(function(){var v=(typeof APP_VERSION!=="undefined"?APP_VERSION:(localStorage.getItem("srs_app_version")||Date.now()));var s=["../js/version.js","../js/api.js","../js/layout.js","../js/klienta-profilis.js"];for(var i=0;i<s.length;i++)document.write('<script src="'+s[i]+'?v='+encodeURIComponent(v)+'"><\/script>');})();
+(function(){var v=(typeof APP_VERSION!=="undefined"?APP_VERSION:(localStorage.getItem("srs_app_version")||Date.now()));var s=["../js/version.js","../js/api.js","../js/layout.js","../js/excel-export.js","../js/klienta-profilis.js"];for(var i=0;i<s.length;i++)document.write('<script src="'+s[i]+'?v='+encodeURIComponent(v)+'"><\/script>');})();
 </script></body></html>
 

@@ -3,8 +3,38 @@
   sessions: [],
   selectedId: null,
   selectedSessions: [],
+  filteredSessions: [],
   ready: false
 };
+
+function downloadBase64File(b64, filename, mime){
+  try{
+    var byteChars = atob(b64);
+    var byteNums = new Array(byteChars.length);
+    for(var i=0;i<byteChars.length;i++) byteNums[i]=byteChars.charCodeAt(i);
+    var blob = new Blob([new Uint8Array(byteNums)], {type: mime || 'application/octet-stream'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename || 'veidne.xlsx';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
+  }catch(e){
+    console.error('downloadBase64File failed', e);
+  }
+}
+function fmtVeidneDate(v){
+  var s=String(v==null?'':v).trim(); if(!s) return '';
+  if(/^\d{2}\.\d{2}\.\d{4}$/.test(s)) return s;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(s)){ var p=s.split('-'); return p[2]+'.'+p[1]+'.'+p[0]; }
+  var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[3]+'.'+m[2]+'.'+m[1];
+  var d=new Date(s); if(!isNaN(d)){ var dd=('0'+d.getDate()).slice(-2), mm=('0'+(d.getMonth()+1)).slice(-2); return dd+'.'+mm+'.'+d.getFullYear(); }
+  return s;
+}
+function makeVeidneFileName(rec){
+  var name=String((rec&&rec.klients)||'Klients').replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'_').replace(/_+/g,'_').replace(/^_+|_+$/g,'') || 'Klients';
+  var d=fmtVeidneDate((rec&&rec.datums)||''); if(!d){ var dt=new Date(); d=('0'+dt.getDate()).slice(-2)+'.'+('0'+(dt.getMonth()+1)).slice(-2)+'.'+dt.getFullYear(); }
+  return name+'_Nodarbibas_veidne_'+d+'.xlsx';
+}
 
 async function initClientProfile(){
   requireUser();
@@ -51,6 +81,8 @@ function bindProfileUi(){
   var status = byId('profileClientStatus');
   var histSearch = byId('profileHistorySearch');
   var toggle = byId('togglePickerBtn');
+  var exportFiltered = byId('profileExportFilteredBtn');
+  var exportAll = byId('profileExportAllBtn');
   if (search) search.addEventListener('input', renderClientPicker);
   if (status) status.addEventListener('change', renderClientPicker);
   if (histSearch) histSearch.addEventListener('input', function(){ renderHistory(_cpState.selectedSessions); });
@@ -61,6 +93,8 @@ function bindProfileUi(){
     toggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
     toggle.textContent = expanded ? 'Rādīt sarakstu' : 'Paslēpt sarakstu';
   });
+  if (exportFiltered) exportFiltered.addEventListener('click', function(){ exportSessions(_cpState.filteredSessions, true); });
+  if (exportAll) exportAll.addEventListener('click', function(){ exportSessions(_cpState.selectedSessions, false); });
 }
 
 function renderClientPicker(){
@@ -157,6 +191,7 @@ function renderProfileView(){
     content.hidden = true;
     title.textContent = 'Klienta profils';
     _cpState.selectedSessions = [];
+    _cpState.filteredSessions = [];
     setProfileMsg('', '');
     return;
   }
@@ -164,6 +199,7 @@ function renderProfileView(){
     content.hidden = true;
     title.textContent = 'Klienta profils';
     _cpState.selectedSessions = [];
+    _cpState.filteredSessions = [];
     setProfileMsg('Klients ar norādīto ID nav atrasts. Izvēlieties klientu no saraksta augstāk.', 'error');
     return;
   }
@@ -176,6 +212,7 @@ function renderProfileView(){
   var sessions = getSessionsForClient(c);
   sessions.sort(function(a, b){ return String(b.datums || '').localeCompare(String(a.datums || '')); });
   _cpState.selectedSessions = sessions;
+  var hs = byId('profileHistorySearch'); if (hs) hs.value = '';
 
   renderHero(c, sessions);
   renderInfo(c, sessions);
@@ -267,21 +304,84 @@ function renderHistory(sessions){
       return hay.indexOf(q) >= 0;
     });
   }
+  _cpState.filteredSessions = rows.slice();
 
   hist.innerHTML = '';
   if (!(sessions || []).length) {
-    hist.innerHTML = '<tr><td colspan="4">Šim klientam vēl nav reģistrētu nodarbību.</td></tr>';
+    hist.innerHTML = '<tr><td colspan="5">Šim klientam vēl nav reģistrētu nodarbību.</td></tr>';
+    updateExportButtons();
     return;
   }
   if (!rows.length) {
-    hist.innerHTML = '<tr><td colspan="4">Meklēšanai atbilstošu ierakstu nav.</td></tr>';
+    hist.innerHTML = '<tr><td colspan="5">Meklēšanai atbilstošu ierakstu nav.</td></tr>';
+    updateExportButtons();
     return;
   }
   for (var i = 0; i < rows.length; i++) {
-    var s = rows[i];
-    var tr = document.createElement('tr');
-    tr.innerHTML = '<td>' + esc(s.datums || '-') + '</td><td>' + esc(s.nodarbiba_nosaukums || s.nodarbiba || '-') + '</td><td>' + esc(s.darbinieks || '-') + '</td><td>' + esc(s.id || '-') + '</td>';
-    hist.appendChild(tr);
+    (function(s){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + esc(s.datums || '-') + '</td><td>' + esc(s.nodarbiba_nosaukums || s.nodarbiba || '-') + '</td><td>' + esc(s.darbinieks || '-') + '</td><td>' + esc(s.id || '-') + '</td>';
+      var td = document.createElement('td');
+      td.className = 'profile-row-actions';
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-secondary btn-sm';
+      btn.textContent = 'Lejupielādēt';
+      btn.title = 'Lejupielādēt šī ieraksta Excel veidni';
+      btn.addEventListener('click', function(){ downloadSingleSession(s, btn); });
+      td.appendChild(btn);
+      tr.appendChild(td);
+      hist.appendChild(tr);
+    })(rows[i]);
+  }
+  updateExportButtons();
+}
+
+function updateExportButtons(){
+  var bF = byId('profileExportFilteredBtn');
+  var bA = byId('profileExportAllBtn');
+  var hasAll = (_cpState.selectedSessions || []).length > 0;
+  var hasFiltered = (_cpState.filteredSessions || []).length > 0;
+  if (bA) bA.disabled = !hasAll;
+  if (bF) bF.disabled = !hasFiltered;
+}
+
+async function downloadSingleSession(rec, btn){
+  if (!rec) return;
+  var old = btn ? btn.textContent : '';
+  try{
+    if (btn){ btn.disabled = true; btn.textContent = '...'; }
+    var res = await api('fillVeidne', rec);
+    if(res && res.ok && res.fileBase64){
+      downloadBase64File(res.fileBase64, res.fileName || makeVeidneFileName(rec), res.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      setProfileMsg('Veidne lejupielādēta: ' + (res.fileName || makeVeidneFileName(rec)), 'ok');
+    } else if(res && res.ok){
+      setProfileMsg('Veidnes fails netika atgriezts lejupielādei.', 'error');
+    } else {
+      setProfileMsg('Neizdevās lejupielādēt veidni: ' + (res && (res.reason||res.err||res.exportWarning) || 'nezināma kļūda'), 'error');
+    }
+  }catch(e){
+    setProfileMsg('Servera kļūda, lejupielādējot veidni.', 'error');
+  }finally{
+    if (btn){ btn.disabled = false; btn.textContent = old || 'Lejupielādēt'; }
+  }
+}
+
+function exportSessions(list, isFiltered){
+  var data = (list || []).slice();
+  if (!data.length){
+    setProfileMsg(isFiltered ? 'Nav ierakstu, ko lejupielādēt (pārbaudiet filtru).' : 'Šim klientam nav nodarbību lejupielādei.', 'error');
+    return;
+  }
+  var c = getSelectedClient();
+  var base = (c ? displayClientName(c) : 'klients').replace(/[\\/:*?"<>|]+/g,'').replace(/\s+/g,'_');
+  var suffix = isFiltered ? '_filtretie' : '_visi';
+  var fname = base + '_nodarbibas' + suffix + '_' + new Date().toISOString().slice(0,10) + '.xlsx';
+  if (typeof exportNodarbibasToExcel === 'function') {
+    exportNodarbibasToExcel(data, fname);
+    setProfileMsg('Eksports sagatavots: ' + data.length + ' ieraksts(-i).', 'ok');
+  } else {
+    setProfileMsg('Eksporta funkcija nav pieejama.', 'error');
   }
 }
 
@@ -314,7 +414,7 @@ function setProfileMsg(text, type){
   var el = byId('pageMsg');
   if (!el) return;
   el.textContent = text || '';
-  el.style.color = type === 'error' ? '#fda4af' : '#fbcfe8';
+  el.style.color = type === 'error' ? '#fda4af' : (type === 'ok' ? '#86efac' : '#fbcfe8');
 }
 
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
