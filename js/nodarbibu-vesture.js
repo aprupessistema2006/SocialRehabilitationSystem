@@ -12,8 +12,11 @@ function downloadBase64File(b64, filename, mime){
     var a = document.createElement('a');
     a.href = url; a.download = filename || 'veidne.xlsx';
     document.body.appendChild(a); a.click(); a.remove();
+    console.log('[SRS] Lejupielādē fails:', a.download);
     setTimeout(function(){ URL.revokeObjectURL(url); }, 4000);
-  }catch(e){ console.error('downloadBase64File failed', e); }
+  }catch(e){
+    console.error('downloadBase64File failed', e);
+  }
 }
 function fmtVeidneDate(v){
   var s=String(v==null?'':v).trim(); if(!s) return '';
