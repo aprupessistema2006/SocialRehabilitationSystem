@@ -235,8 +235,6 @@ function renderCharts(){
 function createChart(canvasId, type, title, labels, values, isRound){
   var canvas = byId(canvasId);
   if (!canvas) return;
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
   var ctx = canvas.getContext('2d');
   var total = values.reduce(function(a,b){ return a + b; }, 0);
   var chart = new Chart(ctx, {
@@ -247,36 +245,61 @@ function createChart(canvasId, type, title, labels, values, isRound){
         label: 'Ieraksti',
         data: values,
         backgroundColor: ST.colors.slice(0, values.length),
-        borderColor: ST.colors.slice(0, values.length),
-        borderWidth: isRound ? 4 : 0,
+        borderColor: isRound ? 'rgba(15,10,30,0.85)' : ST.colors.slice(0, values.length),
+        borderWidth: isRound ? 2 : 0,
         borderRadius: isRound ? 0 : 6,
         borderSkipped: false,
-        hoverOffset: isRound ? 20 : 10,
+        hoverOffset: isRound ? 12 : 8,
         barPercentage: 0.7,
         categoryPercentage: 0.85,
-        barThickness: isRound ? undefined : 20,
-        maxBarThickness: 28
+        barThickness: isRound ? undefined : 18,
+        maxBarThickness: 26,
+        tension: type === 'line' ? 0.35 : 0,
+        fill: type === 'line',
+        pointRadius: type === 'line' ? 3 : 0,
+        pointHoverRadius: type === 'line' ? 5 : 0
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      indexAxis: isRound ? undefined : 'y',
-      layout: { padding: 24 },
+      indexAxis: (type === 'bar') ? 'y' : undefined,
+      layout: { padding: { top: 8, right: 8, bottom: 8, left: 8 } },
       plugins: {
-        legend: { display: false },
+        legend: isRound ? {
+          display: true,
+          position: 'bottom',
+          align: 'center',
+          labels: {
+            color: '#cbd5e1',
+            usePointStyle: true,
+            pointStyle: 'circle',
+            boxWidth: 8,
+            boxHeight: 8,
+            padding: 12,
+            font: { size: 11, weight: '600' }
+          }
+        } : { display: false },
         title: { display: false },
         datalabels: {
           color: '#fff',
-          font: { weight: '800', size: 11 },
+          font: { weight: '700', size: 10 },
           formatter: function(value, ctx){
             var sum = ctx.chart.data.datasets[0].data.reduce(function(a,b){ return a + b; }, 0);
-            return sum > 0 ? (value * 100 / sum).toFixed(1) + '%' : '';
+            if (!sum || value <= 0) return '';
+            var pct = (value * 100 / sum);
+            return pct >= 5 ? pct.toFixed(0) + '%' : '';
           },
-          display: function(ctx){ return ctx.dataset.data[ctx.dataIndex] > 0; },
+          display: function(ctx){
+            if (!isRound) return ctx.dataset.data[ctx.dataIndex] > 0;
+            var sum = ctx.chart.data.datasets[0].data.reduce(function(a,b){ return a + b; }, 0);
+            var v = ctx.dataset.data[ctx.dataIndex];
+            return sum > 0 && v > 0 && (v * 100 / sum) >= 5;
+          },
           anchor: isRound ? 'center' : 'end',
-          align: isRound ? 'center' : 'start',
-          offset: isRound ? 0 : 6,
+          align: isRound ? 'center' : 'right',
+          offset: isRound ? 0 : 4,
+          clamp: true,
           clip: false
         },
         tooltip: {
@@ -286,22 +309,24 @@ function createChart(canvasId, type, title, labels, values, isRound){
           bodyColor: '#cbd5e1',
           titleFont: { weight: 'bold', size: 13 },
           bodyFont: { size: 12 },
-          padding: 14,
-          cornerRadius: 12,
-          displayColors: false,
-          usePointStyle: true,
+          padding: 12,
+          cornerRadius: 10,
+          displayColors: true,
           callbacks: {
             label: function(ctx){
-              return ctx.parsed + ' (' + ((ctx.parsed / total) * 100).toFixed(1) + '%)';
+              var label = ctx.label || '';
+              var val = (type === 'bar') ? ctx.parsed.x : (type === 'line' ? ctx.parsed.y : ctx.parsed);
+              var pct = total > 0 ? ((val / total) * 100).toFixed(1) : '0.0';
+              return label + ': ' + val + ' (' + pct + '%)';
             }
           }
         }
       },
       scales: isRound ? undefined : {
-        x: { beginAtZero: true, grid: { color: 'rgba(168,85,247,0.10)', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 } } },
-        y: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 11 } } }
+        x: { beginAtZero: true, grid: { color: 'rgba(168,85,247,0.10)', drawBorder: false }, ticks: { color: '#94a3b8', font: { size: 10 }, maxTicksLimit: 8 } },
+        y: { grid: { display: false }, ticks: { color: '#cbd5e1', font: { size: 11 }, autoSkip: true, maxTicksLimit: 8 } }
       },
-      animation: { duration: 1400, easing: 'easeOutQuart' }
+      animation: { duration: 1000, easing: 'easeOutQuart' }
     }
   });
   canvas.parentElement.style.cursor = 'zoom-in';
@@ -321,10 +346,6 @@ function openModal(chartInstance, title){
   setTimeout(function(){
     var canvas = document.createElement('canvas');
     canvas.id = 'modalCanvas';
-    canvas.style.width = '100%';
-    canvas.style.height = 'auto';
-    canvas.width = 900;
-    canvas.height = 600;
     fsBody.appendChild(canvas);
     var ctx = canvas.getContext('2d');
     var clone = new Chart(ctx, {
@@ -334,15 +355,15 @@ function openModal(chartInstance, title){
         responsive: true,
         maintainAspectRatio: false,
         indexAxis: chartInstance.config.options.indexAxis,
-        layout: { padding: 30 },
+        layout: { padding: 20 },
         plugins: {
-          legend: { display: false },
-          title: { display: true, text: title, font: { size: 22, weight: 'bold' }, color: '#f8fafc', padding: 24 },
+          legend: chartInstance.config.options.plugins.legend,
+          title: { display: true, text: title, font: { size: 20, weight: 'bold' }, color: '#f8fafc', padding: 16 },
           datalabels: chartInstance.config.options.plugins.datalabels,
           tooltip: chartInstance.config.options.plugins.tooltip
         },
         scales: chartInstance.config.options.scales,
-        animation: { duration: 1200, easing: 'easeOutQuart' }
+        animation: { duration: 800, easing: 'easeOutQuart' }
       }
     });
     ST.modalChart = clone;

@@ -80,18 +80,19 @@ html,body{background:radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 55%), r
 .kpi-card.kpi-dark .kpi-icon{color:#c084fc;border-color:rgba(192,132,252,0.35);background:rgba(192,132,252,0.16);box-shadow:0 0 16px rgba(192,132,252,0.25);}
 
 /* Charts grid */
-.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:20px;padding:0 28px;margin-bottom:30px;}
-.chart-card{background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(30,27,75,0.6));border:1px solid rgba(168,85,247,0.35);border-radius:26px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,0.6);transition:var(--transition);display:flex;flex-direction:column;min-height:380px;backdrop-filter:blur(16px);animation:fadeUp 0.9s ease both;position:relative;}
-.chart-card:nth-child(1){animation-delay:0.1s;}
-.chart-card:nth-child(2){animation-delay:0.16s;}
-.chart-card:nth-child(3){animation-delay:0.22s;}
-.chart-card:nth-child(4){animation-delay:0.28s;}
-.chart-card:nth-child(5){animation-delay:0.34s;}
-.chart-card:nth-child(6){animation-delay:0.4s;}
-.chart-card:hover{transform:translateY(-6px);border-color:rgba(168,85,247,0.6);box-shadow:0 40px 100px rgba(0,0,0,0.75);}
-.chart-card::after{content:'';position:absolute;inset:0;border-radius:26px;padding:1px;background:linear-gradient(135deg,var(--primary),var(--accent),var(--primary));-webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);-webkit-mask-composite:destination-out;mask-composite:exclude;pointer-events:none;opacity:0;transition:opacity 0.3s;}
-.chart-card:hover::after{opacity:0.35;}
+.charts-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;padding:0 28px;margin-bottom:30px;}
+.chart-card{background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(30,27,75,0.6));border:1px solid rgba(168,85,247,0.35);border-radius:26px;overflow:hidden;box-shadow:0 28px 80px rgba(0,0,0,0.6);transition:var(--transition);display:flex;flex-direction:column;height:clamp(320px, 38vh, 480px);backdrop-filter:blur(16px);animation:fadeUp 0.9s ease both;position:relative;}
 .chart-card.chart-wide{grid-column:span 2;}
+@media(min-width:1600px){
+  .charts-grid{grid-template-columns:repeat(3, minmax(0,1fr));}
+  .chart-card.chart-wide{grid-column:span 2;}
+  .chart-card{height:clamp(360px, 34vh, 520px);}
+}
+@media(min-width:2200px){
+  .charts-grid{grid-template-columns:repeat(4, minmax(0,1fr));gap:24px;}
+  .chart-card.chart-wide{grid-column:span 2;}
+  .chart-card{height:clamp(380px, 32vh, 560px);}
+}
 .chart-header{padding:22px 28px;border-bottom:1px solid rgba(168,85,247,0.2);background:rgba(168,85,247,0.08);flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;position:relative;z-index:2;}
 .chart-header > *:first-child{display:flex;flex-direction:column;gap:5px;}
 .chart-title{margin:0;font-size:17px;font-weight:800;color:#fff;letter-spacing:-.3px;}
@@ -100,9 +101,9 @@ html,body{background:radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 55%), r
 .btn-fullscreen{width:36px;height:36px;border-radius:12px;border:none;background:rgba(168,85,247,0.2);color:#e2e8f0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:var(--transition);box-shadow:0 8px 20px rgba(0,0,0,0.3);}
 .btn-fullscreen:hover{background:rgba(168,85,247,0.4);color:#fff;transform:rotate(12deg) scale(1.1);box-shadow:0 12px 28px rgba(168,85,247,0.4);}
 
-/* Chart body - fills container, not compressed, not overflow */
-.chart-body{padding:26px 28px;flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:visible;}
-.chart-body canvas{width:100% !important;height:auto !important;max-width:640px;max-height:420px;display:block;margin:0 auto;}
+/* Chart body - fills container, legend stays inside */
+.chart-body{padding:16px 20px;flex:1 1 auto;position:relative;min-height:0;overflow:hidden;}
+.chart-body canvas{width:100% !important;height:100% !important;display:block;}
 .css-empty{display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding:50px;backdrop-filter:blur(8px);}
 
 /* Insights */
@@ -125,8 +126,8 @@ html,body{background:radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 55%), r
 .chart-fullscreen .fs-title{font-size:20px;font-weight:800;color:#fff;margin:0;}
 .chart-fullscreen .fs-close{width:42px;height:42px;border-radius:16px;border:none;background:rgba(168,85,247,0.2);color:#e2e8f0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:19px;transition:var(--transition);}
 .chart-fullscreen .fs-close:hover{background:rgba(168,85,247,0.45);color:#fff;transform:scale(1.05) rotate(7deg);}
-.chart-fullscreen .fs-body{flex:1;padding:44px;overflow:auto;display:flex;flex-direction:column;gap:34px;align-items:center;justify-content:center;}
-.chart-fullscreen .fs-body canvas{max-width:900px;max-height:620px;display:block;margin:0 auto;}
+.chart-fullscreen .fs-body{flex:1;padding:24px 32px;overflow:hidden;position:relative;min-height:0;}
+.chart-fullscreen .fs-body canvas{width:100% !important;height:100% !important;display:block;}
 
 /* Buttons */
 .btn-primary{background:linear-gradient(135deg,var(--primary),var(--accent));border:none;color:#fff;font-weight:700;padding:11px 22px;border-radius:12px;cursor:pointer;transition:var(--transition);box-shadow:0 12px 30px rgba(168,85,247,0.35);letter-spacing:0.3px;}
@@ -140,6 +141,7 @@ html,body{background:radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 55%), r
 @media(max-width:900px){
   .charts-grid{grid-template-columns:1fr;}
   .chart-card.chart-wide{grid-column:span 1;}
+  .chart-card{height:clamp(300px, 50vh, 420px);}
   .filter-bar{padding:18px;}
   .kpi-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr));}
   .page-header{flex-direction:column;align-items:flex-start;gap:12px;}
@@ -155,12 +157,12 @@ html,body{background:radial-gradient(ellipse at top, #1e1b4b 0%, #0f0a1e 55%), r
   .kpi-value{font-size:22px;}
   .chart-fullscreen{padding:12px;}
   .chart-fullscreen .fs-header{padding:18px 22px;}
-  .chart-fullscreen .fs-body{padding:24px;}
+  .chart-fullscreen .fs-body{padding:16px;}
   .page-header{padding:16px 20px 0 20px;}
   .filter-bar{padding:16px 20px;gap:10px;}
-  .chart-card{min-height:340px;}
+  .chart-card{height:clamp(280px, 55vh, 380px);}
   .chart-header{padding:18px 22px;}
-  .chart-body{padding:22px 24px;}
+  .chart-body{padding:14px 16px;}
   .insights-card{padding:24px 26px;}
 }
 
