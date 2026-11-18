@@ -130,7 +130,7 @@ function renderKPI(u){
   animateValue('statToday', getElText('statToday'), today);
   animateValue('statClients', getElText('statClients'), activeClients);
   animateValue('statMine', getElText('statMine'), mine);
-  setText('statClientActivity', clientActivityPct + '%');
+  setText('statClientActivity', clientActivityPct + '% (' + uniqueClientsWithActivity + '/' + activeClients + ')');
   setText('statAvgRating', avgRating === '-' ? '-' : avgRating + '/5 (' + ratingLabel(avgRating) + ')');
 
   setDelta('statTotalDelta', total, s.kopskaits);
@@ -456,8 +456,9 @@ function renderInsights(){
   nb.forEach(function(r){ if(r.klients && r.klients !== 'Nezināms') withActivity.add(r.klients); });
   var activeWithActivity = 0;
   allActive.forEach(function(k){ var name = k.vards || k.id || ''; if(withActivity.has(name)) activeWithActivity++; });
+  var activeWithoutActivity = allActive.length - activeWithActivity;
   var clientActivityPct = allActive.length > 0 ? Math.round((activeWithActivity / allActive.length) * 100) : 0;
-  insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Klientu aktivitāte:</strong> <strong>' + clientActivityPct + '%</strong> no aktīviem klientiem (' + activeWithActivity + ' no ' + allActive.length + ') ir ierakstīti vismaz viens ieraksts filtrētajā periodā.</div></div>');
+  insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Klientu aktivitāte:</strong> <strong>' + clientActivityPct + '%</strong> no aktīviem klientiem (' + activeWithActivity + ' no ' + allActive.length + ') ir ierakstīti vismaz viens ieraksts filtrētajā periodā. Bez aktivitātes: ' + activeWithoutActivity + ' klients(-i).</div></div>');
 
   var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
   if (ratings.length > 0) {
