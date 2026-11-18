@@ -116,9 +116,13 @@ function renderKPI(u){
 
   var total = nb.length;
   var today = countToday(nb);
-  var activeClients = ST.klienti.filter(function(k){ return String(k.statuss || '').toLowerCase().indexOf('akt') === 0; }).length;
+  var allActiveClients = ST.klienti.filter(function(k){ return String(k.statuss || '').toLowerCase().indexOf('akt') === 0; });
+  var activeClients = allActiveClients.length;
+  var activeClientNames = allActiveClients.map(function(k){ return k.vards || k.id || ''; });
+  var clientsWithActivity = nb.map(function(r){ return r.klients; }).filter(function(c){ return c && c !== 'Nezināms'; });
+  var uniqueClientsWithActivity = new Set(clientsWithActivity).size;
+  var clientActivityPct = activeClients > 0 ? Math.round((uniqueClientsWithActivity / activeClients) * 100) : 0;
   var mine = nb.filter(function(r){ return String(r.employee_id || r.darbinieks_id || '') === String(u.id || ''); }).length;
-  var pctComplete = total > 0 ? Math.round((nb.filter(function(r){ return String(r.pildits || '').toLowerCase().indexOf('pild') >= 0 || String(r.pildits || '').toLowerCase() === 'jā'; }).length / total) * 100) : 0;
   var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
   var avgRating = ratings.length > 0 ? (ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length).toFixed(1) : '-';
 
@@ -126,14 +130,14 @@ function renderKPI(u){
   animateValue('statToday', getElText('statToday'), today);
   animateValue('statClients', getElText('statClients'), activeClients);
   animateValue('statMine', getElText('statMine'), mine);
-  setText('statPctComplete', pctComplete + '%');
+  setText('statClientActivity', clientActivityPct + '%');
   setText('statAvgRating', avgRating === '-' ? '-' : avgRating + '/5 (' + ratingLabel(avgRating) + ')');
 
   setDelta('statTotalDelta', total, s.kopskaits);
   setDelta('statTodayDelta', today, s.sodien);
   setDelta('statClientsDelta', activeClients, s.aktivie);
   setDelta('statMineDelta', mine, s.mani);
-  setDelta('statPctCompleteDelta', pctComplete + '%', '-');
+  setDelta('statClientActivityDelta', clientActivityPct + '%', '-');
   setDelta('statAvgRatingDelta', avgRating, '-');
 }
 
@@ -218,7 +222,7 @@ function destroyCharts(){
 function renderCharts(){
   destroyCharts();
   var nb = getFiltered();
-  var ids = ['chartClients','chartWorkers','chartTimeline','chartTypes','chartStatus','chartMood','chartRating'];
+  var ids = ['chartClients','chartWorkers','chartTimeline','chartTypes','chartClientActivity','chartMood','chartRating'];
   if (!nb.length){
     ids.forEach(function(id){
       var el = byId(id); if(el) el.innerHTML = '<div class="css-empty">Nav ierakstu analīzei.</div>';
@@ -231,10 +235,10 @@ function renderCharts(){
   var clientItems = Object.entries(byClient).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 8).reverse();
   createChart('chartClients', 'bar', 'Nodarbības pēc klienta', clientItems.map(function(i){return i[0];}), clientItems.map(function(i){return i[1];}), false);
 
-  // 2. Pie: workers
+  // 2. Bar: workers workload
   var byWorker = groupBy(nb, function(r){ return r.darbinieks || 'Nezināms'; });
-  var workerItems = Object.entries(byWorker);
-  createChart('chartWorkers', 'pie', 'Nodarbības pēc darbinieka', workerItems.map(function(i){return i[0];}), workerItems.map(function(i){return i[1];}), true);
+  var workerItems = Object.entries(byWorker).sort(function(a, b){ return b[1] - a[1]; }).reverse();
+  createChart('chartWorkers', 'bar', 'Darbinieku darba apjoms', workerItems.map(function(i){return i[0];}), workerItems.map(function(i){return i[1];}), false);
 
   // 3. Line: timeline
   var byDate = groupBy(nb, function(r){ return r.datums || '-'; });
@@ -244,20 +248,21 @@ function renderCharts(){
     return String(a).localeCompare(String(b));
   }).slice(-14);
   var dateItems = dates.map(function(d){ return [d, byDate[d] || 0]; });
-  createChart('chartTimeline', 'line', 'Nodarbības laika gaitā', dateItems.map(function(i){return i[0];}), dateItems.map(function(i){return i[1];}), false);
+  createChart('chartTimeline', 'line', 'Aktivitātes tendence (pēdējās 14 dienas)', dateItems.map(function(i){return i[0];}), dateItems.map(function(i){return i[1];}), false);
 
   // 4. Doughnut: types
   var byType = groupBy(nb, function(r){ return r.nodarbiba_nosaukums || 'Nezināms'; });
   var typeItems = Object.entries(byType).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 6);
   createChart('chartTypes', 'doughnut', 'Nodarbību veidu sadalījums', typeItems.map(function(i){return i[0];}), typeItems.map(function(i){return i[1];}), true);
 
-  // 5. Pie: status
-  var pildits = 0, nepildits = 0;
-  nb.forEach(function(r){
-    if (String(r.pildits || '').toLowerCase().indexOf('pild') >= 0 || String(r.pildits || '').toLowerCase() === 'jā') pildits++;
-    else nepildits++;
-  });
-  createChart('chartStatus', 'pie', 'Pildības statuss', ['Pildīts','Nepildīts'], [pildits, nepildits], true);
+  // 5. Doughnut: client activity (active clients with vs without activity)
+  var allActive = ST.klienti.filter(function(k){ return String(k.statuss || '').toLowerCase().indexOf('akt') === 0; });
+  var activeNames = new Set(allActive.map(function(k){ return k.vards || k.id || ''; }));
+  var withActivity = new Set();
+  nb.forEach(function(r){ if(r.klients && r.klients !== 'Nezināms') withActivity.add(r.klients); });
+  var withoutCount = 0;
+  allActive.forEach(function(k){ var name = k.vards || k.id || ''; if(!withActivity.has(name)) withoutCount++; });
+  createChart('chartClientActivity', 'doughnut', 'Klientu aktivitāte', ['Ar aktivitāti','Bez aktivitātes'], [withActivity.size, withoutCount], true);
 
   // 6. Bar: mood (horizontal, top 8)
   var byMood = groupBy(nb, function(r){ return r.garastavoklis || 'Nezināms'; });
@@ -445,10 +450,14 @@ function renderInsights(){
     insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Visaktivākais darbinieks:</strong> <strong>' + esc(topWorker[0]) + '</strong> ir reģistrējis <strong>' + pct + '%</strong> no visiem ierakstiem (' + topWorker[1] + ').</div></div>');
   }
 
-  var pildits = nb.filter(function(r){ return String(r.pildits || '').toLowerCase().indexOf('pild') >= 0 || String(r.pildits || '').toLowerCase() === 'jā'; }).length;
-  var pctComplete = total > 0 ? Math.round((pildits / total) * 100) : 0;
-  var statusText = pctComplete >= 80 ? 'Augsta pildības disciplīna' : pctComplete >= 50 ? 'Vidēja pildības līmenis' : 'Zemā pildības līmenis, nepieciešams uzlabojums';
-  insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Pildības statuss:</strong> <strong>' + pctComplete + '%</strong> no ierakstiem ir pilnībā pildītas. ' + statusText + '.</div></div>');
+  var allActive = ST.klienti.filter(function(k){ return String(k.statuss || '').toLowerCase().indexOf('akt') === 0; });
+  var activeNames = new Set(allActive.map(function(k){ return k.vards || k.id || ''; }));
+  var withActivity = new Set();
+  nb.forEach(function(r){ if(r.klients && r.klients !== 'Nezināms') withActivity.add(r.klients); });
+  var activeWithActivity = 0;
+  allActive.forEach(function(k){ var name = k.vards || k.id || ''; if(withActivity.has(name)) activeWithActivity++; });
+  var clientActivityPct = allActive.length > 0 ? Math.round((activeWithActivity / allActive.length) * 100) : 0;
+  insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Klientu aktivitāte:</strong> <strong>' + clientActivityPct + '%</strong> no aktīviem klientiem (' + activeWithActivity + ' no ' + allActive.length + ') ir ierakstīti vismaz viens ieraksts filtrētajā periodā.</div></div>');
 
   var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
   if (ratings.length > 0) {
