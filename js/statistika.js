@@ -118,10 +118,12 @@ function renderKPI(u){
   var today = countToday(nb);
   var allActiveClients = ST.klienti.filter(function(k){ return String(k.statuss || '').toLowerCase().indexOf('akt') === 0; });
   var activeClients = allActiveClients.length;
-  var activeClientNames = allActiveClients.map(function(k){ return k.vards || k.id || ''; });
-  var clientsWithActivity = nb.map(function(r){ return r.klients; }).filter(function(c){ return c && c !== 'Nezināms'; });
-  var uniqueClientsWithActivity = new Set(clientsWithActivity).size;
-  var clientActivityPct = activeClients > 0 ? Math.round((uniqueClientsWithActivity / activeClients) * 100) : 0;
+  var activeClientNames = new Set(allActiveClients.map(function(k){ return k.vards || k.id || ''; }));
+  var clientsInRecords = new Set();
+  nb.forEach(function(r){ if(r.klients && r.klients !== 'Nezināms') clientsInRecords.add(r.klients); });
+  var activeWithActivity = 0;
+  allActiveClients.forEach(function(k){ var name = k.vards || k.id || ''; if(clientsInRecords.has(name)) activeWithActivity++; });
+  var clientActivityPct = activeClients > 0 ? Math.round((activeWithActivity / activeClients) * 100) : 0;
   var mine = nb.filter(function(r){ return String(r.employee_id || r.darbinieks_id || '') === String(u.id || ''); }).length;
   var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
   var avgRating = ratings.length > 0 ? Math.min(5, Math.max(1, (ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length))).toFixed(1) : '-';
@@ -130,7 +132,7 @@ function renderKPI(u){
   animateValue('statToday', getElText('statToday'), today);
   animateValue('statClients', getElText('statClients'), activeClients);
   animateValue('statMine', getElText('statMine'), mine);
-  setText('statClientActivity', clientActivityPct + '% (' + uniqueClientsWithActivity + '/' + activeClients + ')');
+  setText('statClientActivity', clientActivityPct + '% (' + activeWithActivity + '/' + activeClients + ')');
   setText('statAvgRating', avgRating === '-' ? '-' : avgRating + '/5 (' + ratingLabel(avgRating) + ')');
 
   setDelta('statTotalDelta', total, s.kopskaits);
