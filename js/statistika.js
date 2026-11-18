@@ -124,7 +124,7 @@ function renderKPI(u){
   var clientActivityPct = activeClients > 0 ? Math.round((uniqueClientsWithActivity / activeClients) * 100) : 0;
   var mine = nb.filter(function(r){ return String(r.employee_id || r.darbinieks_id || '') === String(u.id || ''); }).length;
   var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
-  var avgRating = ratings.length > 0 ? (ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length).toFixed(1) : '-';
+  var avgRating = ratings.length > 0 ? Math.min(5, Math.max(1, (ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length))).toFixed(1) : '-';
 
   animateValue('statTotal', getElText('statTotal'), total);
   animateValue('statToday', getElText('statToday'), today);
@@ -461,7 +461,7 @@ function renderInsights(){
 
   var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
   if (ratings.length > 0) {
-    var avg = ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length;
+    var avg = Math.min(5, Math.max(1, ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length));
     var ratingText = avg >= 4.5 ? 'Izcili' : avg >= 3.5 ? 'Labi' : avg >= 2.5 ? 'Vidēji' : 'Vajag uzlabojumu';
     var pctOfMax = Math.round((avg / 5) * 100);
     insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Vidējais vērtējums:</strong> <strong>' + avg.toFixed(1) + '/5</strong> (' + ratings.length + ' ieraksti, ' + pctOfMax + '% no maksimālām 5). ' + ratingText + ' — ' + ratingLabel(avg) + '.</div></div>');
