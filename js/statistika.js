@@ -510,7 +510,7 @@ function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(
 function ratingLabel(value){
   var v = Math.round(value);
   if (v < 1) v = 1; if (v > 5) v = 5;
-  var s = ST.istatijumi || {};
+  var s = ST.iestatijumi || {};
   var raw = s.cfg_vertejums;
   var items = [];
   if(raw){
