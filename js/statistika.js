@@ -107,8 +107,8 @@ function renderKPI(u){
   var today = countToday(nb);
   var activeClients = ST.klienti.filter(function(k){ return String(k.statuss || '').toLowerCase().indexOf('akt') === 0; }).length;
   var mine = nb.filter(function(r){ return String(r.employee_id || r.darbinieks_id || '') === String(u.id || ''); }).length;
-  var pctComplete = total > 0 ? Math.round((nb.filter(function(r){ return String(r.pildits || '').toLowerCase().indexOf('piln') >= 0 || String(r.pildits || '').toLowerCase() === 'jā'; }).length / total) * 100) : 0;
-  var ratings = nb.map(function(r){ return parseFloat(r.vertejums); }).filter(function(v){ return !isNaN(v) && v > 0; });
+  var pctComplete = total > 0 ? Math.round((nb.filter(function(r){ return String(r.pildits || '').toLowerCase().indexOf('pild') >= 0 || String(r.pildits || '').toLowerCase() === 'jā'; }).length / total) * 100) : 0;
+  var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
   var avgRating = ratings.length > 0 ? (ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length).toFixed(1) : '-';
 
   animateValue('statTotal', getElText('statTotal'), total);
@@ -156,6 +156,7 @@ function setDelta(id, current, baseline){
   var baseNum = parseFloat(String(baseline).replace('%','').replace(',','.'));
   if (isNaN(curNum) || isNaN(baseNum)) { el.textContent = ''; el.className = 'kpi-delta kpi-delta-neutral'; return; }
   var diff = curNum - baseNum;
+  if (diff === 0) { el.textContent = ''; el.className = 'kpi-delta kpi-delta-neutral'; return; }
   var pct = baseNum === 0 ? (curNum > 0 ? 100 : 0) : Math.round((diff / baseNum) * 100);
   var cls = 'kpi-delta kpi-delta-neutral';
   var sign = '';
@@ -221,7 +222,7 @@ function renderCharts(){
   // 5. Pie: status
   var pildits = 0, nepildits = 0;
   nb.forEach(function(r){
-    if (String(r.pildits || '').toLowerCase().indexOf('piln') >= 0 || String(r.pildits || '').toLowerCase() === 'jā') pildits++;
+    if (String(r.pildits || '').toLowerCase().indexOf('pild') >= 0 || String(r.pildits || '').toLowerCase() === 'jā') pildits++;
     else nepildits++;
   });
   createChart('chartStatus', 'pie', 'Pildības statuss', ['Pildīts','Nepildīts'], [pildits, nepildits], true);
@@ -404,12 +405,12 @@ function renderInsights(){
     insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Visaktivākais darbinieks:</strong> <strong>' + esc(topWorker[0]) + '</strong> ir reģistrējis <strong>' + pct + '%</strong> no visiem ierakstiem (' + topWorker[1] + ').</div></div>');
   }
 
-  var pildits = nb.filter(function(r){ return String(r.pildits || '').toLowerCase().indexOf('piln') >= 0 || String(r.pildits || '').toLowerCase() === 'jā'; }).length;
+  var pildits = nb.filter(function(r){ return String(r.pildits || '').toLowerCase().indexOf('pild') >= 0 || String(r.pildits || '').toLowerCase() === 'jā'; }).length;
   var pctComplete = total > 0 ? Math.round((pildits / total) * 100) : 0;
   var statusText = pctComplete >= 80 ? 'Augsta pildības disciplīna' : pctComplete >= 50 ? 'Vidēja pildības līmenis' : 'Zemā pildības līmenis, nepieciešams uzlabojums';
   insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Pildības statuss:</strong> <strong>' + pctComplete + '%</strong> no ierakstiem ir pilnībā pildītas. ' + statusText + '.</div></div>');
 
-  var ratings = nb.map(function(r){ return parseFloat(r.vertejums); }).filter(function(v){ return !isNaN(v) && v > 0; });
+  var ratings = nb.map(function(r){ return parseFloat(String(r.vertejums||'').replace(',','.')); }).filter(function(v){ return !isNaN(v) && v > 0; });
   if (ratings.length > 0) {
     var avg = ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length;
     var ratingText = avg >= 4.5 ? 'Izcili' : avg >= 3.5 ? 'Labi' : avg >= 2.5 ? 'Vidēji' : 'Vajag uzlabojumu';
