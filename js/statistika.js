@@ -271,13 +271,22 @@ function renderCharts(){
   var moodItems = Object.entries(byMood).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 8).reverse();
   createChart('chartMood', 'bar', 'Klienta garastāvoklis', moodItems.map(function(i){return i[0];}), moodItems.map(function(i){return i[1];}), false);
 
-  // 7. Bar: rating distribution (1–5)
+  // 7. Bar: rating distribution (1–5) – labeli no konfigurācijas (cfg_vertejums)
   var ratingCounts = [0,0,0,0,0];
   nb.forEach(function(r){
     var v = Math.round(parseFloat(String(r.vertejums||'').replace(',','.')));
     if (!isNaN(v) && v >= 1 && v <= 5) ratingCounts[v-1]++;
   });
-  createChart('chartRating', 'bar', 'Vērtējumu sadalījums', ST.ratingLabels, ratingCounts, false);
+  var cfg = ST.iestatijumi || {};
+  var raw = cfg.cfg_vertejums;
+  var ratingLabels = ['1','2','3','4','5'];
+  if(raw){
+    try{
+      var items = JSON.parse(raw);
+      items.forEach(function(it){ var vv=String(it.value||it.id); var n=parseInt(vv,10); if(!isNaN(n)&&n>=1&&n<=5) ratingLabels[n-1]=it.label||vv; });
+    }catch(e){}
+  }
+  createChart('chartRating', 'bar', 'Vērtējumu sadalījums', ratingLabels, ratingCounts, false);
 }
 
 function createChart(canvasId, type, title, labels, values, isRound){
