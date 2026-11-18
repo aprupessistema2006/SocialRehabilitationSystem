@@ -88,8 +88,16 @@ function resetFilters(){
 }
 
 function isRecordIncluded(r){
-  if (ST.filters.dateFrom && r.datums && String(r.datums) < ST.filters.dateFrom) return false;
-  if (ST.filters.dateTo && r.datums && String(r.datums) > ST.filters.dateTo) return false;
+  if (ST.filters.dateFrom && r.datums) {
+    var d = parseDate(r.datums);
+    var f = parseDate(ST.filters.dateFrom);
+    if (d && f && d.getTime() < f.getTime()) return false;
+  }
+  if (ST.filters.dateTo && r.datums) {
+    var d = parseDate(r.datums);
+    var f = parseDate(ST.filters.dateTo);
+    if (d && f && d.getTime() > f.getTime()) return false;
+  }
   if (ST.filters.client && String(r.klients || '') !== ST.filters.client) return false;
   if (ST.filters.worker && String(r.darbinieks || '') !== ST.filters.worker) return false;
   return true;
@@ -167,10 +175,27 @@ function setDelta(id, current, baseline){
 }
 
 function countToday(arr){
-  var d = new Date();
-  var dd = String(d.getDate()).padStart(2, '0'), mm = String(d.getMonth() + 1).padStart(2, 0);
-  var today = dd + '.' + mm + '.' + d.getFullYear();
-  return (arr || []).filter(function(r){ return String(r.datums) === today; }).length;
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  return (arr || []).filter(function(r){
+    var d = parseDate(r.datums);
+    return d && d.getTime() === today.getTime();
+  }).length;
+}
+
+function parseDate(s){
+  if(!s) return null;
+  var str = String(s).trim();
+  if(!str) return null;
+  var m = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/);
+  if(m) return new Date(Number(m[3]), Number(m[2])-1, Number(m[1]));
+  m = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+  if(m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+  m = str.match(/^(\d{4})\.(\d{1,2})\.(\d{1,2})$/);
+  if(m) return new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+  var d = new Date(str);
+  if(!isNaN(d)) return d;
+  return null;
 }
 
 function groupBy(arr, keyFn){
@@ -210,7 +235,11 @@ function renderCharts(){
 
   // 3. Line: timeline
   var byDate = groupBy(nb, function(r){ return r.datums || '-'; });
-  var dates = Object.keys(byDate).sort().slice(-14);
+  var dates = Object.keys(byDate).filter(function(d){ return d !== '-'; }).sort(function(a, b){
+    var da = parseDate(a), db = parseDate(b);
+    if (da && db) return da.getTime() - db.getTime();
+    return String(a).localeCompare(String(b));
+  }).slice(-14);
   var dateItems = dates.map(function(d){ return [d, byDate[d] || 0]; });
   createChart('chartTimeline', 'line', 'Nodarbības laika gaitā', dateItems.map(function(i){return i[0];}), dateItems.map(function(i){return i[1];}), false);
 
