@@ -85,8 +85,8 @@ async function initSettings(){
   }
   initCfgTabs();
   initCfgModals();
-  document.addEventListener('DOMContentLoaded', function(){ if(byId('saveSettings')) initSettings(); });
 }
+document.addEventListener('DOMContentLoaded', function(){ if(byId('saveSettings')) initSettings(); });
 
 function initCfgTabs(){
   document.querySelectorAll('.cfg-tab').forEach(function(btn){
