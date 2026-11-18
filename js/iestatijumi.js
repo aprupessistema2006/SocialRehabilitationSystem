@@ -83,10 +83,12 @@ async function initSettings(){
       byId('pageMsg').textContent = 'Sesija atjaunināta.';
     });
   }
-  initCfgTabs();
-  initCfgModals();
 }
-document.addEventListener('DOMContentLoaded', function(){ if(byId('saveSettings')) initSettings(); });
+document.addEventListener('DOMContentLoaded', function(){ 
+  if(byId('saveSettings')) initSettings(); 
+  initCfgTabs(); 
+  initCfgModals(); 
+});
 
 function initCfgTabs(){
   document.querySelectorAll('.cfg-tab').forEach(function(btn){
