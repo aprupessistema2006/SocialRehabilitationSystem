@@ -19,13 +19,43 @@
 <div id="pageMsg" class="page-msg"></div>
 </div></div>
 <div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Integrācija</h3></div><div class="card-body"><div class="small muted">Frontend: GitHub Pages. Backend: Google Apps Script Web App. URL tiek glabāts <code>js/config.js</code>. Pēc <code>code.gs</code> izmaiņām Apps Script jāievieto/deploy manuāli.</div></div></div>
-<div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Vērtējumu kategorijas (1–5)</h3></div><div class="card-body"><div class="small muted">Definējiet katra vērtējuma nosaukumu, kas tiks rādīts Statistikas panelē.</div>
-<div class="form-group"><label class="form-label">1 – ļoti slikti</label><input id="setRating1" class="form-input"></div>
-<div class="form-group"><label class="form-label">2 – slikti</label><input id="setRating2" class="form-input"></div>
-<div class="form-group"><label class="form-label">3 – vidēji</label><input id="setRating3" class="form-input"></div>
-<div class="form-group"><label class="form-label">4 – labi</label><input id="setRating4" class="form-input"></div>
-<div class="form-group"><label class="form-label">5 – izcili</label><input id="setRating5" class="form-input"></div>
-</div></div>
+<div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Nodarbību vērtējumu nolājumiem</h3></div><div class="card-body"><div class="small muted">Definējiet izvēlnes opcijas katram laukam. Šīs opcijas tiks parādītas "Jaunā nodarbībā" kā nolājumvēļnieki un Statistikas panelē.</div>
+<div class="cfg-tabs">
+  <div class="cfg-tab-list" role="tablist">
+    <button class="cfg-tab active" data-cat="vertejums" role="tab" aria-selected="true">Vērtējums (1–5)</button>
+    <button class="cfg-tab" data-cat="garastavoklis" role="tab" aria-selected="false">Klienta garastāvoklis</button>
+    <button class="cfg-tab" data-cat="gaita" role="tab" aria-selected="false">Nodarbības gaita</button>
+    <button class="cfg-tab" data-cat="refleksija" role="tab" aria-selected="false">Klienta refleksija</button>
+    <button class="cfg-tab" data-cat="motivacija" role="tab" aria-selected="false">Klienta motivācija</button>
+    <button class="cfg-tab" data-cat="pildits" role="tab" aria-selected="false">Pildības statuss</button>
+  </div>
+  <div class="cfg-tab-panels">
+    <div class="cfg-tab-panel active" id="cfg-panel-vertejums" role="tabpanel">
+      <div class="cfg-toolbar"><button class="btn btn-primary btn-sm" id="cfgAddVertejums">+ Pievienot vērtējuma opciju</button></div>
+      <div class="cfg-list" id="cfgListVertejums"></div>
+    </div>
+    <div class="cfg-tab-panel" id="cfg-panel-garastavoklis" role="tabpanel">
+      <div class="cfg-toolbar"><button class="btn btn-primary btn-sm" id="cfgAddGarastavoklis">+ Pievienot garastāvokļa opciju</button></div>
+      <div class="cfg-list" id="cfgListGarastavoklis"></div>
+    </div>
+    <div class="cfg-tab-panel" id="cfg-panel-gaita" role="tabpanel">
+      <div class="cfg-toolbar"><button class="btn btn-primary btn-sm" id="cfgAddGaita">+ Pievienot gaitas opciju</button></div>
+      <div class="cfg-list" id="cfgListGaita"></div>
+    </div>
+    <div class="cfg-tab-panel" id="cfg-panel-refleksija" role="tabpanel">
+      <div class="cfg-toolbar"><button class="btn btn-primary btn-sm" id="cfgAddRefleksija">+ Pievienot refleksijas opciju</button></div>
+      <div class="cfg-list" id="cfgListRefleksija"></div>
+    </div>
+    <div class="cfg-tab-panel" id="cfg-panel-motivacija" role="tabpanel">
+      <div class="cfg-toolbar"><button class="btn btn-primary btn-sm" id="cfgAddMotivacija">+ Pievienot motivācijas opciju</button></div>
+      <div class="cfg-list" id="cfgListMotivacija"></div>
+    </div>
+    <div class="cfg-tab-panel" id="cfg-panel-pildits" role="tabpanel">
+      <div class="cfg-toolbar"><button class="btn btn-primary btn-sm" id="cfgAddPildits">+ Pievienot pildības opciju</button></div>
+      <div class="cfg-list" id="cfgListPildits"></div>
+    </div>
+  </div>
+</div></div></div>
 <div class="card" style="margin-top:16px;"><div class="card-header"><h3 class="card-title">Sesijas pārvaldība</h3></div><div class="card-body">
   <div class="form-group"><label class="form-label">Kopējās paroles derīgums</label>
   <div class="session-timer"><div class="session-bar" id="sessionBar"></div><div class="session-label" id="sessionLabel">—</div></div>
@@ -34,8 +64,32 @@
 <div class="form-actions"><button class="btn btn-secondary" id="extendSession">Atjaunināt sesiju</button></div>
 </div></div>
 </div></div><footer class="app-footer">Sociālās rehabilitācijas sistēma | Versija <span class="app-version-num"></span></footer></main></div>
+
+<!-- Pievienot/labot opciju modāls -->
+<div class="cfg-modal" id="cfgModal" hidden aria-hidden="true">
+  <div class="cfg-modal-backdrop" data-cfg-close="1"></div>
+  <div class="cfg-modal-dialog">
+    <div class="cfg-modal-head">
+      <h3 class="cfg-modal-title" id="cfgModalTitle">Pievienot opciju</h3>
+      <button type="button" class="cfg-modal-close" id="cfgModalClose">×</button>
+    </div>
+    <div class="cfg-modal-body">
+      <input type="hidden" id="cfgEditCat">
+      <input type="hidden" id="cfgEditId">
+      <div class="form-group"><label class="form-label">Kategorija</label><input id="cfgCatName" class="form-input" readonly></div>
+      <div class="form-group"><label class="form-label">Opcijas nosaukums</label><input id="cfgOptionLabel" class="form-input" placeholder="Piemēram: 1 – ļoti slikti"></div>
+      <div class="form-group"><label class="form-label">Vērtība (saglabājama datubāzē)</label><input id="cfgOptionValue" class="form-input" placeholder="Piemēram: 1"></div>
+      <div class="small muted">Ja vērtība netiek norādīta, tiek izmantots nosaukums.</div>
+      <div id="cfgMsg" class="alert" style="display:none;"></div>
+    </div>
+    <div class="cfg-modal-foot">
+      <button type="button" class="btn btn-secondary" id="cfgCancel">Atcelt</button>
+      <button type="button" class="btn btn-primary" id="cfgSave">Saglabāt</button>
+    </div>
+  </div>
+</div>
+
 <script src="../js/config.js?v=2.0.11"></script>
 <script>
 (function(){var v=(typeof APP_VERSION!=="undefined"?APP_VERSION:(localStorage.getItem("srs_app_version")||Date.now()));var s=["../js/version.js","../js/api.js","../js/layout.js","../js/iestatijumi.js"];for(var i=0;i<s.length;i++)document.write('<script src="'+s[i]+'?v='+encodeURIComponent(v)+'"><\/script>');})();
 </script></body></html>
-

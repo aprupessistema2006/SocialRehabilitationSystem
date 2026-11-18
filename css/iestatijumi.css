@@ -2,3 +2,38 @@
 .session-timer{position:relative;height:10px;border-radius:999px;background:rgba(148,163,184,.25);overflow:hidden;margin-top:6px;}
 .session-bar{position:absolute;top:0;left:0;height:100%;width:100%;border-radius:999px;background:linear-gradient(90deg,#22c55e,#84cc16);transition:width .5s ease;}
 .session-label{margin-top:8px;font-size:13px;color:var(--text-secondary);}
+
+/* Nolājumu konfigurēšana */
+.cfg-tabs{margin-top:12px;}
+.cfg-tab-list{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;border-bottom:1px solid rgba(168,85,247,.3);padding-bottom:8px;}
+.cfg-tab{background:transparent;border:1px solid transparent;color:#94a3b8;padding:8px 14px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s;}
+.cfg-tab:hover{background:rgba(168,85,247,.1);color:#cbd5e1;}
+.cfg-tab.active{background:rgba(168,85,247,.2);color:#f8fafc;border-color:rgba(168,85,247,.5);}
+.cfg-tab-panels{display:flex;flex-direction:column;gap:16px;}
+.cfg-tab-panel{display:none;}
+.cfg-tab-panel.active{display:block;}
+.cfg-toolbar{display:flex;gap:8px;margin-bottom:12px;}
+.cfg-list{display:flex;flex-direction:column;gap:8px;}
+.cfg-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.2);border-radius:10px;}
+.cfg-item-main{display:flex;align-items:center;gap:10px;flex:1;}
+.cfg-item-num{color:#a855f7;font-weight:700;min-width:20px;}
+.cfg-item-label{color:#e2e8f0;}
+.cfg-item-val{font-size:11px;color:#94a3b8;background:rgba(255,255,255,.05);padding:2px 8px;border-radius:4px;margin-left:8px;}
+.cfg-item-actions{display:flex;gap:6px;}
+.cfg-icon-btn{background:transparent;border:none;color:#94a3b8;cursor:pointer;padding:4px 8px;border-radius:4px;font-size:14px;}
+.cfg-icon-btn:hover{background:rgba(255,255,255,.08);color:#f8fafc;}
+.cfg-icon-btn-danger:hover{color:#f43f5e;background:rgba(244,63,94,.15);}
+.btn-sm{padding:6px 12px;font-size:13px;}
+
+/* Modāls */
+.cfg-modal{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;}
+.cfg-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);}
+.cfg-modal-dialog{position:relative;background:#1e1b4b;border:1px solid rgba(168,85,247,.35);border-radius:16px;width:min(460px,92vw);max-height:85vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 25px 80px rgba(0,0,0,.5);}
+.cfg-modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(168,85,247,.2);background:rgba(139,92,246,.08);}
+.cfg-modal-title{margin:0;font-size:17px;color:#f8fafc;}
+.cfg-modal-close{background:transparent;border:none;color:#94a3b8;font-size:24px;cursor:pointer;line-height:1;}
+.cfg-modal-close:hover{color:#f8fafc;}
+.cfg-modal-body{padding:20px;overflow-y:auto;}
+.cfg-modal-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid rgba(168,85,247,.2);background:rgba(139,92,246,.04);}
+
+.sp-modal-open{overflow:hidden;}

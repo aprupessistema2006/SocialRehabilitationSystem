@@ -499,8 +499,14 @@ function ratingLabel(value){
   var v = Math.round(value);
   if (v < 1) v = 1; if (v > 5) v = 5;
   var s = ST.istatijumi || {};
-  var custom = s['rating_label_'+v];
-  if (custom && String(custom).trim() !== '') return custom;
+  var raw = s.cfg_vertejums;
+  var items = [];
+  if(raw){
+    try{ items = JSON.parse(raw); }catch(e){ items = []; }
+  }
+  if(!items.length) items = ST.ratingLabels.map(function(l,i){ return {id:String(i+1), label:l, value:String(i+1)}; });
+  var match = items.find(function(it){ return String(it.value || it.id) === String(v); });
+  if(match && match.label) return match.label;
   return ST.ratingLabels[v - 1];
 }
 document.addEventListener('DOMContentLoaded', function(){

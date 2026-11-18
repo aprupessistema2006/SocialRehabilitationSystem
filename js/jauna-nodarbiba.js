@@ -9,16 +9,47 @@ var spState={k:null, sel:{nv:null,goal:null,problem:null,task:null}, open:null, 
 var spAuto=true;
 var PRESET_KEY='srs_activity_presets';
 var PRESET_FIELDS=['reflection','motivation','process','mood','evaluation','implementation','comment'];
+var CFG_DEFAULTS_JAUNA = {
+  evaluation: [{id:'1',label:'1 – ļoti slikti'},{id:'2',label:'2 – slikti'},{id:'3',label:'3 – vidēji'},{id:'4',label:'4 – labi'},{id:'5',label:'5 – izcili'}],
+  mood: [{id:'m1',label:'Normāls'},{id:'m2',label:'Pieņemams'},{id:'m3',label:'Jābūt uzmanīgam'}],
+  process: [{id:'g1',label:'Paceli jūtā'},{id:'g2',label:'Neutrāli'},{id:'g3',label:'Savākurbi'}],
+  reflection: [{id:'r1',label:'Pozitīva'},{id:'r2',label:'Neutrāla'},{id:'r3',label:'Negatīva'}],
+  motivation: [{id:'mot1',label:'Augsta'},{id:'mot2',label:'Vidēja'},{id:'mot3',label:'Zema'}],
+  implementation: [{id:'yes',label:'Jā'},{id:'no',label:'Nē'}]
+};
+var CFG_SELECT_MAP = { evaluation:'cfg_vertejums', mood:'cfg_garastavoklis', process:'cfg_gaita', reflection:'cfg_refleksija', motivation:'cfg_motivacija', implementation:'cfg_pildits' };
+
+async function populateCfgSelects(settings){
+  Object.keys(CFG_SELECT_MAP).forEach(function(selectId){
+    var key = CFG_SELECT_MAP[selectId];
+    var raw = settings[key];
+    var items = CFG_DEFAULTS_JAUNA[selectId] || [];
+    if(raw){
+      try{ items = JSON.parse(raw); }catch(e){ items = CFG_DEFAULTS_JAUNA[selectId] || []; }
+    }
+    if(!items || !items.length) items = CFG_DEFAULTS_JAUNA[selectId] || [];
+    var sel = byId(selectId);
+    if(!sel) return;
+    sel.innerHTML = '<option value="">Izvēlieties...</option>';
+    items.forEach(function(it){
+      var opt = document.createElement('option');
+      opt.value = it.value !== undefined ? it.value : (it.label || '');
+      opt.textContent = it.label || '';
+      sel.appendChild(opt);
+    });
+  });
+}
 
 async function initJauna(){
   var u=requireUser(); var emp=byId('employee'); if(emp) emp.value=u.name||'';
   var date=byId('activityDate'); if(date && !date.value){ var d=new Date(); var dd=String(d.getDate()).padStart(2,'0'), mm=String(d.getMonth()+1).padStart(2,'0'); date.value=d.getFullYear()+'-'+mm+'-'+dd; }
   byId('clearForm').addEventListener('click', function(){ if(confirm('Notīrīt formu?')) location.reload(); });
   try{
-    var res=await Promise.all([api('getKlienti'), api('getKaskade')]);
-    var kRes=res[0], cRes=res[1];
+    var res=await Promise.all([api('getKlienti'), api('getKaskade'), api('getIestatijumi')]);
+    var kRes=res[0], cRes=res[1], sRes=res[2];
     if(kRes.ok){ var sel=byId('client'); (kRes.klienti||[]).filter(function(k){return String(k.statuss).toLowerCase().indexOf('akt')===0;}).forEach(function(k){ var o=document.createElement('option'); o.value=k.vards; o.textContent=k.vards; sel.appendChild(o); }); }
     if(cRes.ok) spState.k=cRes;
+    if(sRes.ok && sRes.iestatijumi) populateCfgSelects(sRes.iestatijumi);
   }catch(e){ setMsg('formAlert','Neizdevās ielādēt datus.','alert-error'); }
   initCascadePickers();
   initPresets();
