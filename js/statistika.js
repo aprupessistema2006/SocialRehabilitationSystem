@@ -4,6 +4,7 @@ var ST = {
   klienti: [],
   darbinieki: [],
   sakums: {},
+  istatijumi: {},
   charts: [],
   colors: ['#a855f7','#ec4899','#818cf8','#f472b6','#c4b5fd','#fbcfe8','#22c55e','#f43f5e','#6366f1','#3b82f6'],
   fsTarget: null,
@@ -29,6 +30,7 @@ async function initStatistika(){
   try {
     await Promise.all([
       api('getSakums', { employee_id: u.id }).then(function(r){ if (r.ok) ST.sakums = r; }),
+      api('getIestatijumi').then(function(r){ ST.iestatijumi = (r.ok && r.iestatijumi) ? r.iestatijumi : {}; }),
       api('getNodarbibas', { access_token: getToken() }).then(function(r){ ST.nodarbibas = (r.ok && r.nodarbibas) ? r.nodarbibas : []; }),
       api('getKlienti', { access_token: getToken() }).then(function(r){ ST.klienti = (r.ok && r.klienti) ? r.klienti : []; }),
       api('getEmployees', { access_password: ACCESS_PASSWORD }).then(function(r){ ST.darbinieki = (r.ok && r.employees) ? r.employees : []; })
@@ -496,6 +498,9 @@ function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(
 function ratingLabel(value){
   var v = Math.round(value);
   if (v < 1) v = 1; if (v > 5) v = 5;
+  var s = ST.istatijumi || {};
+  var custom = s['rating_label_'+v];
+  if (custom && String(custom).trim() !== '') return custom;
   return ST.ratingLabels[v - 1];
 }
 document.addEventListener('DOMContentLoaded', function(){
