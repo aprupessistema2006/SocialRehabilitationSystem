@@ -8,7 +8,8 @@ var ST = {
   colors: ['#a855f7','#ec4899','#818cf8','#f472b6','#c4b5fd','#fbcfe8','#22c55e','#f43f5e','#6366f1','#3b82f6'],
   fsTarget: null,
   filters: { dateFrom: '', dateTo: '', client: '', worker: '' },
-  modalChart: null
+  modalChart: null,
+  ratingLabels: ['1 – ļoti slikti', '2 – slikti', '3 – vidēji', '4 – labi', '5 – izcili']
 };
 
 Chart.register(ChartDataLabels);
@@ -124,7 +125,7 @@ function renderKPI(u){
   animateValue('statClients', getElText('statClients'), activeClients);
   animateValue('statMine', getElText('statMine'), mine);
   setText('statPctComplete', pctComplete + '%');
-  setText('statAvgRating', avgRating);
+  setText('statAvgRating', avgRating === '-' ? '-' : avgRating + '/5 (' + ratingLabel(avgRating) + ')');
 
   setDelta('statTotalDelta', total, s.kopskaits);
   setDelta('statTodayDelta', today, s.sodien);
@@ -215,7 +216,7 @@ function destroyCharts(){
 function renderCharts(){
   destroyCharts();
   var nb = getFiltered();
-  var ids = ['chartClients','chartWorkers','chartTimeline','chartTypes','chartStatus','chartMood'];
+  var ids = ['chartClients','chartWorkers','chartTimeline','chartTypes','chartStatus','chartMood','chartRating'];
   if (!nb.length){
     ids.forEach(function(id){
       var el = byId(id); if(el) el.innerHTML = '<div class="css-empty">Nav ierakstu analīzei.</div>';
@@ -260,6 +261,14 @@ function renderCharts(){
   var byMood = groupBy(nb, function(r){ return r.garastavoklis || 'Nezināms'; });
   var moodItems = Object.entries(byMood).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 8).reverse();
   createChart('chartMood', 'bar', 'Klienta garastāvoklis', moodItems.map(function(i){return i[0];}), moodItems.map(function(i){return i[1];}), false);
+
+  // 7. Bar: rating distribution (1–5)
+  var ratingCounts = [0,0,0,0,0];
+  nb.forEach(function(r){
+    var v = Math.round(parseFloat(String(r.vertejums||'').replace(',','.')));
+    if (!isNaN(v) && v >= 1 && v <= 5) ratingCounts[v-1]++;
+  });
+  createChart('chartRating', 'bar', 'Vērtējumu sadalījums', ST.ratingLabels, ratingCounts, false);
 }
 
 function createChart(canvasId, type, title, labels, values, isRound){
@@ -443,7 +452,8 @@ function renderInsights(){
   if (ratings.length > 0) {
     var avg = ratings.reduce(function(a,b){ return a + b; }, 0) / ratings.length;
     var ratingText = avg >= 4.5 ? 'Izcili' : avg >= 3.5 ? 'Labi' : avg >= 2.5 ? 'Vidēji' : 'Vajag uzlabojumu';
-    insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Vidējais vērtējums:</strong> <strong>' + avg.toFixed(1) + '/5</strong> (' + ratings.length + ' ieraksti). ' + ratingText + '.</div></div>');
+    var pctOfMax = Math.round((avg / 5) * 100);
+    insights.push('<div class="insight-item"><span class="insight-dot"></span><div><strong>Vidējais vērtējums:</strong> <strong>' + avg.toFixed(1) + '/5</strong> (' + ratings.length + ' ieraksti, ' + pctOfMax + '% no maksimālām 5). ' + ratingText + ' — ' + ratingLabel(avg) + '.</div></div>');
   }
 
   var today = countToday(nb);
@@ -482,6 +492,12 @@ function initExport(){
 }
 
 function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+function ratingLabel(value){
+  var v = Math.round(value);
+  if (v < 1) v = 1; if (v > 5) v = 5;
+  return ST.ratingLabels[v - 1];
+}
 document.addEventListener('DOMContentLoaded', function(){
   if (byId('chartClients')) initStatistika();
 });
