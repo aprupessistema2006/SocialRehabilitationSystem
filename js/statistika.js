@@ -269,6 +269,8 @@ function renderCharts(){
   // 6. Bar: mood (horizontal, top 8)
   var byMood = groupBy(nb, function(r){ return r.garastavoklis || 'Nezināms'; });
   var moodItems = Object.entries(byMood).sort(function(a, b){ return b[1] - a[1]; }).slice(0, 8).reverse();
+  var cfg = ST.iestatijumi || {};
+  moodItems = moodItems.map(function(i){ return [cfgLabel(cfg, 'cfg_garastavoklis', i[0]) || i[0], i[1]]; });
   createChart('chartMood', 'bar', 'Klienta garastāvoklis', moodItems.map(function(i){return i[0];}), moodItems.map(function(i){return i[1];}), false);
 
   // 7. Bar: rating distribution (1–5) – labeli no konfigurācijas (cfg_vertejums)
@@ -493,10 +495,13 @@ function initExport(){
     if (!nb.length) { alert('Nav datu eksportam.'); return; }
     var headers = ['ID','Klients','Datums','Nodarbība','Mērķis','Problēma','Uzdevums','Darbinieks','Vērtējums','Pildīts','Komentārs'];
     var rows = nb.map(function(r){
+      var cfg = ST.iestatijumi || {};
       return [
         r.id || '', r.klients || '', r.datums || '', r.nodarbiba_nosaukums || '',
         r.merkis || '', r.problema || '', r.uzdevums || '', r.darbinieks || '',
-        r.vertejums || '', r.pildits || '', r.komentars || ''
+        cfgLabel(cfg, 'cfg_vertejums', r.vertejums) || r.vertejums || '',
+        cfgLabel(cfg, 'cfg_pildits', r.pildits) || r.pildits || '',
+        r.komentars || ''
       ];
     });
     var csv = [headers.join(';')].concat(rows.map(function(row){

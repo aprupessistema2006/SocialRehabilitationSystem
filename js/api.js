@@ -91,6 +91,28 @@
   window.esc = function(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); };
   window.fmt = function(v){ return v==null?'':String(v); };
   window.setMsg = function(id,text,cls){ var el=document.getElementById(id); if(!el) return; el.className='alert '+(cls||''); el.textContent=text||''; el.style.display=text?'block':'none'; };
+  window._cfgCache = null;
+  window.getCfg = async function(){
+    if(window._cfgCache) return window._cfgCache;
+    try{
+      var r = await api('getIestatijumi');
+      window._cfgCache = (r && r.ok && r.iestatijumi) ? r.iestatijumi : {};
+    }catch(e){ window._cfgCache = {}; }
+    return window._cfgCache;
+  };
+  window.cfgLabel = function(cfg, key, value){
+    if(value==null || value==='') return value;
+    var raw = cfg && cfg[key];
+    if(!raw) return value;
+    var items = [];
+    try{ items = JSON.parse(raw); }catch(e){ return value; }
+    if(!Array.isArray(items)) return value;
+    var match = items.find(function(it){
+      var v = it.value !== undefined ? it.value : it.id;
+      return String(v) === String(value);
+    });
+    return match && match.label ? match.label : value;
+  };
   window.byId = function(id){ return document.getElementById(id); };
 })();
 
