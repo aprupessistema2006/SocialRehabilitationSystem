@@ -179,8 +179,10 @@ function pielagotRindasAugstumu_(sheet, cellAddress, text) {
   });
 
   // 3. Aprēķinām kopējo nepieciešamo augstumu pikseļos
+  // +2mm augšā +2mm apakšā (≈12 punkti), lai būtu maza atstarpīte arī mīkstinājuma zīmēm.
   var lineHeightPx = Math.ceil(fontSize * 1.45);
-  var neededTotalHeight = (totalLines * lineHeightPx) + 12;
+  var topBottomPaddingPx = 12; // 2mm augšā + 2mm apakšā
+  var neededTotalHeight = (totalLines * lineHeightPx) + topBottomPaddingPx;
 
   // 4. Saskaitām esošo rindu augstumu šim blokam
   var currentTotalHeight = 0;
