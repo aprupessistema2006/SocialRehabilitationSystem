@@ -131,12 +131,72 @@ function exportSheetAsXlsxBase64_(ssId){
   }
 }
 
+// ============================================================
+// PALĪGFUNKCIJA: Automātiski aprēķina un uzstāda rindas augstumu
+// (Strādā arī ar apvienotām / Merged šūnām!)
+// ============================================================
+function pielagotRindasAugstumu_(sheet, cellAddress, text) {
+  if (!text) return;
+  var str = String(text).trim();
+  if (!str) return;
+
+  var range = sheet.getRange(cellAddress);
+  var row = range.getRow();
+  var fontSize = range.getFontSize() || 10;
+
+  // 1. Nosakām šūnas (vai apvienoto šūnu bloka) kopējo platumu pikseļos
+  var totalWidthPx = 0;
+  var mergedRanges = range.getMergedRanges();
+
+  if (mergedRanges && mergedRanges.length > 0) {
+    // Ja šūna ir apvienota (piemēram, B7:E7), saskaitām visu kolonnu platumu
+    var mRange = mergedRanges[0];
+    var startCol = mRange.getColumn();
+    var numCols = mRange.getNumColumns();
+    for (var c = 0; c < numCols; c++) {
+      totalWidthPx += sheet.getColumnWidth(startCol + c);
+    }
+  } else {
+    // Parasta viena šūna
+    totalWidthPx = sheet.getColumnWidth(range.getColumn());
+  }
+
+  // Drošības rezerve šūnas iekšējām malām (padding)
+  var usableWidthPx = Math.max(totalWidthPx - 14, 40);
+
+  // Aptuvenais viena burta platums pikseļos atkarībā no fonta izmēra
+  var avgCharWidthPx = fontSize * 0.56;
+  var charsPerLine = Math.max(Math.floor(usableWidthPx / avgCharWidthPx), 10);
+
+  // 2. Sadalām tekstu pa rindkopām (ja lietotājs spiedis Enter) un saskaitām rindiņas
+  var paragraphs = str.split(/\r?\n/);
+  var totalLines = 0;
+
+  paragraphs.forEach(function(p) {
+    if (p.length === 0) {
+      totalLines += 1;
+    } else {
+      // Cik rindiņas aizņems šī konkrētā rindkopa
+      totalLines += Math.ceil(p.length / charsPerLine);
+    }
+  });
+
+  // 3. Aprēķinām nepieciešamo augstumu pikseļos (rindiņas augstums + neliela rezerve augšā/apakšā)
+  var lineHeightPx = Math.ceil(fontSize * 1.45);
+  var calculatedHeight = (totalLines * lineHeightPx) + 10;
+
+  // 4. Salīdzinām ar pašreizējo veidnes rindas augstumu — mainām TIKAI tad, ja tekstam vajag vairāk vietas!
+  var currentHeight = sheet.getRowHeight(row);
+  if (calculatedHeight > currentHeight) {
+    sheet.setRowHeight(row, calculatedHeight);
+  }
+}
+
 function fillVeidne(data){
   if(!VEIDNE_SS_ID){
     return {ok:false, reason:'nav_konfigurets_veidne_ss_id', hint:'Iestatiet VEIDNE_SS_ID excel-veidne.gs'};
   }
   var tempSheet = null;
-  var tempSsId = null;
   try{
     var ss = SpreadsheetApp.openById(VEIDNE_SS_ID);
     var sh = ss.getSheetByName(VEIDNE_LAPA);
@@ -164,6 +224,10 @@ function fillVeidne(data){
         range.setWrap(true);
         range.setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP);
         range.setVerticalAlignment('top');
+
+        // Precīzs rindu augstuma kalkulators, kas strādā arī ar apvienotām (Merged) šūnām
+        pielagotRindasAugstumu_(tempSheet, addr, values[name]);
+
         pildito++;
       }
     });
