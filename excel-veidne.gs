@@ -168,6 +168,7 @@ function fillVeidne(data){
     });
 
     // 3) Rindu augstuma pielāgošana satura garumam (wrapText atbalstīts)
+    // Augstums tiek aprēķināts atbilstoši teksta garumam un kolonnas platuma.
     Object.keys(VEIDNE_CELLS).forEach(function(name){
       var addr = VEIDNE_CELLS[name];
       var range = tempSheet.getRange(addr);
@@ -176,10 +177,12 @@ function fillVeidne(data){
         var row = range.getRow();
         var col = range.getColumn();
         var colWidth = tempSheet.getColumnWidth(col) || 100;
-        var charsPerLine = Math.max(8, Math.floor(colWidth / 7));
-        var lines = Math.ceil(val.length / charsPerLine);
-        var estHeight = Math.max(18, lines * 14 + 6);
-        var currentHeight = tempSheet.getRowHeight(row) || 18;
+        var charsPerLine = Math.max(8, Math.floor(colWidth));
+        var lines = Math.max(1, Math.ceil(val.length / charsPerLine));
+        var lineHeight = 13;
+        var padding = 2;
+        var estHeight = Math.max(15, lines * lineHeight + padding);
+        var currentHeight = tempSheet.getRowHeight(row) || 15;
         if(estHeight > currentHeight){
           tempSheet.setRowHeight(row, estHeight);
         }
