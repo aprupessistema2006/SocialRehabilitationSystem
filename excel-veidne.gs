@@ -159,33 +159,12 @@ function fillVeidne(data){
       if(addr){
         var range = tempSheet.getRange(addr);
         range.setValue(values[name]);
-        // Teksta slāps un rindu augstuma pielāgošana
+        // Teksta slāps (wrapText) – rindas augstums automātiskais (AutoFit),
+        // neviens fiksēts augstums netiek iestatīts.
         range.setWrap(true);
         range.setWrapStrategy(SpreadsheetApp.WrapStrategy.WRAP);
         range.setVerticalAlignment('top');
         pildito++;
-      }
-    });
-
-    // 3) Rindu augstuma pielāgošana satura garumam (wrapText atbalstīts)
-    // Augstums tiek aprēķināts atbilstoši teksta garumam un kolonnas platuma.
-    Object.keys(VEIDNE_CELLS).forEach(function(name){
-      var addr = VEIDNE_CELLS[name];
-      var range = tempSheet.getRange(addr);
-      var val = String(values[name] || '');
-      if(val.length > 0){
-        var row = range.getRow();
-        var col = range.getColumn();
-        var colWidth = tempSheet.getColumnWidth(col) || 100;
-        var charsPerLine = Math.max(8, Math.floor(colWidth));
-        var lines = Math.max(1, Math.ceil(val.length / charsPerLine));
-        var lineHeight = 13;
-        var padding = 2;
-        var estHeight = Math.max(15, lines * lineHeight + padding);
-        var currentHeight = tempSheet.getRowHeight(row) || 15;
-        if(estHeight > currentHeight){
-          tempSheet.setRowHeight(row, estHeight);
-        }
       }
     });
 
